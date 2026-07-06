@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">PawPlan</string>
+    <string name="navigation_schedule">Schedule</string>
+    <string name="navigation_dogs">Dogs</string>
+    <string name="navigation_profile">Profile</string>
+
+    <string name="displayname_label">Display Name</string>
+    <string name="username_label">E-Mail</string>
+    <string name="password_label">Password</string>
+    <string name="register_button">Register</string>
+    <string name="register_caption">Register</string>
+    <string name="login_button">Login</string>
+    <string name="login_caption">Login</string>
+
+    <string name="pawplan_logo_desc">PawPlan Logo</string>
+</resources>
