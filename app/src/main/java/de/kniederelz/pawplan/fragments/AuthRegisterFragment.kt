@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.auth.fragments
+package de.kniederelz.pawplan.fragments
 
 import android.os.Bundle
 import android.util.Log

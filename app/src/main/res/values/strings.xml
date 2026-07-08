@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">PawPlan</string>
+
+    <string name="back">Back</string>
     <string name="navigation_schedule">Schedule</string>
     <string name="navigation_dogs">Dogs</string>
+    <string name="navigation_tracker">Tracker</string>
     <string name="navigation_profile">Profile</string>
 
     <string name="displayname_label">Display Name</string>

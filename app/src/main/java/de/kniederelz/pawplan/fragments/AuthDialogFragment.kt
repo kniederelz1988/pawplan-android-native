@@ -1,7 +1,6 @@
-package de.kniederelz.pawplan.auth
+package de.kniederelz.pawplan.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

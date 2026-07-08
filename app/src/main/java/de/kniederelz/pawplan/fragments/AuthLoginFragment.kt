@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.auth.fragments
+package de.kniederelz.pawplan.fragments
 
 import android.os.Bundle
 import android.util.Log
@@ -17,7 +17,6 @@ import de.kniederelz.pawplan.databinding.FragmentAuthLoginBinding
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class AuthLoginFragment : Fragment() {
-
     private lateinit var binding: FragmentAuthLoginBinding
 
     override fun onCreateView(

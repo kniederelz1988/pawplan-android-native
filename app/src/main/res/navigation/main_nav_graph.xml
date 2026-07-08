@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/dogsView">
+
+    <fragment
+        android:id="@+id/appointmentsOverviewView"
+        android:name="de.kniederelz.pawplan.views.AppointmentsOverviewView"
+        android:label="fragment_appointments_overview_view"
+        tools:layout="@layout/fragment_appointments_overview" />
+    <fragment
+        android:id="@+id/trackerView"
+        android:name="de.kniederelz.pawplan.views.TrackerView"
+        android:label="fragment_tracker_view"
+        tools:layout="@layout/fragment_tracker" />
+    <fragment
+        android:id="@+id/profileView"
+        android:name="de.kniederelz.pawplan.views.ProfileView"
+        android:label="fragment_profile_view"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/dogsView"
+        android:name="de.kniederelz.pawplan.views.DogsView"
+        android:label="DogsView"
+        tools:layout="@layout/fragment_dogs"/>
+</navigation>
