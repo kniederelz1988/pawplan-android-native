@@ -15,4 +15,9 @@
         android:name="de.kniederelz.pawplan.views.DogsDetailsView"
         android:label="fragment_dogs_details_view"
         tools:layout="@layout/fragment_dogs_details" />
+    <fragment
+        android:id="@+id/dogsRemarksView"
+        android:name="de.kniederelz.pawplan.views.DogsRemarksView"
+        android:label="fragment_dogs_remarks_view"
+        tools:layout="@layout/fragment_dogs_remarks"/>
 </navigation>

@@ -2,21 +2,340 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout2"
+    android:id="@+id/dogDetailsLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".views.DogsDetailsView">
 
-    <!-- TODO: Update blank fragment layout -->
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dog Details"
+    <ScrollView
+        android:id="@+id/dogDetailsScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="72dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/dogImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:contentDescription="@string/dog_details_picture_desc"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/logo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/favButton"
+                    style="@style/ShapeAppearanceOverlay.Material3.FloatingActionButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:clickable="true"
+                    android:contentDescription="@string/dog_details_fav_button"
+                    android:focusable="true"
+                    android:src="@drawable/ic_action_heart"
+                    app:borderWidth="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/dogNameLabel"
+                    style="@style/TextAppearance.Material3.TitleLarge.Emphasized"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/dog_details_name"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/dogImageView" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/ageCard"
+                    style="@style/Widget.Material3.CardView.Filled"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1">
+
+                    <!-- Content -->
+
+                    <LinearLayout
+                        android:id="@+id/ageCardLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/ageCardLabel"
+                            style="@style/TextAppearance.Material3.LabelSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dog_details_age_label"
+                            android:textAlignment="center"
+                            android:textAllCaps="true" />
+
+                        <TextView
+                            android:id="@+id/ageCardValue"
+                            style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dog_details_age_value"
+                            android:textAlignment="center" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/genderCard"
+                    style="@style/Widget.Material3.CardView.Filled"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1">
+
+                    <!-- Content -->
+
+                    <LinearLayout
+                        android:id="@+id/genderCardLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/genderCardLabel"
+                            style="@style/TextAppearance.Material3.LabelSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dog_details_gender_label"
+                            android:textAlignment="center"
+                            android:textAllCaps="true" />
+
+                        <TextView
+                            android:id="@+id/genderCardValue"
+                            style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dog_details_gender_value"
+                            android:textAlignment="center" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/sizeCard"
+                    style="@style/Widget.Material3.CardView.Filled"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1">
+
+                    <LinearLayout
+                        android:id="@+id/sizeCardLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/sizeCardLabel"
+                            style="@style/TextAppearance.Material3.LabelSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dog_details_size_label"
+                            android:textAlignment="center"
+                            android:textAllCaps="true" />
+
+                        <TextView
+                            android:id="@+id/sizeCardValue"
+                            style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dog_details_size_value"
+                            android:textAlignment="center" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/ratingCard"
+                    style="@style/Widget.Material3.CardView.Elevated"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <Space
+                            android:layout_width="16dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:id="@+id/ratingStar1Image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0"
+                            android:contentDescription="@string/dog_details_star_desc"
+                            android:src="@drawable/ic_action_star"
+                            app:tint="@color/md_theme_secondary" />
+
+                        <ImageView
+                            android:id="@+id/ratingStar2Image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0"
+                            android:contentDescription="@string/dog_details_star_desc"
+                            android:src="@drawable/ic_action_star"
+                            app:tint="@color/md_theme_secondary" />
+
+                        <ImageView
+                            android:id="@+id/ratingStar3Image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0"
+                            android:contentDescription="@string/dog_details_star_desc"
+                            android:src="@drawable/ic_action_star"
+                            app:tint="@color/md_theme_secondary" />
+
+                        <ImageView
+                            android:id="@+id/ratingStar4Image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0"
+                            android:contentDescription="@string/dog_details_star_desc"
+                            android:src="@drawable/ic_action_star"
+                            app:tint="@color/md_theme_surfaceDim" />
+
+                        <ImageView
+                            android:id="@+id/ratingStar5Image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0"
+                            android:contentDescription="@string/dog_details_star_desc"
+                            android:src="@drawable/ic_action_star"
+                            app:tint="@color/md_theme_surfaceDim" />
+
+                        <Space
+                            android:layout_width="20dp"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/ratingText"
+                            style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0"
+                            android:gravity="center"
+                            android:text="4.8" />
+
+                        <Space
+                            android:layout_width="20dp"
+                            android:layout_height="match_parent" />
+
+                        <TextView
+                            android:id="@+id/ratingText2"
+                            style="@style/TextAppearance.Material3.LabelSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0"
+                            android:gravity="center"
+                            android:text="27 Spaziergänge" />
+
+                        <Space
+                            android:layout_width="16dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <Button
+                    android:id="@+id/ratingButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="more..."
+                    android:textColor="@color/md_theme_primary" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/descriptionLabel"
+                    style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dog_details_description_label" />
+
+                <TextView
+                    android:id="@+id/descriptionValue"
+                    style="@style/MaterialAlertDialog.Material3.Body.Text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nana is a beautiful Great Dane with a gentle heart and a calm, loving personality. Despite her impressive size, she is a true gentle giant who enjoys spending time with people and making new friends. Nana has a sweet, affectionate nature and loves receiving attention, whether it’s a quiet cuddle session or simply being by your side throughout the day.  She walks well on a leash and enjoys leisurely strolls where she can explore her surroundings at a relaxed pace. Nana is intelligent, eager to please, and responds well to positive reinforcement. Her easygoing temperament makes her a wonderful companion for families, couples, or individuals looking for a loyal best friend.  Nana is happiest when she is included in daily activities and given plenty of love and companionship. She has a calm presence that brings comfort to those around her and would thrive in a home where she can continue building strong bonds with her people.  If you are looking for a devoted, affectionate dog with a big heart to match her big paws, Nana may be the perfect addition to your family. She is ready to leave shelter life behind and start her next chapter in a loving forever home." />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/bookAppointmentButton"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="0"
+        android:text="Book appointment"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

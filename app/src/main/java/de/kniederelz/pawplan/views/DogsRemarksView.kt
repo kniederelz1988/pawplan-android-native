@@ -5,17 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import de.kniederelz.pawplan.R
-
-import de.kniederelz.pawplan.viewModels.DogsOverviewViewModel
 import de.kniederelz.pawplan.databinding.FragmentDogsOverviewBinding
+import de.kniederelz.pawplan.databinding.FragmentDogsRemarksBinding
 
-class DogsOverviewView : Fragment() {
-    private lateinit var binding: FragmentDogsOverviewBinding
-
-    private val viewModel: DogsOverviewViewModel by viewModels()
+class DogsRemarksView : Fragment() {
+    private lateinit var binding: FragmentDogsRemarksBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,11 +22,7 @@ class DogsOverviewView : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentDogsOverviewBinding.inflate(inflater, container, false)
-        binding.dogButton.setOnClickListener {
-            val navController = findNavController()
-            navController.navigate(R.id.dogsDetailsView)
-        }
+        binding = FragmentDogsRemarksBinding.inflate(inflater, container, false)
         return binding.root
     }
 }

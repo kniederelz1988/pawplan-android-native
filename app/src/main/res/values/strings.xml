@@ -15,5 +15,38 @@
     <string name="login_button">Login</string>
     <string name="login_caption">Login</string>
 
+    <string name="dog_details_picture_desc">Cute dog picture</string>
+    <string name="dog_details_name">Nana</string>
+    <string name="dog_details_fav_button">Favorisieren</string>
+    <string name="dog_details_age_label">Alter</string>
+    <string name="dog_details_age_value">4 Jahre</string>
+    <string name="dog_details_gender_label">Geschlecht</string>
+    <string name="dog_details_gender_value">Rüde</string>
+    <string name="dog_details_size_label">Größe</string>
+    <string name="dog_details_size_value">Groß</string>
+    <string name="dog_details_star_desc">Rating</string>
+    <string name="dog_details_description_label">Beschreibung</string>
+
+    <string name="dog_remarks_caption">Remarks about %1$s</string>
+    <string name="dog_remarks_name_label">Placeholder Name</string>
+    <string name="dog_remarks_date_label">01.04.1988 00:00:00</string>
+    <string name="dog_remarks_label">Yes, yes.. great dog.. great walk.. simply great</string>
+
     <string name="pawplan_logo_desc">PawPlan Logo</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ratings_icon_desc">Star</string>
+    <string name="ratings_average">4.7</string>
+    <string name="rating_remark_count">(30 remarks)</string>
+    <string name="dog_age">4 Jahre</string>
+    <string name="bulletpoint">•</string>
+    <string name="dog_gender">Rüde</string>
+    <string name="dog_size">Groß</string>
+    <string name="dog_overview_caption">Dogs</string>
+    <string name="dogs_overview_search_name_hint">Name</string>
+    <string name="dogs_overview_search_all">All</string>
+    <string name="dogs_overview_search_favs">Favs</string>
+    <string name="dogs_overview_search_small">Small</string>
+    <string name="dogs_overview_search_mid">Mid</string>
+    <string name="dogs_overview_search_large">Large</string>
 </resources>

@@ -1,0 +1,24 @@
+<resources>
+
+    <style name="Widget.App.MySearchBar" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+
+        <item name="startIconDrawable">@drawable/ic_home</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.SearchField</item>
+
+        <item name="boxStrokeColor">@color/md_theme_outline</item>
+    </style>
+
+    <style name="ShapeAppearance.SearchField" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="ShapeAppearance.RoundedImage" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="ShapeAppearance.Button" parent="ShapeAppearanceOverlay.Material3.FloatingActionButton">
+
+    </style>
+</resources>

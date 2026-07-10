@@ -5,7 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.databinding.FragmentDogsDetailsBinding
+import de.kniederelz.pawplan.fragments.BookAppointmentFragment
 
 /**
  * A simple [Fragment] subclass.
@@ -31,6 +34,14 @@ class DogsDetailsView : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentDogsDetailsBinding.inflate(inflater, container, false)
+        binding.ratingButton.setOnClickListener {
+            val navController = findNavController()
+            navController.navigate(R.id.dogsRemarksView)
+        }
+        binding.bookAppointmentButton.setOnClickListener {
+            BookAppointmentFragment.newInstance("Waldi")
+                .show(childFragmentManager, BookAppointmentFragment.TAG)
+        }
 
         return binding.root
     }
