@@ -49,4 +49,7 @@
     <string name="dogs_overview_search_small">Small</string>
     <string name="dogs_overview_search_mid">Mid</string>
     <string name="dogs_overview_search_large">Large</string>
+    <string name="appointments_fast_select_caption">Schnellauswahl</string>
+    <string name="appointments_caption">Appointments</string>
+    <string name="appointments_pending_caption">Nächste Termine</string>
 </resources>

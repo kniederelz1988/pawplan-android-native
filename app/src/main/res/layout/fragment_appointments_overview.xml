@@ -7,15 +7,88 @@
     android:layout_height="match_parent"
     tools:context=".views.AppointmentsOverviewView">
 
-    <TextView
-        android:id="@+id/Appointments"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Appointments"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/Appointments"
+            style="@style/TextAppearance.Material3.TitleLarge.Emphasized"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/appointments_caption" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <TextView
+            android:id="@+id/fastSelectCaption"
+            style="@style/TextAppearance.Material3.LabelMedium.Emphasized"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/appointments_fast_select_caption" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/fastSelectLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/fastSelectRecycler"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:orientation="horizontal"
+                tools:itemCount="5"
+                tools:listitem="@layout/fragment_appointment_fastselect_item" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <TextView
+            android:id="@+id/pendingCaption"
+            style="@style/TextAppearance.Material3.LabelMedium.Emphasized"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/appointments_pending_caption" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:itemCount="5"
+                    tools:listitem="@layout/fragment_appointments_overview_item"/>
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/button"
