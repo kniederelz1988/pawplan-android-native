@@ -5,6 +5,7 @@
     <color name="md_theme_onPrimaryContainer">#CDEDA3</color>
     <color name="md_theme_secondary">#BFCBAD</color>
     <color name="md_theme_onSecondary">#2A331E</color>
+    <color name="md_theme_onSecondaryVariant">#404A33</color>
     <color name="md_theme_secondaryContainer">#404A33</color>
     <color name="md_theme_onSecondaryContainer">#DCE7C8</color>
     <color name="md_theme_tertiary">#A0D0CB</color>

@@ -5,7 +5,7 @@
     android:id="@+id/remarksLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.DogsRemarksView">
+    tools:context=".dogs.representation.remarks.DogsRemarksFragment">
 
     <ScrollView
         android:id="@+id/remarksScrollView"
@@ -28,11 +28,12 @@
 
             <TextView
                 android:id="@+id/remarksCaption"
-                style="@style/TextAppearance.Material3.TitleMedium"
+                style="@style/TextAppearance.Material3.TitleLarge.Emphasized"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="@string/dog_remarks_caption" />
+                android:text="@string/dog_remarks_caption"
+                android:textAlignment="center" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"

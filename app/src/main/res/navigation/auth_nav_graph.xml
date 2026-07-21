@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="de.kniederelz.pawplan.fragments.AuthLoginFragment"
+        android:name="de.kniederelz.pawplan.auth.presentation.login.AuthLoginFragment"
         tools:layout="@layout/fragment_auth_login">
 
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="de.kniederelz.pawplan.fragments.AuthRegisterFragment"
+        android:name="de.kniederelz.pawplan.auth.presentation.register.AuthRegisterFragment"
         tools:layout="@layout/fragment_auth_register">
 
         <action

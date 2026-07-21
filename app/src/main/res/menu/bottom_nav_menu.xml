@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_dogs"
         android:icon="@drawable/navigation_dogs"
@@ -8,13 +7,22 @@
     <item
         android:id="@+id/navigation_schedule"
         android:icon="@drawable/navigation_calendar"
-        android:title="@string/navigation_schedule" />
+        android:title="@string/navigation_schedule"
+        android:visible="true" />
     <item
         android:id="@+id/navigation_tracker"
         android:icon="@drawable/navigation_tracker"
-        android:title="@string/navigation_tracker" />
+        android:title="@string/navigation_tracker"
+        android:visible="true" />
+
     <item
         android:id="@+id/navigation_profiles"
         android:icon="@drawable/navigation_person"
-        android:title="@string/navigation_profile" />
+        android:title="@string/navigation_profile"
+        android:visible="true" />
+    <item
+        android:id="@+id/navigation_auth"
+        android:icon="@drawable/ic_action_login"
+        android:title="@string/navigation_login"
+        android:visible="true" />
 </menu>

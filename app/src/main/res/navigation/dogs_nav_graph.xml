@@ -7,17 +7,25 @@
 
     <fragment
         android:id="@+id/dogsOverviewView"
-        android:name="de.kniederelz.pawplan.views.DogsOverviewView"
+        android:name="de.kniederelz.pawplan.dogs.representation.overview.DogsOverviewFragment"
         android:label="fragment_dogs_overview"
         tools:layout="@layout/fragment_dogs_overview" />
     <fragment
         android:id="@+id/dogsDetailsView"
-        android:name="de.kniederelz.pawplan.views.DogsDetailsView"
+        android:name="de.kniederelz.pawplan.dogs.representation.details.DogsDetailsFragment"
         android:label="fragment_dogs_details_view"
-        tools:layout="@layout/fragment_dogs_details" />
+        tools:layout="@layout/fragment_dogs_details" >
+        <argument
+            android:name="dogId"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/dogsRemarksView"
-        android:name="de.kniederelz.pawplan.views.DogsRemarksView"
+        android:name="de.kniederelz.pawplan.dogs.representation.remarks.DogsRemarksFragment"
         android:label="fragment_dogs_remarks_view"
-        tools:layout="@layout/fragment_dogs_remarks"/>
+        tools:layout="@layout/fragment_dogs_remarks">
+        <argument
+            android:name="dogId"
+            app:argType="string" />
+    </fragment>
 </navigation>

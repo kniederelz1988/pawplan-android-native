@@ -5,7 +5,7 @@
     android:id="@+id/dogDetailsLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.DogsDetailsView">
+    tools:context=".dogs.representation.details.DogsDetailsFragment">
 
     <ScrollView
         android:id="@+id/dogDetailsScrollView"
@@ -38,18 +38,20 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/favButton"
-                    style="@style/ShapeAppearanceOverlay.Material3.FloatingActionButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:clickable="true"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
                     android:contentDescription="@string/dog_details_fav_button"
-                    android:focusable="true"
-                    android:src="@drawable/ic_action_heart"
-                    app:borderWidth="16dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:cornerRadius="24dp"
+                    app:icon="@drawable/ic_favortie_outline"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconSize="28dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

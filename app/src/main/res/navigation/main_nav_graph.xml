@@ -7,22 +7,31 @@
 
     <fragment
         android:id="@+id/appointmentsOverviewView"
-        android:name="de.kniederelz.pawplan.views.AppointmentsOverviewView"
+        android:name="de.kniederelz.pawplan.appointments.presentation.AppointmentsOverviewFragment"
         android:label="fragment_appointments_overview_view"
         tools:layout="@layout/fragment_appointments_overview" />
+
     <fragment
         android:id="@+id/trackerView"
-        android:name="de.kniederelz.pawplan.views.TrackerView"
+        android:name="de.kniederelz.pawplan.tracking.presentation.TrackerView"
         android:label="fragment_tracker_view"
         tools:layout="@layout/fragment_tracker" />
+
     <fragment
         android:id="@+id/profileView"
-        android:name="de.kniederelz.pawplan.views.ProfileView"
+        android:name="de.kniederelz.pawplan.user.presentation.ProfileFragment"
         android:label="fragment_profile_view"
         tools:layout="@layout/fragment_profile" />
+
     <fragment
         android:id="@+id/dogsView"
-        android:name="de.kniederelz.pawplan.views.DogsView"
+        android:name="de.kniederelz.pawplan.dogs.representation.DogsView"
         android:label="DogsView"
         tools:layout="@layout/fragment_dogs"/>
+
+    <fragment
+        android:id="@+id/authView"
+        android:name="de.kniederelz.pawplan.auth.presentation.AuthView"
+        android:label="AuthView"
+        tools:layout="@layout/fragment_auth"/>
 </navigation>

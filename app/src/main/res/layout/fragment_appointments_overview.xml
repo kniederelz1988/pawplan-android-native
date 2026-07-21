@@ -5,7 +5,7 @@
     android:id="@+id/appointmentsOverviewLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.AppointmentsOverviewView">
+    tools:context=".appointments.presentation.AppointmentsOverviewFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,7 +26,8 @@
             style="@style/TextAppearance.Material3.TitleLarge.Emphasized"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/appointments_caption" />
+            android:text="@string/appointments_caption"
+            android:textAlignment="center" />
 
         <Space
             android:layout_width="match_parent"
