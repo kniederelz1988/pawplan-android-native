@@ -2,6 +2,7 @@ package de.kniederelz.pawplan.ui.extensions
 
 import android.widget.TextView
 import de.kniederelz.pawplan.R
+import de.kniederelz.pawplan.appointmentratings.domain.AppointmentRatingStatistics
 import de.kniederelz.pawplan.dogs.domain.DogAge
 
 fun TextView.setAge(age: DogAge) {
@@ -19,4 +20,17 @@ fun TextView.setAge(age: DogAge) {
                 age.months
             )
         }
+}
+
+fun TextView.setStatisticsAverage(statistics: AppointmentRatingStatistics?) {
+    text = context.getString(
+        R.string.dog_rating_average,
+        statistics?.average ?: 0f
+    )
+}
+fun TextView.setStatisticsCount(statistics: AppointmentRatingStatistics?) {
+    text = context.getString(
+        R.string.dog_rating_count,
+        statistics?.count ?: 0
+    )
 }

@@ -23,22 +23,18 @@ import kotlinx.coroutines.launch
 class DogsOverviewFragment : Fragment() {
     private lateinit var binding: FragmentDogsOverviewBinding
 
+    private val viewModel: DogsOverviewViewModel by viewModels()
+
     private val overviewAdapter: DogOverviewAdapter = DogOverviewAdapter(
         { dog -> onDogButtonSubmit(dog) },
         { dog -> viewModel.toggleDogFavorite(dog) }
     )
-    private val viewModel: DogsOverviewViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDogsOverviewBinding.inflate(inflater, container, false)
-        binding.dogButton.setOnClickListener {
-            val navController = findNavController()
-            navController.navigate(R.id.dogsDetailsView)
-        }
-        
         return binding.root
     }
 

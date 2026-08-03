@@ -1,0 +1,14 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@drawable/ic_gender_male" />
+
+    <item
+        android:width="10dp"
+        android:height="10dp"
+        android:left="1dp"
+        android:top="1dp"
+        android:gravity="top|left"
+        android:drawable="@drawable/ic_gender_neutered_check" />
+
+</layer-list>

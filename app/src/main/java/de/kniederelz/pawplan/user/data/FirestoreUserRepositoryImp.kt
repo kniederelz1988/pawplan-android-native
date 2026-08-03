@@ -3,6 +3,7 @@ package de.kniederelz.pawplan.user.data
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import de.kniederelz.pawplan.auth.domain.User
 import de.kniederelz.pawplan.core.extensions.toTimestamp
 import de.kniederelz.pawplan.dogs.domain.Dog
 import de.kniederelz.pawplan.user.domain.UserFavorite
@@ -51,25 +52,47 @@ class FirestoreUserRepositoryImpl(
 
     private val _userProfile = _user
         .flatMapLatest { user ->
-            user?.let { getProfile(it.uid) } ?: flowOf(null)
+            user?.let { getProfile(it.uid) }
+                ?: flowOf(UserProfile())
         }
-        .onEach { Log.d("FirestoreUserRepository", "Profile: ${it.toString()}") }
-        .stateIn(scope,SharingStarted.Eagerly,null)
+        .onEach { Log.d("FirestoreUserRepository", "Profile: $it") }
+        .stateIn(scope,SharingStarted.WhileSubscribed(5000), null)
     override val userProfile: StateFlow<UserProfile?> = _userProfile
 
     private val _userRole = _userProfile
         .flatMapLatest { userProfile ->
-            userProfile?.let { getRole(it.userId) } ?: flowOf(UserRole.OBSERVER)
+            userProfile?.let { getRole(it.id) }
+                ?: flowOf(UserRole.OBSERVER)
         }
+        .onEach { Log.d("FirestoreUserRepository", "Role: $it") }
         .stateIn(scope, SharingStarted.WhileSubscribed(5000),UserRole.OBSERVER)
     override val userRole: StateFlow<UserRole> = _userRole
 
     private val _userFavorites = _userProfile
         .flatMapLatest { userProfile ->
-            userProfile?.let { getFavorites(it.userId)} ?: flowOf(UserFavorites())
+            userProfile?.let { getFavorites(it.id)}
+                ?: flowOf(UserFavorites())
         }
+        .onEach { Log.d("FirestoreUserRepository", "Favs: $it") }
         .stateIn(scope, SharingStarted.WhileSubscribed(5000), UserFavorites())
     override val userFavorites: StateFlow<UserFavorites> = _userFavorites
+
+    private val profileNameCache = mutableMapOf<String, String>()
+    override suspend fun getProfileName(volunteerId: String): String {
+        if (profileNameCache.contains(volunteerId))
+            return profileNameCache[volunteerId] ?: ""
+
+        val snapshot = firestore
+            .collection(VOLUNTEERS_COLLECTION)
+            .document(volunteerId)
+            .get()
+            .await()
+
+        val name = snapshot.getString("name") ?: ""
+        profileNameCache[volunteerId] = name
+
+        return name
+    }
 
     private fun getProfile(userId: String) = callbackFlow {
         val registration = firestore
@@ -77,22 +100,22 @@ class FirestoreUserRepositoryImpl(
             .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    trySend(null)
+                    trySend(UserProfile())
                     return@addSnapshotListener
                 }
 
                 if (snapshot == null || snapshot.size() != 1){
-                    trySend(null)
+                    trySend(UserProfile())
                     return@addSnapshotListener
                 }
 
                 val userProfile = snapshot.documents.firstOrNull()?.let {
                     it.toObject(FirebaseUserProfileDto::class.java)
                         ?.toDomain(it.id)
-                }
+                } ?: UserProfile()
 
                 val result = trySend(userProfile)
-                Log.e("FirestoreUserRepository", "Result: ${result.isSuccess}")
+                Log.e("FirestoreUserRepository Profile", "Result: ${result.isSuccess}")
             }
 
         awaitClose {
@@ -130,11 +153,13 @@ class FirestoreUserRepositoryImpl(
                     return@addSnapshotListener
                 }
 
-                val userRole =
-                    snapshot.toObject(FirebaseUserRoleDto::class.java)
-                        ?.toDomain() ?: UserRole.OBSERVER
+                val userRoleDto = snapshot.toObject(FirebaseUserRoleDto::class.java)
+                Log.e("FirestoreUserRepository Role", "Result: $userRoleDto")
 
-                trySend(userRole)
+                val userRole = userRoleDto?.toDomain() ?: UserRole.OBSERVER
+
+                val result = trySend(userRole)
+                Log.e("FirestoreUserRepository Role", "Result: ${result.isSuccess} -> $userRole")
             }
 
         awaitClose {

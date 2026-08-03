@@ -4,37 +4,55 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.google.firebase.firestore.FirebaseFirestore
+import de.kniederelz.pawplan.appointmentratings.data.FirebaseAppointmentRatingDto
+import de.kniederelz.pawplan.appointmentratings.data.FirestoreAppointmentRatingRepositoryImpl
+import de.kniederelz.pawplan.appointmentratings.domain.AppointmentRatingStatistics
+import de.kniederelz.pawplan.dogs.data.sources.extensions.toDomain
 import de.kniederelz.pawplan.dogs.domain.Dog
 import de.kniederelz.pawplan.dogs.domain.sources.factory.DogDataSourceFactory
 import de.kniederelz.pawplan.dogs.domain.DogRepository
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirebaseDogRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
-    private val dogDataSourceFactory: DogDataSourceFactory,
+    private val sourceFactory: DogDataSourceFactory,
 ) : DogRepository {
     companion object {
         const val COLLECTION = "dogs"
     }
 
-    override fun getOverview(): Flow<PagingData<Dog>> = Pager(
-        config = PagingConfig(pageSize = 10),
-        pagingSourceFactory = {
-            dogDataSourceFactory.createPagingSource()
-        }
-    ).flow
-
-    override suspend fun getDog(dogId: String): Dog? {
-        val snapshot = firestore
+    override fun observeDog(dogId: String): Flow<Dog?> = callbackFlow {
+        val registration = firestore
             .collection(COLLECTION)
             .document(dogId)
-            .get()
-            .await()
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
 
-        val dto = snapshot.toObject(FirebaseDogDto::class.java)
-        return dto?.toDomain(snapshot.id)
+                if (snapshot == null) {
+                    trySend(null)
+                    return@addSnapshotListener
+                }
+
+                val dto = snapshot.toObject(FirebaseDogDto::class.java)
+                trySend(dto?.toDomain(snapshot.id))
+            }
+
+        awaitClose {
+            registration.remove()
+        }
     }
 
+    override fun observeDogs(): Flow<PagingData<Dog>> = Pager(
+        config = PagingConfig(pageSize = 10),
+        pagingSourceFactory = {
+            sourceFactory.createPagingSource()
+        }
+    ).flow
 }

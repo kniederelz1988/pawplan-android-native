@@ -4,7 +4,6 @@ import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 
 interface DogRepository {
-    fun getOverview(): Flow<PagingData<Dog>>
-
-    suspend fun getDog(dogId: String): Dog?
+    fun observeDog(dogId: String): Flow<Dog?>
+    fun observeDogs(): Flow<PagingData<Dog>>
 }

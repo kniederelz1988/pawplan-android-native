@@ -24,6 +24,7 @@ import de.kniederelz.pawplan.databinding.FragmentProfileBinding
 import de.kniederelz.pawplan.user.domain.UserProfile
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 
 @AndroidEntryPoint
@@ -32,7 +33,8 @@ class ProfileFragment : Fragment() {
     private val profileViewModel: ProfileViewModel by viewModels()
 
     private lateinit var binding: FragmentProfileBinding
-    private var userProfile: UserProfile = UserProfile()
+
+    private lateinit var birthday: LocalDate
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,9 +51,7 @@ class ProfileFragment : Fragment() {
 
         authViewModel.authState.observe(viewLifecycleOwner) { authState ->
             if (authState.isAuthenticated) {
-                val user = authState.user!!
-
-                val email = user.email
+                val email = authState.user?.email
                 if (email != null) {
                     binding.emailText.text = email
                     binding.emailInput.setText(email)
@@ -63,28 +63,20 @@ class ProfileFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            // this doesnt get update after initial collect
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                profileViewModel.userProfile.collect { tProfile ->
-                    Log.d("ProfileFragment", "Observed profile: ${tProfile?.name}")
-                    if (tProfile != null) {
-                        userProfile = tProfile
+                profileViewModel.userProfile.collect { profile ->
+                    val curProfile = profile ?: UserProfile()
 
-                        binding.initialsText.text = userProfile.name.initials()
+                    birthday = curProfile.birthday
 
-                        binding.nameText.text = userProfile.name
-                        binding.nameInput.setText(userProfile.name)
+                    binding.initialsText.text = curProfile.name.initials()
 
-                        binding.phoneInput.setText(userProfile.phoneNumber)
-                        binding.birthdayInput.setText(userProfile.birthday.format(dateFormatter))
-                        binding.volunteerSinceInput.setText(userProfile.volunteerSince.format(dateFormatter))
-                    } else {
-                        userProfile = UserProfile()
+                    binding.nameText.text = curProfile.name
+                    binding.nameInput.setText(curProfile.name)
 
-                        binding.phoneInput.setText(R.string.profile_phone_value)
-                        binding.birthdayInput.setText(R.string.profile_birthday_value)
-                        binding.volunteerSinceInput.setText(R.string.profile_volunteer_value)
-                    }
+                    binding.phoneInput.setText(curProfile.phoneNumber)
+                    binding.birthdayInput.setText(curProfile.birthday.format(dateFormatter))
+                    binding.volunteerSinceInput.setText(curProfile.volunteerSince.format(dateFormatter))
                 }
             }
         }
@@ -105,8 +97,8 @@ class ProfileFragment : Fragment() {
                 .build()
 
             picker.addOnPositiveButtonClickListener { selection ->
-                userProfile.birthday = selection.toLocalDate()
-                binding.birthdayInput.setText(userProfile.birthday.format(dateFormatter))
+                birthday = selection.toLocalDate()
+                binding.birthdayInput.setText(birthday.format(dateFormatter))
             }
 
             picker.show(parentFragmentManager, "date_picker")
@@ -116,12 +108,20 @@ class ProfileFragment : Fragment() {
             authViewModel.logout()
         }
         binding.editButton.setOnClickListener {
-            userProfile.name = binding.nameInput.text.toString()
-            userProfile.phoneNumber = binding.phoneInput.text.toString()
+            val curProfile = profileViewModel.userProfile.value
+                ?: return@setOnClickListener
+
+            val userProfile = UserProfile(
+                curProfile.id,
+                curProfile.userId,
+                binding.nameInput.text.toString(),
+                binding.phoneInput.text.toString(),
+                birthday,
+                curProfile.volunteerSince
+            )
 
             profileViewModel.updateProfile(userProfile)
             profileViewModel.updateUserName(userProfile.name)
-
         }
     }
 }

@@ -66,27 +66,35 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center"
+                        android:contentDescription="@string/ratings_icon_desc"
                         android:src="@drawable/ic_action_star"
-                        android:contentDescription="@string/ratings_icon_desc" />
+                        tools:tint="@color/md_theme_onPrimaryContainer" />
+
+                    <Space
+                        android:layout_width="2dp"
+                        android:layout_height="match_parent" />
 
                     <TextView
                         android:id="@+id/ratingLabel"
-                        style="@style/TextAppearance.Material3.LabelSmall"
+                        style="@style/TextAppearance.Material3.LabelSmall.Emphasized"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/ratings_average" />
+
+                    <Space
+                        android:layout_width="8dp"
+                        android:layout_height="match_parent" />
 
                     <TextView
                         android:id="@+id/ratingCount"
                         style="@style/TextAppearance.Material3.LabelSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp"
                         android:text="@string/rating_remark_count" />
+
                 </LinearLayout>
 
                 <Space
@@ -101,40 +109,32 @@
 
                     <TextView
                         android:id="@+id/ageLabel"
-                        style="@style/TextAppearance.Material3.LabelMedium"
+                        style="@style/TextAppearance.Material3.LabelLarge"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
                         android:text="@string/dog_age" />
 
-                    <TextView
-                        style="@style/TextAppearance.Material3.LabelMedium"
+                    <Space
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/bulletpoint" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
 
-                    <TextView
-                        android:id="@+id/genderLabel"
-                        style="@style/TextAppearance.Material3.LabelMedium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/dog_gender" />
+                    <ImageView
+                        android:id="@+id/sizeImage"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_size_small"
+                        app:tint="@color/md_theme_onPrimaryContainer" />
 
-                    <TextView
-                        style="@style/TextAppearance.Material3.LabelMedium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/bulletpoint" />
+                    <ImageView
+                        android:id="@+id/genderImage"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        app:srcCompat="@drawable/ic_gender_female_neutered"
+                        app:tint="@color/md_theme_onPrimaryContainer" />
 
-                    <TextView
-                        android:id="@+id/sizeLabel"
-                        style="@style/TextAppearance.Material3.LabelMedium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/dog_size" />
                 </LinearLayout>
 
                 <Space

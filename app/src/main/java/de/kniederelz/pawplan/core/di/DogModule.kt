@@ -19,7 +19,7 @@ object DogModule {
         val firestore = FirebaseFirestore.getInstance()
         return FirebaseDogRepositoryImpl(
             firestore = firestore,
-            dogDataSourceFactory = FirebaseDogOverviewDataSourceFactory(firestore)
+            sourceFactory = FirebaseDogOverviewDataSourceFactory(firestore)
         )
     }
 }

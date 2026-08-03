@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.kniederelz.pawplan.appointmentratings.domain.AppointmentRatingRepository
 import de.kniederelz.pawplan.dogs.domain.Dog
 import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.user.domain.UserRepository
@@ -20,30 +21,26 @@ import javax.inject.Inject
 class DogsDetailsViewModel @Inject constructor(
     private val dogRepository: DogRepository,
     private val userRepository: UserRepository,
+    appointmentRatingRepository: AppointmentRatingRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val dogId: String =
         checkNotNull(savedStateHandle["dogId"])
 
-    private val _dog = MutableStateFlow<Dog?>(null)
     val dog: Flow<Dog?> = combine(
-        _dog,
-        userRepository.userFavorites
-    ) { dog, favorites ->
-        dog?.copy(isFavorite = favorites.contains(dog))
-    }
-
-    init {
-        loadDog()
-    }
-
-    private fun loadDog() {
-        viewModelScope.launch {
-            _dog.value = dogRepository.getDog(dogId)
+        dogRepository.observeDog(dogId),
+        appointmentRatingRepository.dogStatistics,
+        userRepository.userFavorites,
+    ) { dog, statistics, favorites ->
+        dog?.let {
+            appointmentRatingRepository.requestDogStatistics(dog.id)
+            dog.copy(
+                isFavorite = favorites.contains(dog),
+                statistics = statistics[dog.id]
+            )
         }
     }
-
 
     fun toggleDogFavorite(dog: Dog) {
         val userFavorites = userRepository.userFavorites.value

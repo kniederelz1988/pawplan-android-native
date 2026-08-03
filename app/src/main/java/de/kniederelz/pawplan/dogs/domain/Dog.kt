@@ -1,7 +1,7 @@
 package de.kniederelz.pawplan.dogs.domain
 
 import android.net.Uri
-import com.google.firebase.Timestamp
+import de.kniederelz.pawplan.appointmentratings.domain.AppointmentRatingStatistics
 import java.time.LocalDate
 import java.time.Period
 
@@ -12,8 +12,8 @@ data class Dog(
     val description: String,
 
     val breed: String,
-    val size: Int,
-    val gender: Int,
+    val size: DogSize,
+    val gender: DogGender,
     val imageURL: Uri,
 
     val birthday: LocalDate,
@@ -22,15 +22,6 @@ data class Dog(
     val adoptionDateValid: Boolean,
     val adoptionDate: LocalDate?,
 
-    var isFavorite: Boolean = false
+    var isFavorite: Boolean = false,
+    var statistics: AppointmentRatingStatistics? = null
 )
-
-data class DogAge(
-    val years: Int,
-    val months: Int
-)
-
-fun Dog.getAge(): DogAge {
-    val period = Period.between(birthday, LocalDate.now())
-    return DogAge(period.years, period.months)
-}

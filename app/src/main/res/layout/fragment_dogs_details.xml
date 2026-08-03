@@ -11,8 +11,8 @@
         android:id="@+id/dogDetailsScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="72dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/bookAppointmentButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -102,9 +102,13 @@
                             android:textAlignment="center"
                             android:textAllCaps="true" />
 
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="4dp" />
+
                         <TextView
                             android:id="@+id/ageCardValue"
-                            style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
+                            style="@style/TextAppearance.Material3.TitleMedium.Emphasized"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/dog_details_age_value"
@@ -140,13 +144,15 @@
                             android:textAlignment="center"
                             android:textAllCaps="true" />
 
-                        <TextView
-                            android:id="@+id/genderCardValue"
-                            style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="4dp" />
+
+                        <ImageView
+                            android:id="@+id/genderCardImage"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/dog_details_gender_value"
-                            android:textAlignment="center" />
+                            android:src="@drawable/ic_gender_female" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -175,39 +181,48 @@
                             android:textAlignment="center"
                             android:textAllCaps="true" />
 
-                        <TextView
-                            android:id="@+id/sizeCardValue"
-                            style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="4dp" />
+
+                        <ImageView
+                            android:id="@+id/sizeCardImage"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/dog_details_size_value"
-                            android:textAlignment="center" />
+                            android:src="@drawable/ic_size_medium" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/linearLayout4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:orientation="horizontal">
+                android:layout_marginBottom="4dp">
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/ratingCard"
                     style="@style/Widget.Material3.CardView.Elevated"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="8dp">
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/ratingButton"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/ratingButton">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
                         android:orientation="horizontal">
 
                         <Space
-                            android:layout_width="16dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_weight="1" />
 
@@ -218,7 +233,7 @@
                             android:layout_weight="0"
                             android:contentDescription="@string/dog_details_star_desc"
                             android:src="@drawable/ic_action_star"
-                            app:tint="@color/md_theme_secondary" />
+                            app:tint="@color/md_theme_outline" />
 
                         <ImageView
                             android:id="@+id/ratingStar2Image"
@@ -227,7 +242,7 @@
                             android:layout_weight="0"
                             android:contentDescription="@string/dog_details_star_desc"
                             android:src="@drawable/ic_action_star"
-                            app:tint="@color/md_theme_secondary" />
+                            app:tint="@color/md_theme_outline" />
 
                         <ImageView
                             android:id="@+id/ratingStar3Image"
@@ -236,7 +251,7 @@
                             android:layout_weight="0"
                             android:contentDescription="@string/dog_details_star_desc"
                             android:src="@drawable/ic_action_star"
-                            app:tint="@color/md_theme_secondary" />
+                            app:tint="@color/md_theme_outline" />
 
                         <ImageView
                             android:id="@+id/ratingStar4Image"
@@ -245,7 +260,7 @@
                             android:layout_weight="0"
                             android:contentDescription="@string/dog_details_star_desc"
                             android:src="@drawable/ic_action_star"
-                            app:tint="@color/md_theme_surfaceDim" />
+                            app:tint="@color/md_theme_outlineVariant" />
 
                         <ImageView
                             android:id="@+id/ratingStar5Image"
@@ -254,11 +269,11 @@
                             android:layout_weight="0"
                             android:contentDescription="@string/dog_details_star_desc"
                             android:src="@drawable/ic_action_star"
-                            app:tint="@color/md_theme_surfaceDim" />
+                            app:tint="@color/md_theme_outlineVariant" />
 
                         <Space
-                            android:layout_width="20dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_width="12dp"
+                            android:layout_height="match_parent" />
 
                         <TextView
                             android:id="@+id/ratingText"
@@ -267,11 +282,12 @@
                             android:layout_height="match_parent"
                             android:layout_weight="0"
                             android:gravity="center"
-                            android:text="4.8" />
+                            android:text="@string/dog_details_rating_desc" />
 
                         <Space
-                            android:layout_width="20dp"
-                            android:layout_height="match_parent" />
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:id="@+id/ratingText2"
@@ -280,10 +296,10 @@
                             android:layout_height="match_parent"
                             android:layout_weight="0"
                             android:gravity="center"
-                            android:text="27 Spaziergänge" />
+                            android:text="@string/dog_details_appointment_desc" />
 
                         <Space
-                            android:layout_width="16dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_weight="1" />
 
@@ -297,9 +313,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="more..."
-                    android:textColor="@color/md_theme_primary" />
+                    android:textColor="@color/md_theme_primary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/ratingCard" />
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

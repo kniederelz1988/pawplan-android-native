@@ -1,13 +1,12 @@
 package de.kniederelz.pawplan.dogs.data.sources
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import de.kniederelz.pawplan.dogs.data.FirebaseDogDto
 import de.kniederelz.pawplan.dogs.data.FirebaseDogRepositoryImpl
-import de.kniederelz.pawplan.dogs.data.toDomain
+import de.kniederelz.pawplan.dogs.data.sources.extensions.toDomain
 import de.kniederelz.pawplan.dogs.domain.Dog
 import kotlinx.coroutines.tasks.await
 
@@ -36,7 +35,7 @@ class FirestoreDogOverviewDataSource(
 
             LoadResult.Page(
                 data = dogs,
-                prevKey = snapshot.documents.firstOrNull(),
+                prevKey = null,
                 nextKey = snapshot.documents.lastOrNull()
             )
         } catch (e: Exception) {

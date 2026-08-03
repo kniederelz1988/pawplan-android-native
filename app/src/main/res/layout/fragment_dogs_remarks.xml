@@ -7,40 +7,49 @@
     android:layout_height="match_parent"
     tools:context=".dogs.representation.remarks.DogsRemarksFragment">
 
-    <ScrollView
-        android:id="@+id/remarksScrollView"
+    <TextView
+        android:id="@+id/remarksCaption"
+        style="@style/TextAppearance.Material3.TitleLarge.Emphasized"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="72dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="@string/dog_remarks_caption"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/remarksList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="invisible"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/remarksCaption"
+        tools:itemCount="5"
+        tools:listitem="@layout/fragment_dog_remark_item" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/remarksCaption"
-                style="@style/TextAppearance.Material3.TitleLarge.Emphasized"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="@string/dog_remarks_caption"
-                android:textAlignment="center" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:itemCount="5"
-                tools:listitem="@layout/fragment_dog_remark_item" />
-        </LinearLayout>
-    </ScrollView>
+    <TextView
+        android:id="@+id/noRemarksText"
+        style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="@string/dog_remarks_none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/remarksCaption" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

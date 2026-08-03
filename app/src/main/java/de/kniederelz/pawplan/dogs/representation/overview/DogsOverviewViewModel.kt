@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.kniederelz.pawplan.appointmentratings.domain.AppointmentRatingRepository
 import de.kniederelz.pawplan.dogs.domain.Dog
 import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.user.domain.UserRepository
@@ -20,24 +21,32 @@ import javax.inject.Inject
 @HiltViewModel
 class DogsOverviewViewModel @Inject constructor(
     private val dogRepository: DogRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val appointmentRatingRepository: AppointmentRatingRepository
 ) : ViewModel() {
 
+    private val _dogs = dogRepository.observeDogs()
+        .cachedIn(viewModelScope)
+
     val dogs: Flow<PagingData<Dog>> =
-        dogRepository
-            .getOverview()
-            .cachedIn(viewModelScope)
-            .combine(userRepository.userFavorites) { pagingData, favorites ->
-                pagingData.map { dog ->
-                    dog.copy(isFavorite = favorites.contains(dog))
-                }
+        combine(
+            _dogs,
+            appointmentRatingRepository.dogStatistics,
+            userRepository.userFavorites
+        ) { pagingData, statistics, favorites ->
+            pagingData.map { dog ->
+                appointmentRatingRepository.requestDogStatistics(dog.id)
+                dog.copy(
+                    isFavorite = favorites.contains(dog),
+                    statistics = statistics[dog.id]
+                )
             }
+        }
 
     fun toggleDogFavorite(dog: Dog) {
         val userFavorites = userRepository.userFavorites.value
 
         val userFavorite = userFavorites.get(dog)
-        Log.d("DogsOverviewViewModel", "userFavorite: $userFavorite")
         if (userFavorite != null) {
             viewModelScope.launch {
                 userRepository.deleteFavorite(userFavorite)

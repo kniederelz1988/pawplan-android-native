@@ -36,7 +36,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/ratingStar1Image2"
+                    android:id="@+id/ratingStar1Image"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/dog_details_star_desc"
@@ -44,7 +44,7 @@
                     app:tint="@color/md_theme_secondary" />
 
                 <ImageView
-                    android:id="@+id/ratingStar2Image2"
+                    android:id="@+id/ratingStar2Image"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/dog_details_star_desc"
@@ -52,7 +52,7 @@
                     app:tint="@color/md_theme_secondary" />
 
                 <ImageView
-                    android:id="@+id/ratingStar3Image2"
+                    android:id="@+id/ratingStar3Image"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/dog_details_star_desc"
@@ -60,7 +60,7 @@
                     app:tint="@color/md_theme_secondary" />
 
                 <ImageView
-                    android:id="@+id/ratingStar4Image2"
+                    android:id="@+id/ratingStar4Image"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/dog_details_star_desc"
@@ -68,7 +68,7 @@
                     app:tint="@color/md_theme_surfaceDim_highContrast" />
 
                 <ImageView
-                    android:id="@+id/ratingStar5Image2"
+                    android:id="@+id/ratingStar5Image"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/dog_details_star_desc"

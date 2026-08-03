@@ -15,12 +15,15 @@ import coil3.request.placeholder
 import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.databinding.FragmentDogsDetailsBinding
-import de.kniederelz.pawplan.dogs.domain.getAge
+import de.kniederelz.pawplan.dogs.domain.extensions.getAge
 import de.kniederelz.pawplan.appointments.presentation.BookAppointmentFragment
 import de.kniederelz.pawplan.ui.extensions.setAge
 import de.kniederelz.pawplan.ui.extensions.setFavorite
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collect
+import de.kniederelz.pawplan.ui.extensions.setGender
+import de.kniederelz.pawplan.ui.extensions.setRating
+import de.kniederelz.pawplan.ui.extensions.setSize
+import de.kniederelz.pawplan.ui.extensions.setStatisticsAverage
+import de.kniederelz.pawplan.ui.extensions.setStatisticsCount
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
@@ -76,13 +79,22 @@ class DogsDetailsFragment : Fragment() {
                     crossfade(true)
                 }
 
-                binding.favButton.setFavorite(dog.isFavorite)
-
                 binding.ageCardValue.setAge(dog.getAge())
-                binding.genderCardValue.text = dog.gender.toString()
-                binding.sizeCardValue.text = dog.size.toString()
+                binding.genderCardImage.setGender(dog.gender)
+                binding.sizeCardImage.setSize(dog.size)
 
                 binding.descriptionValue.text = dog.description
+
+                binding.ratingText.setStatisticsAverage(dog.statistics)
+                binding.ratingText2.setStatisticsCount(dog.statistics)
+
+                binding.ratingStar1Image.setRating((dog.statistics?.average ?: 0f) >= 1f)
+                binding.ratingStar2Image.setRating((dog.statistics?.average ?: 0f) >= 2f)
+                binding.ratingStar3Image.setRating((dog.statistics?.average ?: 0f) >= 3f)
+                binding.ratingStar4Image.setRating((dog.statistics?.average ?: 0f) >= 4f)
+                binding.ratingStar5Image.setRating((dog.statistics?.average ?: 0f) >= 5f)
+
+                binding.favButton.setFavorite(dog.isFavorite)
             }
         }
     }
