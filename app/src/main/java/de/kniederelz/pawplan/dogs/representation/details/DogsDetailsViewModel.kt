@@ -5,14 +5,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.kniederelz.pawplan.appointmentratings.domain.AppointmentRatingRepository
+import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingRepository
 import de.kniederelz.pawplan.dogs.domain.Dog
 import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.user.domain.UserRepository
 import de.kniederelz.pawplan.user.domain.contains
 import de.kniederelz.pawplan.user.domain.get
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject

@@ -4,18 +4,18 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
-import de.kniederelz.pawplan.appointmentratings.domain.AppointmentRating
+import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRating
 import de.kniederelz.pawplan.core.extensions.dateFormatter
 import de.kniederelz.pawplan.core.utils.RatingDiff
-import de.kniederelz.pawplan.databinding.FragmentDogRemarkItemBinding
-import de.kniederelz.pawplan.ui.extensions.setRating
+import de.kniederelz.pawplan.databinding.FragmentDogsRemarkItemBinding
+import de.kniederelz.pawplan.core.ui.extensions.setRating
 
 class DogsRemarksAdapter : PagingDataAdapter<AppointmentRating, DogsRemarksAdapter.RatingsViewHolder>(
     RatingDiff
 ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RatingsViewHolder {
-        val binding = FragmentDogRemarkItemBinding.inflate(
+        val binding = FragmentDogsRemarkItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -38,7 +38,7 @@ class DogsRemarksAdapter : PagingDataAdapter<AppointmentRating, DogsRemarksAdapt
         }
     }
 
-    inner class RatingsViewHolder(val binding: FragmentDogRemarkItemBinding)
+    inner class RatingsViewHolder(val binding: FragmentDogsRemarkItemBinding)
         : RecyclerView.ViewHolder(binding.root)
 }
 

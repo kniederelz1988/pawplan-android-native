@@ -5,9 +5,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import de.kniederelz.pawplan.appointmentratings.data.FirestoreAppointmentRatingRepositoryImpl
-import de.kniederelz.pawplan.appointmentratings.data.sources.factories.FirestoreAppointmentRatingDataSourceFactory
-import de.kniederelz.pawplan.appointmentratings.domain.AppointmentRatingRepository
+import de.kniederelz.pawplan.appointments.repositories.ratings.data.FirestoreAppointmentRatingRepositoryImpl
+import de.kniederelz.pawplan.appointments.sources.factories.FirestoreAppointmentRatingDataSourceFactory
+import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingRepository
 import javax.inject.Singleton
 
 @Module

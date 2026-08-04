@@ -12,7 +12,6 @@ import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.databinding.FragmentDogsRemarksBinding
-import de.kniederelz.pawplan.dogs.representation.overview.adapter.DogOverviewAdapter
 import de.kniederelz.pawplan.dogs.representation.overview.adapter.DogsRemarksAdapter
 import kotlinx.coroutines.launch
 import kotlin.getValue

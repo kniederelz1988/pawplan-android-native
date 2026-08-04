@@ -3,9 +3,9 @@ package de.kniederelz.pawplan.user.data
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import de.kniederelz.pawplan.auth.domain.User
-import de.kniederelz.pawplan.core.extensions.toTimestamp
 import de.kniederelz.pawplan.dogs.domain.Dog
+import de.kniederelz.pawplan.user.data.extensions.toDomain
+import de.kniederelz.pawplan.user.data.extensions.toDto
 import de.kniederelz.pawplan.user.domain.UserFavorite
 import de.kniederelz.pawplan.user.domain.UserFavorites
 import de.kniederelz.pawplan.user.domain.UserProfile
@@ -17,7 +17,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -126,13 +125,7 @@ class FirestoreUserRepositoryImpl(
         firestore
             .collection(VOLUNTEERS_COLLECTION)
             .document(user.id)
-            .set(FirebaseUserProfileDto(
-                userId = userId,
-                name = user.name,
-                phoneNumber = user.phoneNumber,
-                birthday = user.birthday.toTimestamp(),
-                volunteerSince = user.volunteerSince.toTimestamp()
-            ))
+            .set(user.toDto())
             .await()
 
         return Result.success(Unit)

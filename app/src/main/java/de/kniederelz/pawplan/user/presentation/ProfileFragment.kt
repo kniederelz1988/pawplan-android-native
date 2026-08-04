@@ -1,7 +1,6 @@
 package de.kniederelz.pawplan.user.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +21,6 @@ import de.kniederelz.pawplan.core.extensions.toLocalDate
 import de.kniederelz.pawplan.core.extensions.toRoleString
 import de.kniederelz.pawplan.databinding.FragmentProfileBinding
 import de.kniederelz.pawplan.user.domain.UserProfile
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 

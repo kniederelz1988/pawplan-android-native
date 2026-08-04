@@ -27,7 +27,7 @@
             android:layout_height="48dp"
             android:layout_marginBottom="8dp"
             android:gravity="center_horizontal|center_vertical"
-            android:text="@string/dog_overview_caption" />
+            android:text="@string/dogs_overview_caption" />
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.App.MySearchBar"
@@ -107,7 +107,7 @@
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="10"
-            tools:listitem="@layout/fragment_dog_list_item" />
+            tools:listitem="@layout/fragment_dogs_overview_item" />
 
     </LinearLayout>
 

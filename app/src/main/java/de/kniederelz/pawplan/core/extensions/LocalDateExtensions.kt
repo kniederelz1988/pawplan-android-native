@@ -1,7 +1,6 @@
 package de.kniederelz.pawplan.core.extensions
 
 import com.google.firebase.Timestamp
-import de.kniederelz.pawplan.dogs.domain.Dog
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId

@@ -7,7 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.kniederelz.pawplan.appointmentratings.domain.AppointmentRatingRepository
+import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingRepository
 import de.kniederelz.pawplan.dogs.domain.Dog
 import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.user.domain.UserRepository

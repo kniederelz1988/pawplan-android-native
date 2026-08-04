@@ -44,9 +44,11 @@
     <string name="rating_remark_count">(30 remarks)</string>
     <string name="dog_age">4 Jahre</string>
     <string name="bulletpoint">•</string>
-    <string name="dog_gender">Rüde</string>
-    <string name="dog_size">Groß</string>
-    <string name="dog_overview_caption">Dogs</string>
+
+    <string name="date_placeholder">Sa, 04 Juli 2026</string>
+    <string name="time_placeholder">10:00</string>
+
+    <string name="dogs_overview_caption">Dogs</string>
     <string name="dogs_overview_search_name_hint">Name</string>
     <string name="dogs_overview_search_all">All</string>
     <string name="dogs_overview_search_favs">Favs</string>

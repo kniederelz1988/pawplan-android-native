@@ -1,7 +1,7 @@
 package de.kniederelz.pawplan.core.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import de.kniederelz.pawplan.appointmentratings.domain.AppointmentRating
+import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRating
 
 object RatingDiff : DiffUtil.ItemCallback<AppointmentRating>() {
     override fun areItemsTheSame(

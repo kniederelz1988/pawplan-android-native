@@ -1,6 +1,7 @@
 package de.kniederelz.pawplan.dogs.representation.details
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,14 +15,14 @@ import coil3.request.error
 import coil3.request.placeholder
 import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.R
+import de.kniederelz.pawplan.appointments.presentation.AppointmentBookingFragment
 import de.kniederelz.pawplan.databinding.FragmentDogsDetailsBinding
 import de.kniederelz.pawplan.dogs.domain.extensions.getAge
-import de.kniederelz.pawplan.appointments.presentation.BookAppointmentFragment
 import de.kniederelz.pawplan.ui.extensions.setAge
 import de.kniederelz.pawplan.ui.extensions.setFavorite
-import de.kniederelz.pawplan.ui.extensions.setGender
-import de.kniederelz.pawplan.ui.extensions.setRating
-import de.kniederelz.pawplan.ui.extensions.setSize
+import de.kniederelz.pawplan.core.ui.extensions.setGender
+import de.kniederelz.pawplan.core.ui.extensions.setRating
+import de.kniederelz.pawplan.core.ui.extensions.setSize
 import de.kniederelz.pawplan.ui.extensions.setStatisticsAverage
 import de.kniederelz.pawplan.ui.extensions.setStatisticsCount
 import kotlinx.coroutines.flow.firstOrNull
@@ -47,19 +48,25 @@ class DogsDetailsFragment : Fragment() {
             }
         }
         binding.ratingButton.setOnClickListener {
-            val navController = findNavController()
+            val dogId = arguments?.getString("dogId")
+                ?: return@setOnClickListener
 
             // navigate to remarks page, use arguments as dog id
+            val navController = findNavController()
             navController.navigate(R.id.dogsRemarksView, Bundle().apply {
-                putString("dogId", arguments?.getString("dogId"))
+                putString("dogId", dogId)
             })
         }
         binding.bookAppointmentButton.setOnClickListener {
-            BookAppointmentFragment().apply {
+            val dogId = arguments?.getString("dogId")
+                ?: return@setOnClickListener
+
+            Log.d("DogsDetailsFragment", "Creating appointment for dog $dogId")
+            AppointmentBookingFragment().apply {
                 arguments = Bundle().apply {
-                    putString("dogId", arguments?.getString("dogId"))
+                    putString("dogId", dogId)
                 }
-            }.show(childFragmentManager, BookAppointmentFragment.TAG)
+            }.show(childFragmentManager, AppointmentBookingFragment.TAG)
         }
 
         return binding.root

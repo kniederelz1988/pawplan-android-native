@@ -6,23 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.auth.AuthViewModel
 import de.kniederelz.pawplan.databinding.FragmentAuthLoginBinding
 
-/**
- * A simple [androidx.fragment.app.Fragment] subclass as the default destination in the navigation.
- */
-
 @AndroidEntryPoint
 class AuthLoginFragment : Fragment() {
     private lateinit var binding: FragmentAuthLoginBinding
 
     private val authViewModel: AuthViewModel by activityViewModels()
-    private val loginViewModel: AuthLoginViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

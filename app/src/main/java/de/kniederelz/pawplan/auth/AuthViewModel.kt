@@ -1,8 +1,6 @@
 package de.kniederelz.pawplan.auth
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -12,7 +10,6 @@ import de.kniederelz.pawplan.auth.domain.AuthRepository
 import de.kniederelz.pawplan.auth.domain.AuthState
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlin.math.log
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(

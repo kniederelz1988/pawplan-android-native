@@ -1,21 +1,13 @@
 package de.kniederelz.pawplan.user.presentation
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.kniederelz.pawplan.auth.domain.AuthRepository
 import de.kniederelz.pawplan.user.domain.UserProfile
 import de.kniederelz.pawplan.user.domain.UserRepository
-import de.kniederelz.pawplan.user.domain.UserRole
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel

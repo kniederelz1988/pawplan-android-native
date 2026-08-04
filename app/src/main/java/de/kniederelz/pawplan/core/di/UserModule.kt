@@ -8,7 +8,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import de.kniederelz.pawplan.user.data.FirestoreUserRepositoryImpl
 import de.kniederelz.pawplan.user.domain.UserRepository
-import kotlinx.coroutines.coroutineScope
 import javax.inject.Singleton
 
 @Module

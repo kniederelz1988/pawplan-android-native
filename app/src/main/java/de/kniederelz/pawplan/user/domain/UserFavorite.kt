@@ -1,6 +1,5 @@
 package de.kniederelz.pawplan.user.domain
 
-import de.kniederelz.pawplan.auth.domain.User
 import de.kniederelz.pawplan.dogs.domain.Dog
 
 data class UserFavorite(

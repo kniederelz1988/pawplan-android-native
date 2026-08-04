@@ -36,7 +36,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/remarksCaption"
         tools:itemCount="5"
-        tools:listitem="@layout/fragment_dog_remark_item" />
+        tools:listitem="@layout/fragment_dogs_remark_item" />
 
     <TextView
         android:id="@+id/noRemarksText"
