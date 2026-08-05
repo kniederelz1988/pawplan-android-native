@@ -1,17 +1,19 @@
 package de.kniederelz.pawplan.appointments.repositories.base.data
 
-import android.util.Log
 import androidx.paging.PagingSource
 import com.google.firebase.firestore.FirebaseFirestore
 import de.kniederelz.pawplan.appointments.sources.FirestoreAppointmentDataSource
 import de.kniederelz.pawplan.appointments.repositories.base.domain.Appointment
 import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentData
 import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentRepository
+import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
 import de.kniederelz.pawplan.core.utils.TimestampUtils
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class FirestoreAppointmentRepositoryImpl @Inject constructor(
@@ -21,31 +23,33 @@ class FirestoreAppointmentRepositoryImpl @Inject constructor(
         const val COLLECTION = "appointments2"
     }
 
-    override suspend fun createAppointment(appointment: Appointment) : Result<Unit> {
-        return try {
-            firestore
-                .collection(COLLECTION)
-                .add(appointment.toDto())
-                .await()
+    override suspend fun createAppointment(appointment: Appointment) : Result<String> {
+        return withContext(NonCancellable) {
+            try {
+                val result = firestore
+                    .collection(COLLECTION)
+                    .add(appointment.toDto())
+                    .await()
 
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Log.e("FirestoreAppointmentRepository", "Failed to create appointment", e)
-            Result.failure(e)
+                Result.success(result.id)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
         }
     }
     override suspend fun updateAppointment(appointment: Appointment) : Result<Unit> {
-        return try {
-            firestore
-                .collection(COLLECTION)
-                .document(appointment.id)
-                .set(appointment.toDto())
-                .await()
+        return withContext(NonCancellable) {
+            try {
+                firestore
+                    .collection(COLLECTION)
+                    .document(appointment.id)
+                    .set(appointment.toDto())
+                    .await()
 
-            return Result.success(Unit)
-        } catch (e: Exception) {
-            Log.e("FirestoreAppointmentRepository", "Failed to update appointment", e)
-            Result.failure(e)
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
         }
     }
 
@@ -76,6 +80,8 @@ class FirestoreAppointmentRepositoryImpl @Inject constructor(
         }
 
     override fun getAppointmentDataSource(volunteerId: String): PagingSource<*, AppointmentData> {
-        return FirestoreAppointmentDataSource(firestore, volunteerId)
+        return FirestoreAppointmentDataSource(firestore, volunteerId, listOf(
+            AppointmentStatusType.PENDING, AppointmentStatusType.CONFIRMED
+        ))
     }
 }

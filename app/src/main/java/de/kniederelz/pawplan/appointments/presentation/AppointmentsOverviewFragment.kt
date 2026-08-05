@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -55,7 +57,6 @@ class AppointmentsOverviewFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.favoritedDogs.collectLatest { pagingData ->
-                    Log.d("AppointmentsOverviewFragment", "Paging data: $pagingData")
                     fastSelectionAdapter.submitData(pagingData)
                 }
             }
@@ -63,6 +64,15 @@ class AppointmentsOverviewFragment : Fragment() {
     }
 
     private fun onFastSelectItemSubmit(dog: Dog) {
+        parentFragmentManager.setFragmentResultListener(
+            AppointmentBookingFragment.RESULT_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            if (bundle.getBoolean(AppointmentBookingFragment.RESULT_REFRESH)) {
+                overviewAdapter.refresh()
+            }
+        }
+
         AppointmentBookingFragment().apply {
             arguments = Bundle().apply {
                 putString("dogId", dog.id)

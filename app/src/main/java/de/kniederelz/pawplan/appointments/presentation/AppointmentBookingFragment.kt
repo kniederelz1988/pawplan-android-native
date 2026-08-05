@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.CalendarConstraints
@@ -30,6 +31,9 @@ import java.util.Calendar
 class AppointmentBookingFragment : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "AuthBottomSheetDialogFragment"
+
+        const val RESULT_KEY = "result"
+        const val RESULT_REFRESH = "refresh"
     }
 
     private lateinit var binding: FragmentAppointmentBookingBinding
@@ -62,10 +66,14 @@ class AppointmentBookingFragment : BottomSheetDialogFragment() {
         }
 
         binding.submitButton.setOnClickListener {
-            val dogId = arguments?.getString("dogId") ?: return@setOnClickListener
+            val dogId = arguments?.getString("dogId")
+                ?: return@setOnClickListener
 
-            Log.d("BookAppointmentFragment", "Creating appointment for dog $dogId")
             viewModel.createAppointment(dogId, LocalDateTime.of(selectedDate, selectedTime))
+
+            parentFragmentManager.setFragmentResult(RESULT_KEY,
+                Bundle().apply { putBoolean(RESULT_REFRESH, true) }
+            )
 
             dismiss()
         }
