@@ -9,4 +9,6 @@ interface DogRepository {
     fun observeDogs(): Flow<PagingData<Dog>>
 
     fun getDogsDataSource(dogIds: List<String>): PagingSource<*, Dog>
+
+    fun createSubscription(): DogSubscription
 }

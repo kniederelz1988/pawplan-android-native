@@ -54,7 +54,7 @@ class AppointmentsOverviewFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.favoritedDogs.collectLatest { pagingData ->
+                viewModel.favoriteDogs.collectLatest { pagingData ->
                     Log.d("AppointmentsOverviewFragment", "Paging data: $pagingData")
                     fastSelectionAdapter.submitData(pagingData)
                 }

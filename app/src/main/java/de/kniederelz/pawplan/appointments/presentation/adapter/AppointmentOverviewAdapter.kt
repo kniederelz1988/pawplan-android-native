@@ -1,5 +1,6 @@
 package de.kniederelz.pawplan.appointments.presentation.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -45,6 +46,8 @@ class AppointmentOverviewAdapter :
 
             holder.binding.dateLabel.text = it.appointment.date.format(dateFormatter)
             holder.binding.timeLabel.text = it.appointment.date.format(timeFormatter)
+
+            Log.d("AppointmentOverviewAdapter", "onBindViewHolder: ${it.appointmentStatus.status}")
         }
     }
 

@@ -9,18 +9,23 @@ import com.google.firebase.firestore.FirebaseFirestore
 import de.kniederelz.pawplan.appointments.repositories.base.data.FirebaseAppointmentDto
 import de.kniederelz.pawplan.appointments.repositories.base.data.FirestoreAppointmentRepositoryImpl
 import de.kniederelz.pawplan.appointments.repositories.base.data.toDomain
+import de.kniederelz.pawplan.appointments.repositories.base.domain.Appointment
 import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentData
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatus
+import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusSubscription
 import de.kniederelz.pawplan.dogs.data.FirebaseDogDto
 import de.kniederelz.pawplan.dogs.data.FirebaseDogRepositoryImpl
 import de.kniederelz.pawplan.dogs.data.sources.extensions.toDomain
 import de.kniederelz.pawplan.dogs.domain.Dog
+import de.kniederelz.pawplan.dogs.domain.DogSubscription
 import kotlinx.coroutines.tasks.await
 
 class FirestoreAppointmentDataSource (
     private val firestore: FirebaseFirestore,
-    private val volunteerId: String
-) : PagingSource<DocumentSnapshot, AppointmentData>() {
+    private val volunteerId: String,
+    private val statusSubscription: AppointmentStatusSubscription,
+    private val dogSubscription: DogSubscription
+) : PagingSource<DocumentSnapshot, Appointment>() {
     private suspend fun getAppointmentDocuments(limit: Long, lastDocument: DocumentSnapshot?)
         : Collection<DocumentSnapshot> {
         try {
@@ -43,24 +48,9 @@ class FirestoreAppointmentDataSource (
             throw e
         }
     }
-    private suspend fun getDogDocuments(dogIds: List<String>)
-        : Collection<DocumentSnapshot> {
-        try {
-            val query = firestore
-                .collection(FirebaseDogRepositoryImpl.COLLECTION)
-                .whereIn(FieldPath.documentId(), dogIds)
-
-            val snapshot = query.get()
-                .await()
-
-            return snapshot.documents.mapNotNull { it }
-        } catch (e: Exception) {
-            throw e
-        }
-    }
 
     override suspend fun load(params: LoadParams<DocumentSnapshot>)
-        : LoadResult<DocumentSnapshot, AppointmentData> {
+        : LoadResult<DocumentSnapshot, Appointment> {
         return try {
             val appointmentDocuments = getAppointmentDocuments(params.loadSize.toLong(), params.key)
             val appointments = appointmentDocuments.mapNotNull {
@@ -68,25 +58,11 @@ class FirestoreAppointmentDataSource (
                 dto?.toDomain(it.id)
             }
 
-            val dogDocuments = getDogDocuments(appointments.map { it.dogId }.distinct())
-            val dogs = dogDocuments.mapNotNull { document ->
-                document.toObject(FirebaseDogDto::class.java)
-                    ?.toDomain(document.id)
-                    ?.let { it.id to it }
-            }.toMap()
-
-            Log.d("FirestoreAppointmentDataSource", "Loaded appointments: $appointments")
-            Log.d("FirestoreAppointmentDataSource", "Loaded dogs: $dogs")
-
-            val data = appointments.map { AppointmentData(
-                it.id,
-                it,
-                AppointmentStatus.EMPTY,
-                dogs[it.dogId] ?: Dog.EMPTY
-            ) }
+            statusSubscription.registerBatchListener( appointments.map { it.id }.distinct())
+            dogSubscription.registerBatchListener( appointments.map { it.dogId }.distinct() )
 
             LoadResult.Page(
-                data = data,
+                data = appointments,
                 prevKey = null,
                 nextKey = appointmentDocuments.lastOrNull()
             )
@@ -95,5 +71,5 @@ class FirestoreAppointmentDataSource (
         }
     }
 
-    override fun getRefreshKey(state: PagingState<DocumentSnapshot, AppointmentData>): DocumentSnapshot? = null
+    override fun getRefreshKey(state: PagingState<DocumentSnapshot, Appointment>): DocumentSnapshot? = null
 }

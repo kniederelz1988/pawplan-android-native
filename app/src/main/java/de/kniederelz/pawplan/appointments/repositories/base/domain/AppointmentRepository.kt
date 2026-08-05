@@ -1,6 +1,8 @@
 package de.kniederelz.pawplan.appointments.repositories.base.domain
 
 import androidx.paging.PagingSource
+import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusSubscription
+import de.kniederelz.pawplan.dogs.domain.DogSubscription
 import kotlinx.coroutines.flow.Flow
 
 interface AppointmentRepository {
@@ -9,5 +11,9 @@ interface AppointmentRepository {
 
     fun observeNextAppointment(volunteerId: String): Flow<Appointment?>
 
-    fun getAppointmentDataSource(volunteerId: String): PagingSource<*, AppointmentData>
+    fun getAppointmentDataSource(
+        volunteerId: String,
+        statusSubscription: AppointmentStatusSubscription,
+        dogSubscription: DogSubscription
+    ): PagingSource<*, Appointment>
 }
