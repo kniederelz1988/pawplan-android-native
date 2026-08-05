@@ -6,17 +6,11 @@ import androidx.paging.PagingState
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import de.kniederelz.pawplan.appointments.repositories.base.data.FirebaseAppointmentDto
 import de.kniederelz.pawplan.appointments.repositories.base.data.FirestoreAppointmentRepositoryImpl
 import de.kniederelz.pawplan.appointments.repositories.base.data.toDomain
 import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentData
-import de.kniederelz.pawplan.appointments.repositories.status.data.FirebaseAppointmentStatusDto
-import de.kniederelz.pawplan.appointments.repositories.status.data.FirestoreAppointmentStatusRepositoryImpl
-import de.kniederelz.pawplan.appointments.repositories.status.data.toDomain
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatus
-import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
-import de.kniederelz.pawplan.core.utils.TimestampUtils
 import de.kniederelz.pawplan.dogs.data.FirebaseDogDto
 import de.kniederelz.pawplan.dogs.data.FirebaseDogRepositoryImpl
 import de.kniederelz.pawplan.dogs.data.sources.extensions.toDomain
@@ -25,8 +19,7 @@ import kotlinx.coroutines.tasks.await
 
 class FirestoreAppointmentDataSource (
     private val firestore: FirebaseFirestore,
-    private val volunteerId: String,
-    private val statusTypes: List<AppointmentStatusType>
+    private val volunteerId: String
 ) : PagingSource<DocumentSnapshot, AppointmentData>() {
     private suspend fun getAppointmentDocuments(limit: Long, lastDocument: DocumentSnapshot?)
         : Collection<DocumentSnapshot> {
@@ -90,9 +83,9 @@ class FirestoreAppointmentDataSource (
         : LoadResult<DocumentSnapshot, AppointmentData> {
         return try {
             val appointmentDocuments = getAppointmentDocuments(params.loadSize.toLong(), params.key)
-            val appointments = appointmentDocuments.mapNotNull { document ->
-                document.toObject(FirebaseAppointmentDto::class.java)
-                    ?.toDomain(document.id)
+            val appointments = appointmentDocuments.mapNotNull {
+                val dto = it.toObject(FirebaseAppointmentDto::class.java)
+                dto?.toDomain(it.id)
             }
 
             Log.d("FirestoreAppointmentDataSource", "Loaded appointments: $appointments")
@@ -106,32 +99,8 @@ class FirestoreAppointmentDataSource (
 
             Log.d("FirestoreAppointmentDataSource", "Loaded statuses: $appointmentStatuses")
 
-            val dogDocuments = getDogDocuments(appointments.map { it.dogId }.distinct())
-            val dogs = dogDocuments.mapNotNull { document ->
-                document.toObject(FirebaseDogDto::class.java)
-                    ?.toDomain(document.id)
-                    ?.let { it.id to it }
-            }.toMap()
-
-            Log.d("FirestoreAppointmentDataSource", "Loaded dogs: $dogs")
-
-            appointments.forEach {
-                Log.d("FirestoreAppointmentDataSource",
-                    "Status: ${appointmentStatuses.containsKey(it.id)}, " +
-                            "Dog: ${dogs.containsKey(it.dogId)}"
-                )
-            }
-
-            val data = appointments.filter {
-                appointmentStatuses.containsKey(it.id) && dogs.containsKey(it.dogId)
-            }.map {
-                AppointmentData(
-                    it.id,
-                    it,
-                    appointmentStatuses[it.id] ?: AppointmentStatus.EMPTY,
-                    dogs[it.dogId] ?: Dog.EMPTY
-                )
-            }
+            statusSubscription.registerBatchListener( appointments.map { it.id }.distinct())
+            dogSubscription.registerBatchListener( appointments.map { it.dogId }.distinct() )
 
             LoadResult.Page(
                 data = data,
@@ -139,7 +108,6 @@ class FirestoreAppointmentDataSource (
                 nextKey = appointmentDocuments.lastOrNull()
             )
         } catch (e: Exception) {
-            Log.e("FirestoreAppointmentDataSource", "Failed to load appointments", e)
             LoadResult.Error(e)
         }
     }
