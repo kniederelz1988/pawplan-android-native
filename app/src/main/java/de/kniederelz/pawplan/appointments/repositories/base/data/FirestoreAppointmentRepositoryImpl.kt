@@ -1,18 +1,10 @@
 package de.kniederelz.pawplan.appointments.repositories.base.data
 
-import android.util.Log
-import androidx.paging.PagingSource
 import com.google.firebase.firestore.FirebaseFirestore
-import de.kniederelz.pawplan.appointments.sources.FirestoreAppointmentDataSource
 import de.kniederelz.pawplan.appointments.repositories.base.domain.Appointment
 import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentRepository
-import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusSubscription
-import de.kniederelz.pawplan.core.utils.TimestampUtils
+import de.kniederelz.pawplan.core.RepositorySubscription
 import kotlinx.coroutines.NonCancellable
-import de.kniederelz.pawplan.dogs.domain.DogSubscription
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -54,37 +46,10 @@ class FirestoreAppointmentRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun observeNextAppointment(volunteerId: String): Flow<Appointment?> =
-        callbackFlow {
-            val registration = firestore
-                .collection(COLLECTION)
-                .whereGreaterThanOrEqualTo("date", TimestampUtils.startOfDay())
-                .orderBy("date")
-                .limit(1)
-                .addSnapshotListener { snapshot, error ->
-                    if (error != null) {
-                        close(error)
-                        return@addSnapshotListener
-                    }
-
-                    val appointment = snapshot?.documents?.firstOrNull()?.let {
-                        it.toObject(FirebaseAppointmentDto::class.java)
-                            ?.toDomain(it.id)
-                    }
-
-                    trySend(appointment)
-                }
-
-            awaitClose {
-                registration.remove()
-            }
-        }
-
-    override fun getAppointmentDataSource(
-        volunteerId: String,
-        statusSubscription: AppointmentStatusSubscription,
-        dogSubscription: DogSubscription
-    ): PagingSource<*, Appointment> {
-        return FirestoreAppointmentDataSource(firestore, volunteerId, statusSubscription, dogSubscription)
+    override fun createSubscription(): RepositorySubscription<Appointment> {
+        return FirestoreAppointmentSubscriptionImpl(firestore)
+    }
+    override fun createVolunteerSubscription(): RepositorySubscription<Appointment> {
+        return FirestoreVolunteerAppointmentSubscriptionImpl(firestore)
     }
 }

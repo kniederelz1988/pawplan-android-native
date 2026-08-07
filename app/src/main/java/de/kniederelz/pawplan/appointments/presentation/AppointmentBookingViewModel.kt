@@ -1,6 +1,7 @@
 package de.kniederelz.pawplan.appointments.presentation
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,20 +11,35 @@ import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentTy
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatus
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusRepository
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
+import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.user.domain.UserRepository
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class AppointmentBookingViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val appointmentRepository: AppointmentRepository,
     private val appointmentStatusRepository: AppointmentStatusRepository,
+    private val dogRepository: DogRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    fun createAppointment(dogId: String, date: LocalDateTime) {
+    private val dogId: String =
+        checkNotNull(savedStateHandle["dogId"])
+
+    private val dogSubscription = dogRepository.createSubscription()
+        .registerListener(dogId)
+
+    val dog = dogSubscription.values.flatMapLatest { dogs ->
+        flowOf(dogs.values.firstOrNull())
+    }
+
+    fun createAppointment(date: LocalDateTime) {
         if (dogId.isEmpty())
             return
 
@@ -52,12 +68,12 @@ class AppointmentBookingViewModel @Inject constructor(
                         id = it,
 
                         appointmentId = it,
-                        status = AppointmentStatusType.PENDING,
+                        status = AppointmentStatusType.CONFIRMED,
 
                         dogId = dogId,
                         volunteerId = profile.id,
 
-                        updatedAt = LocalDateTime.now(),
+                        updateAt = LocalDateTime.now(),
                         updatedBy = profile.id
                     )
                     appointmentStatusRepository.createStatus(appointmentStatus)
@@ -83,5 +99,9 @@ class AppointmentBookingViewModel @Inject constructor(
                     )
                 }
         }
+    }
+
+    override fun onCleared() {
+        dogSubscription.close()
     }
 }

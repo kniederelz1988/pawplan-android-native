@@ -1,23 +1,22 @@
 package de.kniederelz.pawplan.appointments.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentData
+import de.kniederelz.pawplan.appointments.repositories.AppointmentData
 import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentRepository
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatus
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusRepository
-import de.kniederelz.pawplan.dogs.domain.Dog
+import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
+import de.kniederelz.pawplan.core.time.ClockProvider
 import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.user.domain.UserRepository
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,67 +24,76 @@ class AppointmentsOverviewViewModel @Inject constructor(
     userRepository: UserRepository,
     private val appointmentRepository: AppointmentRepository,
     private val appointmentStatusRepository: AppointmentStatusRepository,
-    private val dogRepository: DogRepository
+    private val dogRepository: DogRepository,
+    private val clockProvider: ClockProvider
 ) : ViewModel() {
 
-    val appointmentStatusSubscription
-            = appointmentStatusRepository.createSubscription()
-    val dogSubscription
-            = dogRepository.createSubscription()
+    private val appointmentSubscription
+        = appointmentRepository.createVolunteerSubscription()
+    private val appointmentStatusSubscription
+        = appointmentStatusRepository.createSubscription()
+    private val appointmentDogSubscription
+        = dogRepository.createSubscription()
 
     private val _appointments = userRepository.userProfile
         .flatMapLatest { userProfile ->
             userProfile?.let {
-                Pager(
-                    config = PagingConfig(
-                        pageSize = 5,
-                        enablePlaceholders = false
-                    ),
-                    pagingSourceFactory = {
-                        appointmentRepository.getAppointmentDataSource(
-                            userProfile.id,
-                            appointmentStatusSubscription,
-                            dogSubscription
-                        )
-                    }
-                ).flow
-            } ?: flowOf(PagingData.empty())
+                Log.d("AppointmentsOverviewViewModel", "User: $it")
+                appointmentSubscription.registerListener(it.id)
+            }
+            appointmentSubscription.values
+        }
+        .onEach { appointments ->
+            appointments.values.forEach { appointment ->
+                appointmentStatusSubscription.registerListener(appointment.id)
+                appointmentDogSubscription.registerListener(appointment.dogId)
+            }
         }
 
     val appointments = combine(
-            _appointments,
-            appointmentStatusSubscription.values,
-            dogSubscription.values
-        ) { appointments, status, dog ->
-            appointments.map { appointment ->
-                val appointmentStatus = status[appointment.id] ?: AppointmentStatus.EMPTY
-                val dog = dog[appointment.id] ?: Dog.EMPTY
+        _appointments,
+        appointmentStatusSubscription.values,
+        appointmentDogSubscription.values,
+        clockProvider.now
+    ) { appointments, statuses, dogs, _ ->
+        Log.d("AppointmentsOverviewViewModel", "Appointments: ${appointments.count()}")
+        Log.d("AppointmentsOverviewViewModel", "Statuses: ${statuses.count()}")
+        Log.d("AppointmentsOverviewViewModel", "Dogs: ${dogs.count()}")
 
-                AppointmentData(
-                    appointment.id,
-                    appointment,
-                    appointmentStatus,
-                    dog
-                )
-            }
+        appointments.values.filter { statuses.containsKey(it.id) && dogs.containsKey(it.dogId) }.map {
+            val appointmentStatus = statuses[it.id]!!
+            val dog = dogs[it.dogId]!!
+
+            AppointmentData(
+                it.id,
+                it,
+                appointmentStatus,
+                dog
+            )
         }
-        .cachedIn(viewModelScope)
+    }
 
+    private val favoriteDogsSubscription
+        = dogRepository.createSubscription()
     val favoriteDogs = userRepository.userFavorites
-        .flatMapLatest {
-            Pager(
-                config = PagingConfig(
-                    pageSize = 5,
-                    enablePlaceholders = false
-                ),
-                pagingSourceFactory = {
-                    dogRepository.getDogsDataSource(it.favorites.map { dog -> dog.dogId }.distinct())
-                }
-            ).flow
+        .flatMapLatest { userFavorites ->
+            favoriteDogsSubscription.registerBatchListener( userFavorites.favorites.map { it.dogId }.distinct() )
+            favoriteDogsSubscription.values
         }
+        .map { it.values }
+
+    fun cancelAppointment(status: AppointmentStatus) {
+        viewModelScope.launch {
+            val t = status.copy(
+                status = AppointmentStatusType.CANCELLED
+            )
+            appointmentStatusRepository.updateStatus(t)
+        }
+    }
 
     override fun onCleared() {
+        appointmentSubscription.close()
         appointmentStatusSubscription.close()
-        dogSubscription.close()
+        appointmentDogSubscription.close()
     }
 }

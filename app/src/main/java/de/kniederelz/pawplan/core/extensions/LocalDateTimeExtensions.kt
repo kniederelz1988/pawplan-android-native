@@ -1,10 +1,10 @@
 package de.kniederelz.pawplan.core.extensions
 
-import android.util.Log
 import com.google.firebase.Timestamp
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.Instant
 
 fun Timestamp.toLocalDateTime() : LocalDateTime {
     return this.toDate().toInstant().atZone(ZoneId.systemDefault())
@@ -16,7 +16,22 @@ fun LocalDateTime.toTimestamp() : Timestamp {
     return Timestamp(instant.epochSecond, instant.nano)
 }
 
+fun LocalDateTime.toLong(): Long {
+    return atZone(ZoneId.systemDefault())
+        .toInstant()
+        .toEpochMilli()
+}
+fun Long.toLocalDateTime(): LocalDateTime {
+    return Instant.ofEpochMilli(this)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDateTime()
+}
+
 fun LocalDateTime.isAfterStartOfDay() : Boolean {
-    Log.d("LocalDateTime", "current: $this, startOfDay: ${LocalDate.now().atStartOfDay()}")
     return isAfter(LocalDate.now().atStartOfDay())
+}
+
+fun LocalDateTime.checkAfterAndBeforeNow(minutesBefore: Long, minutesAfter: Long): Boolean {
+    return isAfter(LocalDateTime.now().minusMinutes(minutesBefore)) &&
+            isBefore(LocalDateTime.now().plusMinutes(minutesAfter))
 }

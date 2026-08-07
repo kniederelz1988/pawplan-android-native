@@ -5,7 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
+import de.kniederelz.pawplan.core.RepositorySubscription
 import de.kniederelz.pawplan.dogs.data.sources.FirestoreDogsDataSource
 import de.kniederelz.pawplan.dogs.data.sources.extensions.toDomain
 import de.kniederelz.pawplan.dogs.domain.Dog
@@ -14,9 +14,7 @@ import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.dogs.domain.DogSubscription
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class FirebaseDogRepositoryImpl @Inject constructor(
@@ -26,52 +24,6 @@ class FirebaseDogRepositoryImpl @Inject constructor(
     companion object {
         const val COLLECTION = "dogs"
 
-        class FirebaseDogSubscriptionImpl(
-            private val firestore: FirebaseFirestore
-        ) : DogSubscription {
-            private val _listeners = mutableMapOf<String, ListenerRegistration>()
-
-            private val _values = MutableStateFlow(emptyMap<String, Dog>())
-            override val values = _values
-
-            override fun registerStatusListener(dogId: String) {
-                if (_listeners.containsKey(dogId))
-                    return
-
-                _listeners[dogId] = firestore
-                    .collection(COLLECTION)
-                    .document(dogId)
-                    .addSnapshotListener { snapshot, error ->
-                        if (error != null || snapshot == null)
-                            return@addSnapshotListener
-
-                        val dog = snapshot.toObject(FirebaseDogDto::class.java)
-                            ?.toDomain(snapshot.id) ?: return@addSnapshotListener
-
-                        _values.update {
-                            it + (dogId to dog)
-                        }
-                    }
-            }
-            override fun deregisterStatusListener(dogId: String) {
-                if (!_listeners.containsKey(dogId))
-                    return
-            }
-
-            override fun registerBatchListener(dogIds: List<String>) {
-                dogIds.forEach { registerStatusListener(it) }
-            }
-            override fun deregisterBatchListener(dogIds: List<String>) {
-                dogIds.forEach { deregisterStatusListener(it) }
-            }
-
-            override fun close() {
-                _listeners.values.forEach {
-                    it.remove()
-                }
-                _listeners.clear()
-            }
-        }
     }
 
     override fun observeDog(dogId: String): Flow<Dog?> = callbackFlow {
@@ -109,7 +61,7 @@ class FirebaseDogRepositoryImpl @Inject constructor(
         return FirestoreDogsDataSource(firestore, dogIds)
     }
 
-    override fun createSubscription(): DogSubscription {
+    override fun createSubscription(): RepositorySubscription<Dog> {
         return FirebaseDogSubscriptionImpl(firestore)
     }
 }

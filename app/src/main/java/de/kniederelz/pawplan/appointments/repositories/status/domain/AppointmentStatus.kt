@@ -8,7 +8,7 @@ data class AppointmentStatus(
     val volunteerId: String,
     val dogId: String,
     val status: AppointmentStatusType,
-    val updatedAt: LocalDateTime,
+    val updateAt: LocalDateTime,
     val updatedBy: String
 ) {
     companion object {

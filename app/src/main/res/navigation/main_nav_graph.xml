@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/trackerView"
-        android:name="de.kniederelz.pawplan.tracking.presentation.TrackerView"
+        android:name="de.kniederelz.pawplan.tracking.presentation.overview.TrackerOverviewFragment"
         android:label="fragment_tracker_view"
         tools:layout="@layout/fragment_tracker" />
 

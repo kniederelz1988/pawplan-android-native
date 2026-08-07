@@ -7,6 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import coil3.load
+import coil3.request.crossfade
+import coil3.request.error
+import coil3.request.placeholder
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.CompositeDateValidator
@@ -16,11 +21,13 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
+import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.core.extensions.dateFormatter
 import de.kniederelz.pawplan.core.extensions.roundToFiveMinutes
 import de.kniederelz.pawplan.core.extensions.timeFormatter
 import de.kniederelz.pawplan.core.extensions.toLocalDate
 import de.kniederelz.pawplan.databinding.FragmentAppointmentBookingBinding
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -31,9 +38,6 @@ import java.util.Calendar
 class AppointmentBookingFragment : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "AuthBottomSheetDialogFragment"
-
-        const val RESULT_KEY = "result"
-        const val RESULT_REFRESH = "refresh"
     }
 
     private lateinit var binding: FragmentAppointmentBookingBinding
@@ -54,6 +58,21 @@ class AppointmentBookingFragment : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         binding = FragmentAppointmentBookingBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        lifecycleScope.launch {
+            viewModel.dog.collect { dog ->
+                if (dog == null) return@collect
+
+                binding.dogImageView.load(dog.imageURL) {
+                    placeholder(R.drawable.dog_placeholder)
+                    error(R.drawable.dog_placeholder)
+                    crossfade(true)
+                }
+            }
+        }
 
         binding.selectDateButton.text = selectedDate.format(dateFormatter)
         binding.selectDateButton.setOnClickListener {
@@ -66,19 +85,9 @@ class AppointmentBookingFragment : BottomSheetDialogFragment() {
         }
 
         binding.submitButton.setOnClickListener {
-            val dogId = arguments?.getString("dogId")
-                ?: return@setOnClickListener
-
-            viewModel.createAppointment(dogId, LocalDateTime.of(selectedDate, selectedTime))
-
-            parentFragmentManager.setFragmentResult(RESULT_KEY,
-                Bundle().apply { putBoolean(RESULT_REFRESH, true) }
-            )
-
+            viewModel.createAppointment(LocalDateTime.of(selectedDate, selectedTime))
             dismiss()
         }
-
-        return binding.root
     }
 
     private fun showDatePicker() {

@@ -1,6 +1,6 @@
 package de.kniederelz.pawplan.appointments.repositories.ratings.domain
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class AppointmentRating(
     val id: String,
@@ -9,7 +9,7 @@ data class AppointmentRating(
     val volunteerId: String,
     val rating: Int,
     val comment: String,
-    val updatedAt: LocalDate,
+    val updatedAt: LocalDateTime,
 
     val volunteerName: String = ""
 )

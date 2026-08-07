@@ -5,7 +5,7 @@
     android:id="@+id/reportLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".tracking.presentation.TrackerReportFragment">
+    tools:context=".tracking.presentation.report.TrackerReportFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

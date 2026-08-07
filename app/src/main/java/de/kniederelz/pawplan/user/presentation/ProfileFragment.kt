@@ -14,12 +14,11 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.auth.AuthViewModel
-import de.kniederelz.pawplan.core.extensions.applyColors
 import de.kniederelz.pawplan.core.extensions.dateFormatter
 import de.kniederelz.pawplan.core.extensions.initials
 import de.kniederelz.pawplan.core.extensions.toLocalDate
-import de.kniederelz.pawplan.core.extensions.toRoleString
 import de.kniederelz.pawplan.databinding.FragmentProfileBinding
+import de.kniederelz.pawplan.ui.extensions.applyRole
 import de.kniederelz.pawplan.user.domain.UserProfile
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -82,8 +81,7 @@ class ProfileFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 profileViewModel.userRole.collect { role ->
-                    binding.roleBadge.text = role.toRoleString()
-                    role.applyColors(requireContext(), binding.roleBadge)
+                    binding.roleBadge.applyRole(requireContext(), role)
                 }
             }
         }

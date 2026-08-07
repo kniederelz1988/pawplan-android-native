@@ -1,7 +1,6 @@
-package de.kniederelz.pawplan.tracking.presentation
+package de.kniederelz.pawplan.tracking.presentation.report
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +9,11 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import de.kniederelz.pawplan.databinding.FragmentTrackerReportBinding
 import de.kniederelz.pawplan.core.extensions.dateFormatter
 import de.kniederelz.pawplan.core.extensions.roundToFiveMinutes
 import de.kniederelz.pawplan.core.extensions.timeFormatter
 import de.kniederelz.pawplan.core.extensions.toLocalDate
+import de.kniederelz.pawplan.databinding.FragmentTrackerReportBinding
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -22,7 +21,7 @@ import java.time.LocalTime
 import java.time.ZoneId
 
 /**
- * A simple [Fragment] subclass.
+ * A simple [androidx.fragment.app.Fragment] subclass.
  * Use the [TrackerReportFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -109,4 +108,3 @@ class TrackerReportFragment : BottomSheetDialogFragment() {
     }
 
 }
-

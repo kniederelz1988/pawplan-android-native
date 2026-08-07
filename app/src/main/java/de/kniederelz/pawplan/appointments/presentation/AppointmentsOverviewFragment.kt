@@ -1,7 +1,6 @@
 package de.kniederelz.pawplan.appointments.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.appointments.presentation.adapter.AppointmentFastSelectionAdapter
 import de.kniederelz.pawplan.appointments.presentation.adapter.AppointmentOverviewAdapter
+import de.kniederelz.pawplan.appointments.repositories.AppointmentData
 import de.kniederelz.pawplan.databinding.FragmentAppointmentOverviewBinding
 import de.kniederelz.pawplan.dogs.domain.Dog
 import kotlinx.coroutines.flow.collectLatest
@@ -22,11 +22,6 @@ import kotlinx.coroutines.launch
 class AppointmentsOverviewFragment : Fragment() {
     private lateinit var binding: FragmentAppointmentOverviewBinding
 
-    private var overviewAdapter: AppointmentOverviewAdapter = AppointmentOverviewAdapter()
-    private var fastSelectionAdapter: AppointmentFastSelectionAdapter =
-        AppointmentFastSelectionAdapter(
-            { onFastSelectItemSubmit(it) }
-        )
     private val viewModel: AppointmentsOverviewViewModel by viewModels()
 
     override fun onCreateView(
@@ -34,9 +29,6 @@ class AppointmentsOverviewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAppointmentOverviewBinding.inflate(inflater, container, false)
-        binding.appointmentList.adapter = overviewAdapter
-        binding.fastSelectRecycler.adapter = fastSelectionAdapter
-
         return binding.root
     }
 
@@ -45,24 +37,41 @@ class AppointmentsOverviewFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.appointments.collectLatest { pagingData ->
-                    Log.d("AppointmentsOverviewFragment", "Paging data: $pagingData")
-                    overviewAdapter.submitData(pagingData)
+                viewModel.appointments.collectLatest { appointmentData ->
+                    binding.appointmentList.adapter = AppointmentOverviewAdapter(
+                        appointmentData,
+                        { onAppointmentStartButtonSubmit(it) },
+                        { onAppointmentEditButtonSubmit(it) },
+                        { onAppointmentCancelButtonSubmit(it) }
+                    )
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.favoriteDogs.collectLatest { pagingData ->
-                    Log.d("AppointmentsOverviewFragment", "Paging data: $pagingData")
-                    fastSelectionAdapter.submitData(pagingData)
+                viewModel.favoriteDogs.collectLatest { favoriteDogs ->
+                    binding.fastSelectRecycler.adapter = AppointmentFastSelectionAdapter(
+                        favoriteDogs.toList(),
+                        { onFastSelectButtonSubmit(it) }
+                    )
                 }
             }
         }
     }
 
-    private fun onFastSelectItemSubmit(dog: Dog) {
+    private fun onAppointmentStartButtonSubmit(data: AppointmentData) {
+
+    }
+
+    private fun onAppointmentEditButtonSubmit(data: AppointmentData) {
+
+    }
+    private fun onAppointmentCancelButtonSubmit(data: AppointmentData) {
+        viewModel.cancelAppointment(data.appointmentStatus)
+    }
+
+    private fun onFastSelectButtonSubmit(dog: Dog) {
         AppointmentBookingFragment().apply {
             arguments = Bundle().apply {
                 putString("dogId", dog.id)

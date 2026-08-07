@@ -2,6 +2,7 @@ package de.kniederelz.pawplan.dogs.domain
 
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import de.kniederelz.pawplan.core.RepositorySubscription
 import kotlinx.coroutines.flow.Flow
 
 interface DogRepository {
@@ -10,5 +11,5 @@ interface DogRepository {
 
     fun getDogsDataSource(dogIds: List<String>): PagingSource<*, Dog>
 
-    fun createSubscription(): DogSubscription
+    fun createSubscription(): RepositorySubscription<Dog>
 }

@@ -5,16 +5,17 @@
     android:id="@+id/trackerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".tracking.presentation.TrackerView">
+    tools:context=".tracking.presentation.overview.TrackerOverviewFragment">
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/buttonLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -30,7 +31,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="200dp"
             android:layout_weight="1">
 
             <org.osmdroid.views.MapView
@@ -62,6 +63,11 @@
                 app:layout_constraintEnd_toEndOf="parent" />
         </RelativeLayout>
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
         <TextView
             android:id="@+id/wt_currentwalk_caption"
             style="@style/TextAppearance.Material3.LabelMedium.Emphasized"
@@ -75,12 +81,43 @@
             android:layout_height="240dp">
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/completedAppointments"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="4dp"
+                android:visibility="visible"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="3"
-                tools:listitem="@layout/fragment_tracker_pending_walk" />
+                tools:listitem="@layout/fragment_tracker_appointment" />
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/noCompletedAppointments"
+                style="@style/Widget.Material3.CardView.Filled"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:visibility="gone"
+                tools:context=".tracking.presentation.TrackerAppointmentFragment">
+
+                <TextView
+                    android:id="@+id/noCompletedAppointmentsLabel"
+                    style="@style/TextAppearance.Material3.BodyMedium.Emphasized"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/wtp_noupcomingappointments"
+                    android:textAlignment="center" />
+
+            </com.google.android.material.card.MaterialCardView>
+
         </RelativeLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/wt_pendingwalk_caption"
@@ -90,41 +127,73 @@
             android:layout_marginBottom="8dp"
             android:text="@string/wt_pendingwalk_caption" />
 
-        <FrameLayout
-            android:id="@+id/childFragmentContainer"
-            android:name="de.kniederelz.pawplan.fragments.TrackerPendingWalkFragment"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_height="80dp">
 
-        <LinearLayout
-            android:id="@+id/buttonLayout"
-            android:layout_width="match_parent"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/upcomingAppointments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="1"
+                tools:listitem="@layout/fragment_tracker_appointment" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/noUpcomingAppointments"
+                style="@style/Widget.Material3.CardView.Filled"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:visibility="visible"
+                tools:context=".tracking.presentation.TrackerAppointmentFragment">
+
+                <TextView
+                    android:id="@+id/noUpcomingAppointmentsLabel"
+                    style="@style/TextAppearance.Material3.BodyMedium.Emphasized"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/wtp_noupcomingappointments"
+                    android:textAlignment="center" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:text="@string/wt_start_walk" />
 
-            <Button
-                android:id="@+id/startButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/wt_start_walk" />
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="wrap_content" />
 
-            <Space
-                android:layout_width="16dp"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:id="@+id/stopButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:enabled="false"
-                android:text="@string/wt_stop_walk" />
-
-        </LinearLayout>
+        <Button
+            android:id="@+id/stopButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="@string/wt_stop_walk" />
 
     </LinearLayout>
 

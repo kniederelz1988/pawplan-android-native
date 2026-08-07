@@ -59,6 +59,8 @@
     <string name="appointments_caption">Appointments</string>
     <string name="appointments_pending_caption">Nächste Termine</string>
 
+    <string name="bookappointment_caption">Book appointment</string>
+
     <string name="wt_start_walk">Start walk</string>
     <string name="wt_stop_walk">Stop walk</string>
     <string name="wt_caption">Walk Tracker</string>
@@ -67,10 +69,8 @@
     <string name="wt_previouswalk_caption">Vorherige Spaziergänge</string>
     <string name="wt_reportbutton_desc">Report</string>
 
-    <string name="wtp_walklength">%1$s km</string>
-    <string name="wtp_walkduration">%1$s Min</string>
-
-    <string name="bookappointment_caption">Book appointment</string>
+    <string name="wtp_walklength">%1$.1f km</string>
+    <string name="wtp_walkduration">%1$d h %2$d m</string>
 
     <string name="wtp_remark_caption">Set remark</string>
 
@@ -106,6 +106,9 @@
     <string name="wtp_report_hint">What happened?</string>
     <string name="wtp_report_submit">Submit Report</string>
 
+    <string name="wtp_noupcomingappointments">No upcoming appointments…</string>
+    <string name="wtp_nocompletedappointments">No completed appointments…</string>
+
     <string name="bookappointment_picture_desc">Cute dog picture</string>
     <string name="bookappointment_selectDogButton">Change</string>
     <string name="bookappointment_selectDateButton">Select date</string>
@@ -136,6 +139,10 @@
     <string name="profile_volunteer_label">Volunteer since</string>
     <string name="profile_volunteer_value">Mon, 25.04.1988</string>
 
+    <string name="profile_role_observer">Observer</string>
+    <string name="profile_role_volunteer">Volunteer</string>
+    <string name="profile_role_admin">Admin</string>
+
     <string name="dog_gender_female">Female</string>
     <string name="dog_gender_female_neutered">Female (Neutered)</string>
     <string name="dog_gender_male">Male</string>
@@ -148,4 +155,12 @@
     <string name="dog_rating_average">%1$.1f</string>
     <string name="dog_rating_count">%1$d Walks</string>
 
+    <string name="appointment_edit_button">Edit Appointment</string>
+    <string name="appointment_start_button">Start Appointment</string>
+    <string name="appointment_cancel_button">Cancel Appointment</string>
+
+    <string name="appointment_badge_pending">Pending</string>
+    <string name="appointment_badge_confirmed">Confirmed</string>
+    <string name="appointment_badge_completed">Finished</string>
+    <string name="appointment_badge_cancelled">Cancelled</string>
 </resources>

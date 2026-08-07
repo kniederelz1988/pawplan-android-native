@@ -50,7 +50,6 @@
 
                 <TextView
                     android:id="@+id/nameLabel"
-                    style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/dog_remarks_name_label" />
@@ -79,7 +78,7 @@
 
                     <TextView
                         android:id="@+id/ratingLabel"
-                        style="@style/TextAppearance.Material3.LabelSmall.Emphasized"
+                        style="@style/TextAppearance.Material3.BodyMedium.Emphasized"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/ratings_average" />
@@ -90,7 +89,7 @@
 
                     <TextView
                         android:id="@+id/ratingCount"
-                        style="@style/TextAppearance.Material3.LabelSmall"
+                        style="@style/TextAppearance.Material3.BodyMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/rating_remark_count" />
@@ -109,7 +108,7 @@
 
                     <TextView
                         android:id="@+id/ageLabel"
-                        style="@style/TextAppearance.Material3.LabelLarge"
+                        style="@style/TextAppearance.Material3.BodyMedium.Emphasized"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"

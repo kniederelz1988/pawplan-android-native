@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -42,6 +43,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.lifecycle.service)
     implementation(libs.androidx.paging.common)
     implementation(libs.androidx.paging.runtime.ktx)
     implementation(libs.material)
@@ -60,10 +62,13 @@ dependencies {
     implementation(libs.androidx.recyclerview)
 
     implementation(libs.firebase.firestore)
+    implementation(libs.play.services.location)
     implementation(libs.transport.runtime)
     testImplementation(libs.junit)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.11.0")
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.kotlinx.serialization.json)
+
     implementation("com.google.dagger:hilt-android:2.60.1")
     ksp("com.google.dagger:hilt-compiler:2.60.1")
 

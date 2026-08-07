@@ -12,7 +12,7 @@ fun FirebaseAppointmentStatusDto.toDomain(id: String) : AppointmentStatus =
         volunteerId,
         dogId,
         AppointmentStatusType.entries[status],
-        updatedAt.toLocalDateTime(),
+        updateAt.toLocalDateTime(),
         updatedBy
     )
 
@@ -22,6 +22,6 @@ fun AppointmentStatus.toDto() : FirebaseAppointmentStatusDto =
         volunteerId,
         dogId,
         AppointmentStatusType.entries.indexOf(status),
-        updatedAt.toTimestamp(),
+        updateAt.toTimestamp(),
         updatedBy
     )

@@ -7,6 +7,6 @@ class FirebaseAppointmentStatusDto(
     val volunteerId: String = "",
     val dogId: String = "",
     val status: Int = 0,
-    val updatedAt: Timestamp = Timestamp.now(),
+    val updateAt: Timestamp = Timestamp.now(),
     val updatedBy: String = ""
 )

@@ -9,6 +9,8 @@ import de.kniederelz.pawplan.appointments.repositories.ratings.domain.Appointmen
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingStatistics
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingRepository
 import de.kniederelz.pawplan.appointments.sources.factories.FirestoreAppointmentRatingDataSourceFactory
+import de.kniederelz.pawplan.core.RepositorySubscription
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class FirestoreAppointmentRatingRepositoryImpl @Inject constructor(
@@ -26,11 +29,19 @@ class FirestoreAppointmentRatingRepositoryImpl @Inject constructor(
         const val COLLECTION = "appointmentsRating"
     }
 
-    override suspend fun createRating(rating: AppointmentRating) {
-        firestore
-            .collection(COLLECTION)
-            .add(rating.toDto())
-            .await()
+    override suspend fun createRating(rating: AppointmentRating) : Result<String> {
+        return withContext(NonCancellable) {
+            try {
+                val result = firestore
+                    .collection(COLLECTION)
+                    .add(rating.toDto())
+                    .await()
+
+                Result.success(result.id)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
     }
 
     override fun observeRating(appointmentId: String): Flow<AppointmentRating?> =
@@ -103,5 +114,9 @@ class FirestoreAppointmentRatingRepositoryImpl @Inject constructor(
                     it + (dogId to AppointmentRatingStatistics(average, count))
                 }
             }
+    }
+
+    override fun createSubscription() : RepositorySubscription<AppointmentRating> {
+        return FirestoreAppointmentRatingSubscriptionImpl(firestore)
     }
 }

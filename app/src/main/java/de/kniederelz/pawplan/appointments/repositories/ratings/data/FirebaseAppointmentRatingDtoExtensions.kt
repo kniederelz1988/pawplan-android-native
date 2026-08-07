@@ -2,6 +2,7 @@ package de.kniederelz.pawplan.appointments.repositories.ratings.data
 
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRating
 import de.kniederelz.pawplan.core.extensions.toLocalDate
+import de.kniederelz.pawplan.core.extensions.toLocalDateTime
 import de.kniederelz.pawplan.core.extensions.toTimestamp
 
 fun FirebaseAppointmentRatingDto.toDomain(id: String) : AppointmentRating =
@@ -12,7 +13,7 @@ fun FirebaseAppointmentRatingDto.toDomain(id: String) : AppointmentRating =
         volunteerId,
         rating,
         comment,
-        updatedAt.toLocalDate()
+        updatedAt.toLocalDateTime()
     )
 
 fun AppointmentRating.toDto() : FirebaseAppointmentRatingDto =
