@@ -29,15 +29,19 @@ class FirestoreAppointmentRatingRepositoryImpl @Inject constructor(
         const val COLLECTION = "appointmentsRating"
     }
 
-    override suspend fun createRating(rating: AppointmentRating) : Result<String> {
+    override suspend fun createRating(rating: AppointmentRating): Result<String> {
+        return updateRating(rating)
+    }
+    override suspend fun updateRating(rating: AppointmentRating) : Result<String> {
         return withContext(NonCancellable) {
             try {
-                val result = firestore
+                firestore
                     .collection(COLLECTION)
-                    .add(rating.toDto())
+                    .document(rating.id)
+                    .set(rating.toDto())
                     .await()
 
-                Result.success(result.id)
+                Result.success(rating.id)
             } catch (e: Exception) {
                 Result.failure(e)
             }

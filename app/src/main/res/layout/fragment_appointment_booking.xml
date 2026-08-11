@@ -6,7 +6,7 @@
     android:id="@+id/bookAppointmentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".appointments.presentation.AppointmentBookingFragment">
+    tools:context=".appointments.presentation.booking.AppointmentBookingFragment">
 
     <LinearLayout
         android:layout_width="0dp"

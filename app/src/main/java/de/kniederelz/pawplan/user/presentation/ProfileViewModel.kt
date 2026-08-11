@@ -18,8 +18,8 @@ class ProfileViewModel @Inject constructor(
 
     private val currentUser = authRepository.currentUser
 
-    val userProfile = userRepository.userProfile
-    val userRole = userRepository.userRole
+    val userProfile = userRepository.userProfileFlow
+    val userRole = userRepository.userRoleFlow
 
     fun updateUserName(name: String) {
         viewModelScope.launch {

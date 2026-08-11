@@ -56,7 +56,7 @@ class FirestoreUserRepositoryImpl(
         }
         .onEach { Log.d("FirestoreUserRepository", "Profile: $it") }
         .stateIn(scope,SharingStarted.WhileSubscribed(5000), null)
-    override val userProfile: StateFlow<UserProfile?> = _userProfile
+    override val userProfileFlow: StateFlow<UserProfile?> = _userProfile
 
     private val _userRole = _userProfile
         .flatMapLatest { userProfile ->
@@ -65,7 +65,7 @@ class FirestoreUserRepositoryImpl(
         }
         .onEach { Log.d("FirestoreUserRepository", "Role: $it") }
         .stateIn(scope, SharingStarted.WhileSubscribed(5000),UserRole.OBSERVER)
-    override val userRole: StateFlow<UserRole> = _userRole
+    override val userRoleFlow: StateFlow<UserRole> = _userRole
 
     private val _userFavorites = _userProfile
         .flatMapLatest { userProfile ->
@@ -74,7 +74,7 @@ class FirestoreUserRepositoryImpl(
         }
         .onEach { Log.d("FirestoreUserRepository", "Favs: $it") }
         .stateIn(scope, SharingStarted.WhileSubscribed(5000), UserFavorites())
-    override val userFavorites: StateFlow<UserFavorites> = _userFavorites
+    override val userFavoritesFlow: StateFlow<UserFavorites> = _userFavorites
 
     private val profileNameCache = mutableMapOf<String, String>()
     override suspend fun getProfileName(volunteerId: String): String {

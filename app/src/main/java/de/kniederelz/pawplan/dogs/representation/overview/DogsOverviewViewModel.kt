@@ -32,7 +32,7 @@ class DogsOverviewViewModel @Inject constructor(
         combine(
             _dogs,
             appointmentRatingRepository.dogStatistics,
-            userRepository.userFavorites
+            userRepository.userFavoritesFlow
         ) { pagingData, statistics, favorites ->
             pagingData.map { dog ->
                 appointmentRatingRepository.requestDogStatistics(dog.id)
@@ -44,7 +44,7 @@ class DogsOverviewViewModel @Inject constructor(
         }
 
     fun toggleDogFavorite(dog: Dog) {
-        val userFavorites = userRepository.userFavorites.value
+        val userFavorites = userRepository.userFavoritesFlow.value
 
         val userFavorite = userFavorites.get(dog)
         if (userFavorite != null) {
@@ -55,7 +55,7 @@ class DogsOverviewViewModel @Inject constructor(
             }
         } else {
             viewModelScope.launch {
-                val user = userRepository.userProfile.value ?: return@launch
+                val user = userRepository.userProfileFlow.value ?: return@launch
                 userRepository.createFavorite(user, dog)
                     .onSuccess { Log.d("DogsOverviewViewModel", "Favorites created successfully") }
                     .onFailure { Log.d("DogsOverviewViewModel", "Failed to create favorite", it) }

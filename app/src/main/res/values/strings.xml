@@ -70,9 +70,9 @@
     <string name="wt_reportbutton_desc">Report</string>
 
     <string name="wtp_walklength">%1$.1f km</string>
-    <string name="wtp_walkduration">%1$d h %2$d m</string>
+    <string name="wtp_walkduration">%1$d h %2$dm</string>
 
-    <string name="wtp_remark_caption">Set remark</string>
+    <string name="wtp_remark_caption">Submit remark for %1$s</string>
 
     <string name="wtp_remark_rating1">1</string>
     <string name="wtp_remark_rating2">2</string>
@@ -91,6 +91,13 @@
     <string name="tracker_startWalk_positiveLabel">Yes</string>
     <string name="tracker_startWalk_negativeLabel">No</string>
 
+    <string name="tracker_reportIncident_title">Report incident?</string>
+    <string name="tracker_reportIncident_message">
+        Do really want to report an incident?
+    </string>
+    <string name="tracker_reportIncident_positiveLabel">Yes</string>
+    <string name="tracker_reportIncident_negativeLabel">No</string>
+
     <string name="tracker_stopWalk_title">Complete walk?</string>
     <string name="tracker_stopWalk_message">
         Do really want to stop tracking now?
@@ -99,12 +106,20 @@
     <string name="tracker_stopWalk_positiveLabel">Yes</string>
     <string name="tracker_stopWalk_negativeLabel">No</string>
 
+    <string name="tracker_inspectWalk_title">Not allowed</string>
+    <string name="tracker_inspectWalk_message">
+        You can\'t inspect a walk. While a walk is actively tracked.
+    </string>
+    <string name="tracker_inspectWalk_label">Okay</string>
+
     <string name="wtp_report_caption">Report incident</string>
 
     <string name="wtp_report_dateButton">Select date</string>
     <string name="wtp_report_timeButton">Select time</string>
     <string name="wtp_report_hint">What happened?</string>
     <string name="wtp_report_submit">Submit Report</string>
+
+    <string name="wtp_report_emptyerror">Please enter a description</string>
 
     <string name="wtp_noupcomingappointments">No upcoming appointments…</string>
     <string name="wtp_nocompletedappointments">No completed appointments…</string>
@@ -163,4 +178,5 @@
     <string name="appointment_badge_confirmed">Confirmed</string>
     <string name="appointment_badge_completed">Finished</string>
     <string name="appointment_badge_cancelled">Cancelled</string>
+
 </resources>

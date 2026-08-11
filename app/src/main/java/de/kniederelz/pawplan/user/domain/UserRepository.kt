@@ -1,12 +1,18 @@
 package de.kniederelz.pawplan.user.domain
 
+import android.util.Log
 import de.kniederelz.pawplan.dogs.domain.Dog
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository {
-    val userProfile: StateFlow<UserProfile?>
-    val userRole: StateFlow<UserRole>
-    val userFavorites: StateFlow<UserFavorites>
+    val userProfileFlow: StateFlow<UserProfile?>
+    fun getUserProfile(): UserProfile? {
+        Log.d("UserRepository", "getUserProfile -> ${userProfileFlow.value}")
+        return userProfileFlow.value
+    }
+
+    val userRoleFlow: StateFlow<UserRole>
+    val userFavoritesFlow: StateFlow<UserFavorites>
 
     suspend fun getProfileName(volunteerId: String): String
 

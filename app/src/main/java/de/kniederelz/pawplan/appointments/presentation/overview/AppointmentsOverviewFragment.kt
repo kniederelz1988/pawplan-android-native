@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.appointments.presentation
+package de.kniederelz.pawplan.appointments.presentation.overview
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import de.kniederelz.pawplan.appointments.presentation.adapter.AppointmentFastSelectionAdapter
-import de.kniederelz.pawplan.appointments.presentation.adapter.AppointmentOverviewAdapter
+import de.kniederelz.pawplan.appointments.presentation.booking.AppointmentBookingFragment
+import de.kniederelz.pawplan.appointments.presentation.overview.adapter.AppointmentFastSelectionAdapter
+import de.kniederelz.pawplan.appointments.presentation.overview.adapter.AppointmentOverviewAdapter
 import de.kniederelz.pawplan.appointments.repositories.AppointmentData
 import de.kniederelz.pawplan.databinding.FragmentAppointmentOverviewBinding
 import de.kniederelz.pawplan.dogs.domain.Dog

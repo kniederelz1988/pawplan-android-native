@@ -2,38 +2,40 @@ package de.kniederelz.pawplan.tracking.presentation.remark
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.R
-import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRating
 import de.kniederelz.pawplan.databinding.FragmentTrackerRemarkBinding
-import de.kniederelz.pawplan.tracking.presentation.overview.TrackerOverviewViewModel
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 import kotlin.getValue
 
 @AndroidEntryPoint
 class TrackerRemarkFragment : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "RemarkBottomSheetDialogFragment"
-    }
 
-    private lateinit var binding: FragmentTrackerRemarkBinding
+        fun show(fragmentManager: FragmentManager, appointmentId: String) {
+            TrackerRemarkFragment().apply {
+                arguments = Bundle().apply {
+                    putString("appointmentId", appointmentId)
+                }
+            }.show(fragmentManager, TAG)
+        }
+    }
 
     private val viewModel: TrackerRemarkViewModel by viewModels()
 
+    private lateinit var binding: FragmentTrackerRemarkBinding
     private lateinit var stars: List<ImageButton>
-    private var rating = 0
+    private var rating = 5
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentTrackerRemarkBinding.inflate(inflater, container, false)
@@ -49,24 +51,26 @@ class TrackerRemarkFragment : BottomSheetDialogFragment() {
                 setRating(index + 1)
             }
         }
+        setRating(rating)
+
+        viewModel.nextAppointment.observe(viewLifecycleOwner) {
+            it?.let { data ->
+                binding.remarkCaption.text = getString(R.string.wtp_remark_caption, data.dog.name)
+            }
+        }
 
         binding.submitButton.setOnClickListener { _ ->
+
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.appointments.first().map { it.value }.firstOrNull()?.let { appointment ->
-                    val rating = AppointmentRating(
-                        id = "",
-                        appointmentId = appointment.id,
-                        volunteerId = appointment.volunteerId,
-                        dogId = appointment.dogId,
-                        rating = rating,
-                        comment = binding.remarkDescription.text.toString(),
-                        updatedAt = LocalDateTime.now()
-                    )
-                    viewModel.createRating(rating)
-                }
+                val appointment = viewModel.getAppointment()
+                    ?: return@launch
+
+                val comment = binding.remarkDescription.text.toString()
+                viewModel.submitRating(appointment,rating, comment)
 
                 dismiss()
             }
+
         }
     }
 

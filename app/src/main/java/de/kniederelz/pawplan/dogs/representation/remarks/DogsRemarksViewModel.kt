@@ -3,7 +3,6 @@ package de.kniederelz.pawplan.dogs.representation.remarks
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.paging.PagingData
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRating
@@ -23,22 +22,23 @@ class DogsRemarksViewModel @Inject constructor(
     private val appointmentRatingRepository: AppointmentRatingRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(){
+    data class AppointmentRatingData(val rating: AppointmentRating, val volunteerName: String)
 
     private val dogId: String =
         checkNotNull(savedStateHandle["dogId"])
 
     val dog: Flow<Dog?> = dogRepository.observeDog(dogId)
 
-    val ratings: Flow<PagingData<AppointmentRating>> = appointmentRatingRepository.observeRatings(dogId)
+    val ratings = appointmentRatingRepository.observeRatings(dogId)
         .mapLatest { pagingData ->
             pagingData.map { rating ->
                 val volunteerName = userRepository.getProfileName(rating.volunteerId)
-                rating.copy(
-                    volunteerName = volunteerName
-                )
+                AppointmentRatingData(rating, volunteerName)
             }
         }
         .onEach {
-            Log.d("DogsRemarksViewModel", "Ratings: ${it.map { rating -> rating.comment }}")
+            Log.d("DogsRemarksViewModel", "Ratings: ${it.map { 
+                data -> data.rating.comment
+            }}")
         }
 }

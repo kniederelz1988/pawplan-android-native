@@ -3,6 +3,7 @@ package de.kniederelz.pawplan.tracking.services
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import de.kniederelz.pawplan.core.extensions.toLong
+import de.kniederelz.pawplan.tracking.repositories.base.domain.LatLngTime
 import de.kniederelz.pawplan.tracking.repositories.session.domain.WalkingTrackerSession
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -19,7 +20,7 @@ class WalkingTracker(
                 if (!service.trackingStateHolder.isActive())
                     return@collect
 
-                val latLngTime = WalkingTrackerSession.LatLngTime(
+                val latLngTime = LatLngTime(
                     latitude = location.latitude,
                     longitude = location.longitude,
                     timestamp = LocalDateTime.now().toLong()

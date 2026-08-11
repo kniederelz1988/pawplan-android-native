@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.appointments.presentation
+package de.kniederelz.pawplan.appointments.presentation.overview
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -35,7 +35,7 @@ class AppointmentsOverviewViewModel @Inject constructor(
     private val appointmentDogSubscription
         = dogRepository.createSubscription()
 
-    private val _appointments = userRepository.userProfile
+    private val _appointmentsFlow = userRepository.userProfileFlow
         .flatMapLatest { userProfile ->
             userProfile?.let {
                 Log.d("AppointmentsOverviewViewModel", "User: $it")
@@ -43,39 +43,51 @@ class AppointmentsOverviewViewModel @Inject constructor(
             }
             appointmentSubscription.values
         }
-        .onEach { appointments ->
-            appointments.values.forEach { appointment ->
-                appointmentStatusSubscription.registerListener(appointment.id)
-                appointmentDogSubscription.registerListener(appointment.dogId)
+    private val _appointmentStatusFlow =
+        _appointmentsFlow
+            .onEach { appointments ->
+                appointments.values.forEach { appointment ->
+                    appointmentStatusSubscription.registerListener(appointment.id)
+                }
             }
-        }
+            .flatMapLatest {
+                appointmentStatusSubscription.values
+            }
+    private val _appointmentDogFlow =
+        _appointmentsFlow
+            .onEach { appointments ->
+                appointments.values.forEach { appointment ->
+                    appointmentDogSubscription.registerListener(appointment.dogId)
+                }
+            }
+            .flatMapLatest {
+                appointmentDogSubscription.values
+            }
 
     val appointments = combine(
-        _appointments,
-        appointmentStatusSubscription.values,
-        appointmentDogSubscription.values,
+        _appointmentsFlow,
+        _appointmentStatusFlow,
+        _appointmentDogFlow,
         clockProvider.now
     ) { appointments, statuses, dogs, _ ->
-        Log.d("AppointmentsOverviewViewModel", "Appointments: ${appointments.count()}")
-        Log.d("AppointmentsOverviewViewModel", "Statuses: ${statuses.count()}")
-        Log.d("AppointmentsOverviewViewModel", "Dogs: ${dogs.count()}")
+        appointments.values
+            .filter { statuses.containsKey(it.id) && dogs.containsKey(it.dogId) }
+            .map {
+                val appointmentStatus = statuses[it.id]!!
+                val dog = dogs[it.dogId]!!
 
-        appointments.values.filter { statuses.containsKey(it.id) && dogs.containsKey(it.dogId) }.map {
-            val appointmentStatus = statuses[it.id]!!
-            val dog = dogs[it.dogId]!!
-
-            AppointmentData(
-                it.id,
-                it,
-                appointmentStatus,
-                dog
-            )
-        }
+                AppointmentData(
+                    it.id,
+                    it,
+                    appointmentStatus,
+                    dog
+                )
+            }
     }
 
     private val favoriteDogsSubscription
         = dogRepository.createSubscription()
-    val favoriteDogs = userRepository.userFavorites
+    val favoriteDogs = userRepository.userFavoritesFlow
         .flatMapLatest { userFavorites ->
             favoriteDogsSubscription.registerBatchListener( userFavorites.favorites.map { it.dogId }.distinct() )
             favoriteDogsSubscription.values

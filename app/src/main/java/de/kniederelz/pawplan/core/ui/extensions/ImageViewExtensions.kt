@@ -7,10 +7,10 @@ import de.kniederelz.pawplan.dogs.domain.DogGender
 import de.kniederelz.pawplan.dogs.domain.DogSize
 
 fun ImageView.setRating(isRated: Boolean) {
-    if (isRated) {
-        imageTintList = AppCompatResources.getColorStateList(context,R.color.md_theme_outline)
+    imageTintList = if (isRated) {
+        AppCompatResources.getColorStateList(context,R.color.md_theme_outline)
     } else {
-        imageTintList = AppCompatResources.getColorStateList(context,R.color.md_theme_outlineVariant)
+        AppCompatResources.getColorStateList(context,R.color.md_theme_outlineVariant)
     }
 }
 

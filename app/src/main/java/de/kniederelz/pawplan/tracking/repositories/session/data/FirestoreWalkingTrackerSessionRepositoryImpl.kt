@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class FirestoreWalkingTrackerSessionRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
-) : WalkingTrackerSessionRepository {
+): WalkingTrackerSessionRepository {
     companion object {
         const val COLLECTION = "walkingtrackerSessions"
     }

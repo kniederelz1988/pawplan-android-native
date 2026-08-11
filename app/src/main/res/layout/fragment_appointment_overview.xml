@@ -5,7 +5,7 @@
     android:id="@+id/appointmentsOverviewLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".appointments.presentation.AppointmentsOverviewFragment">
+    tools:context=".appointments.presentation.overview.AppointmentsOverviewFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

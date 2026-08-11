@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AppointmentRatingRepository {
     suspend fun createRating(rating: AppointmentRating): Result<String>
+    suspend fun updateRating(rating: AppointmentRating): Result<String>
 
     fun observeRating(appointmentId: String): Flow<AppointmentRating?>
     fun observeRatings(dogId: String): Flow<PagingData<AppointmentRating>>

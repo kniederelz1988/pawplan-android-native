@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.appointments.presentation
+package de.kniederelz.pawplan.appointments.presentation.booking
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -13,7 +13,6 @@ import de.kniederelz.pawplan.appointments.repositories.status.domain.Appointment
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
 import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.user.domain.UserRepository
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -43,7 +42,7 @@ class AppointmentBookingViewModel @Inject constructor(
         if (dogId.isEmpty())
             return
 
-        val profile = userRepository.userProfile.value ?:
+        val profile = userRepository.userProfileFlow.value ?:
             return
 
         viewModelScope.launch {

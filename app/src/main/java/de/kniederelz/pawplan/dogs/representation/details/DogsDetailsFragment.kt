@@ -15,7 +15,7 @@ import coil3.request.error
 import coil3.request.placeholder
 import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.R
-import de.kniederelz.pawplan.appointments.presentation.AppointmentBookingFragment
+import de.kniederelz.pawplan.appointments.presentation.booking.AppointmentBookingFragment
 import de.kniederelz.pawplan.databinding.FragmentDogsDetailsBinding
 import de.kniederelz.pawplan.dogs.domain.extensions.getAge
 import de.kniederelz.pawplan.ui.extensions.setAge

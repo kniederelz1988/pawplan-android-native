@@ -30,7 +30,7 @@ class DogsDetailsViewModel @Inject constructor(
     val dog: Flow<Dog?> = combine(
         dogRepository.observeDog(dogId),
         appointmentRatingRepository.dogStatistics,
-        userRepository.userFavorites,
+        userRepository.userFavoritesFlow,
     ) { dog, statistics, favorites ->
         dog?.let {
             appointmentRatingRepository.requestDogStatistics(dog.id)
@@ -42,7 +42,7 @@ class DogsDetailsViewModel @Inject constructor(
     }
 
     fun toggleDogFavorite(dog: Dog) {
-        val userFavorites = userRepository.userFavorites.value
+        val userFavorites = userRepository.userFavoritesFlow.value
 
         val userFavorite = userFavorites.get(dog)
         if (userFavorite != null) {
@@ -53,7 +53,7 @@ class DogsDetailsViewModel @Inject constructor(
             }
         } else {
             viewModelScope.launch {
-                val user = userRepository.userProfile.value ?: return@launch
+                val user = userRepository.userProfileFlow.value ?: return@launch
                 userRepository.createFavorite(user, dog)
                     .onSuccess { Log.d("DogsDetailsViewModel", "Favorites created successfully") }
                     .onFailure { Log.d("DogsDetailsViewModel", "Failed to create favorite", it) }

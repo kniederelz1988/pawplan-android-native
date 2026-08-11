@@ -3,6 +3,7 @@ package de.kniederelz.pawplan.appointments.repositories.status.data
 import com.google.firebase.firestore.FirebaseFirestore
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatus
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusRepository
+import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
 import de.kniederelz.pawplan.core.RepositorySubscription
 import kotlinx.coroutines.NonCancellable
 import javax.inject.Inject
@@ -50,7 +51,8 @@ class FirestoreAppointmentStatusRepositoryImpl @Inject constructor(
     override fun createSubscription(): RepositorySubscription<AppointmentStatus> {
         return FirestoreAppointmentStatusSubscriptionImpl(firestore)
     }
-    override fun createVolunteerSubscription(): RepositorySubscription<AppointmentStatus> {
-        return FirestoreVolunteerAppointmentStatusSubscriptionImpl(firestore)
+    override fun createSubscriptionFilteredByStatus(status: Collection<AppointmentStatusType>)
+        : RepositorySubscription<AppointmentStatus> {
+        return FirestoreConfirmedAppointmentStatusSubscriptionImpl(firestore, status)
     }
 }

@@ -13,7 +13,7 @@ fun FirebaseAppointmentRatingDto.toDomain(id: String) : AppointmentRating =
         volunteerId,
         rating,
         comment,
-        updatedAt.toLocalDateTime()
+        updateAt.toLocalDateTime()
     )
 
 fun AppointmentRating.toDto() : FirebaseAppointmentRatingDto =
@@ -23,5 +23,5 @@ fun AppointmentRating.toDto() : FirebaseAppointmentRatingDto =
         volunteerId,
         rating,
         comment,
-        updatedAt.toTimestamp()
+        updateAt.toTimestamp()
     )

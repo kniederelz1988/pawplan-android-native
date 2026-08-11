@@ -7,6 +7,7 @@ interface AppointmentStatusRepository {
     suspend fun updateStatus(status: AppointmentStatus): Result<Unit>
 
     fun createSubscription(): RepositorySubscription<AppointmentStatus>
-    fun createVolunteerSubscription(): RepositorySubscription<AppointmentStatus>
+    fun createSubscriptionFilteredByStatus(status: Collection<AppointmentStatusType>)
+        : RepositorySubscription<AppointmentStatus>
 }
 

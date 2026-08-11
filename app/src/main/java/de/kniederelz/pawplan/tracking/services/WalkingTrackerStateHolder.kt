@@ -20,7 +20,7 @@ class WalkingTrackerStateHolder @Inject constructor() {
     fun updateState(state: WalkingTrackerState) {
         _state.update { state }
     }
-    fun updateSession(session: WalkingTrackerSession) {
+    fun updateSession(session: WalkingTrackerSession?) {
         _session.update { session }
     }
 

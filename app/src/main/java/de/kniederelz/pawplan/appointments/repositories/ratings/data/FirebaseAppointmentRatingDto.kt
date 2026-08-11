@@ -8,5 +8,5 @@ class FirebaseAppointmentRatingDto(
     val volunteerId: String = "",
     val rating: Int = 0,
     val comment: String = "",
-    val updatedAt: Timestamp = Timestamp.now()
+    val updateAt: Timestamp = Timestamp.now()
 )

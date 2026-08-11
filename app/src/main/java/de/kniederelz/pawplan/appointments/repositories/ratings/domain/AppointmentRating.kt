@@ -9,7 +9,5 @@ data class AppointmentRating(
     val volunteerId: String,
     val rating: Int,
     val comment: String,
-    val updatedAt: LocalDateTime,
-
-    val volunteerName: String = ""
+    val updateAt: LocalDateTime
 )

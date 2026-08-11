@@ -15,8 +15,10 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class WalkingTrackerService: LifecycleService() {
-    @Inject
-    lateinit var permissionManager: WalkingTrackerPermissionManager
+
+    private val permissionManager: WalkingTrackerPermissionManager
+        = WalkingTrackerPermissionManager(this)
+
     @Inject
     lateinit var notificationManager: TrackingNotificationManager
 
@@ -59,7 +61,6 @@ class WalkingTrackerService: LifecycleService() {
 
     private fun startTracking(session: WalkingTrackerSession) {
         walkingTracker = WalkingTracker(this, session)
-
         walkingTracker.startTracking()
 
         notificationManager.createNotificationChannel()

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/appointmentsOverviewView"
-        android:name="de.kniederelz.pawplan.appointments.presentation.AppointmentsOverviewFragment"
+        android:name="de.kniederelz.pawplan.appointments.presentation.overview.AppointmentsOverviewFragment"
         android:label="fragment_appointments_overview_view"
         tools:layout="@layout/fragment_appointment_overview" />
 

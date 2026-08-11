@@ -1,7 +1,6 @@
 package de.kniederelz.pawplan.tracking.presentation.overview.adapter
 
 import android.view.View
-import androidx.core.content.ContextCompat.getString
 import de.kniederelz.pawplan.core.extensions.dateFormatter
 import de.kniederelz.pawplan.core.extensions.timeFormatter
 import de.kniederelz.pawplan.core.ui.extensions.setRating
@@ -11,22 +10,27 @@ import de.kniederelz.pawplan.tracking.repositories.session.domain.getDistance
 import java.time.Duration
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import de.kniederelz.pawplan.R
 import coil3.load
 import coil3.request.crossfade
 import coil3.request.error
 import coil3.request.placeholder
+import de.kniederelz.pawplan.tracking.repositories.session.domain.WalkingTrackerSession
+
 class TrackerAppointmentAdapter(
-    private val trackerAppointmentData: List<TrackerAppointmentData>
+    private val trackerAppointmentData: List<TrackerAppointmentData>,
+    private val onAppointmentClicked: (TrackerAppointmentData) -> Unit
 ) : RecyclerView.Adapter<TrackerAppointmentAdapter.AppointmentViewHolder>() {
+
+    private var highlightedSessionIndex: Int = -1
 
     override fun getItemCount(): Int {
         return trackerAppointmentData.size
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int
-    ): AppointmentViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppointmentViewHolder {
         val binding = FragmentTrackerAppointmentBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
@@ -35,8 +39,35 @@ class TrackerAppointmentAdapter(
         return AppointmentViewHolder(binding)
     }
 
+    fun setHighlightedSession(session: WalkingTrackerSession?) {
+        val index =
+            if (session != null)
+                trackerAppointmentData.indexOfFirst { it.trackingSession?.id == session.id }
+            else
+                -1
+
+        val tIndex = highlightedSessionIndex
+        if (highlightedSessionIndex != index) {
+            highlightedSessionIndex = index
+
+            notifyItemChanged(index)
+            notifyItemChanged(tIndex)
+        }
+    }
+
     override fun onBindViewHolder(holder: AppointmentViewHolder, position: Int) {
         trackerAppointmentData[position].let { appointmentData ->
+            if (highlightedSessionIndex == position) {
+                holder.binding.root.strokeColor =
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.md_theme_outline_mediumContrast
+                    )
+                holder.binding.root.strokeWidth = 4
+            } else {
+                holder.binding.root.strokeWidth = 0
+            }
+
             holder.binding.dogNameLabel.text = appointmentData.dog.name
             holder.binding.dogImageView.load(appointmentData.dog.imageURL) {
                 placeholder(R.drawable.dog_placeholder)
@@ -69,7 +100,7 @@ class TrackerAppointmentAdapter(
             appointmentData.trackingSession?.let {
                 holder.binding.sessionLengthLabel.text = holder.itemView.context.getString(
                     R.string.wtp_walklength,
-                    it.locations.getDistance() / 1000
+                    it.getDistance() / 1000
                 )
 
                 val duration = Duration.between(it.startTimestamp, it.endTimestamp)
@@ -78,8 +109,18 @@ class TrackerAppointmentAdapter(
                     duration.toHours(),
                     duration.toMinutes() % 60
                 )
+
+                holder.binding.root.setOnClickListener {
+                    onAppointmentClicked(appointmentData)
+                }
             }
         }
+    }
+
+    override fun onViewRecycled(holder: AppointmentViewHolder) {
+        super.onViewRecycled(holder)
+
+        holder.binding.root.setOnClickListener(null)
     }
 
     inner class AppointmentViewHolder(val binding: FragmentTrackerAppointmentBinding)

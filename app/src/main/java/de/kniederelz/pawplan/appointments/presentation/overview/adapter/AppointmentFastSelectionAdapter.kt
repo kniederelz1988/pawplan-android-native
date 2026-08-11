@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.appointments.presentation.adapter
+package de.kniederelz.pawplan.appointments.presentation.overview.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

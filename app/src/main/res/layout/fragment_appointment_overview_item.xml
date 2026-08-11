@@ -118,7 +118,7 @@
                     android:insetTop="0dp"
                     android:insetRight="0dp"
                     android:insetBottom="0dp"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:cornerRadius="24dp"
                     app:icon="@drawable/ic_action_play"
                     app:iconGravity="textStart"
@@ -127,7 +127,8 @@
 
                 <Space
                     android:layout_width="4dp"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/cancelButton"

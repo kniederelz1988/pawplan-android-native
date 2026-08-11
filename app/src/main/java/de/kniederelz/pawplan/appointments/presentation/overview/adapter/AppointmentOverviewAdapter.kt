@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.appointments.presentation.adapter
+package de.kniederelz.pawplan.appointments.presentation.overview.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +10,8 @@ import coil3.request.crossfade
 import coil3.request.error
 import coil3.request.placeholder
 import de.kniederelz.pawplan.appointments.repositories.AppointmentData
+import de.kniederelz.pawplan.appointments.repositories.base.domain.canStart
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
-import de.kniederelz.pawplan.core.extensions.checkAfterAndBeforeNow
 import de.kniederelz.pawplan.core.extensions.dateFormatter
 import de.kniederelz.pawplan.core.extensions.timeFormatter
 import de.kniederelz.pawplan.databinding.FragmentAppointmentOverviewItemBinding
@@ -57,17 +57,8 @@ class AppointmentOverviewAdapter(
                 onEditButtonSubmit(data)
             }
 
-            holder.binding.startButton.visibility =
-                if (data.appointmentStatus.status in setOf(
-                        AppointmentStatusType.CONFIRMED
-                    ))
-                    View.VISIBLE
-                else
-                    View.GONE
-
-            holder.binding.startButton.isEnabled =
-                data.appointment.date.checkAfterAndBeforeNow(10, 10)
-
+            holder.binding.startButton.visibility = View.GONE
+            holder.binding.startButton.isEnabled = data.appointment.canStart()
             holder.binding.startButton.setOnClickListener {
                 onStartButtonSubmit(data)
             }

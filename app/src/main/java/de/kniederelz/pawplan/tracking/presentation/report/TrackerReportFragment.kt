@@ -1,110 +1,114 @@
 package de.kniederelz.pawplan.tracking.presentation.report
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
+import dagger.hilt.android.AndroidEntryPoint
+import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.core.extensions.dateFormatter
-import de.kniederelz.pawplan.core.extensions.roundToFiveMinutes
 import de.kniederelz.pawplan.core.extensions.timeFormatter
-import de.kniederelz.pawplan.core.extensions.toLocalDate
 import de.kniederelz.pawplan.databinding.FragmentTrackerReportBinding
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
+import de.kniederelz.pawplan.tracking.presentation.remark.TrackerReportViewModel
+import de.kniederelz.pawplan.tracking.repositories.base.domain.LatLngTime
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import org.osmdroid.config.Configuration
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.Marker
 
-/**
- * A simple [androidx.fragment.app.Fragment] subclass.
- * Use the [TrackerReportFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class TrackerReportFragment : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "ReportBottomSheetDialogFragment"
 
-        @JvmStatic
-        fun newInstance() = TrackerReportFragment()
+        fun show(
+            fragmentManager: FragmentManager,
+            appointmentId: String,
+            sessionId: String,
+            locationTime: LatLngTime
+        ) {
+            TrackerReportFragment().apply {
+                arguments = Bundle().apply {
+                    putString("appointmentId", appointmentId)
+                    putString("sessionId", sessionId)
+                    putString("locationJson", Json.encodeToString(locationTime))
+                }
+            }.show(fragmentManager, TAG)
+        }
     }
 
-    private lateinit var binding: FragmentTrackerReportBinding
-    private lateinit var dateButton: MaterialButton
-    private lateinit var timeButton: MaterialButton
+    private val viewModel: TrackerReportViewModel by viewModels()
 
-    private lateinit var selectedDate: LocalDate
-    private lateinit var selectedTime: LocalTime
+    private lateinit var binding: FragmentTrackerReportBinding
+    private lateinit var locationMarker: Marker
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-        }
-
-        val now = LocalDateTime.now()
-        selectedDate = now.toLocalDate()
-        selectedTime = now.toLocalTime()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val prefs = context?.getSharedPreferences(
+            "app_preferences",
+            Context.MODE_PRIVATE
+        )
+
+        // OSMDroid Configuration - Must be done before inflating layout
+        val omsdriodConfig = Configuration.getInstance()
+        omsdriodConfig.userAgentValue = context?.packageName
+        omsdriodConfig.load(context, prefs)
+
         // Inflate the layout for this fragment
         binding = FragmentTrackerReportBinding.inflate(inflater, container, false)
 
-        dateButton = binding.selectDateButton
-        dateButton.text = selectedDate.format(dateFormatter)
-        timeButton = binding.selectTimeButton
-        timeButton.text = selectedTime.format(timeFormatter)
-
-        binding.selectDateButton.setOnClickListener {
-            showDatePicker()
+        locationMarker = Marker(binding.reportMap).apply {
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+            icon = ContextCompat.getDrawable(requireContext(),R.drawable.ic_action_warning)
         }
-        binding.selectTimeButton.setOnClickListener {
-            showTimePicker()
-        }
+        binding.reportMap.overlays.add(locationMarker)
 
         return binding.root
     }
 
-    private fun showDatePicker() {
-        val picker = MaterialDatePicker.Builder.datePicker()
-            .setTitleText("Select date")
-            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-            .build()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        picker.addOnPositiveButtonClickListener { selection ->
-            selectedDate = selection.toLocalDate()
+        viewModel.location.observe(viewLifecycleOwner) {
+            val point = GeoPoint(it.latitude, it.longitude)
+            binding.reportMap.controller.setCenter(point)
+            binding.reportMap.controller.setZoom(20.0)
 
-            dateButton.text = selectedDate.format(dateFormatter)
+            locationMarker.position = point
+        }
+        viewModel.date.observe(viewLifecycleOwner) {
+            binding.selectDateButton.text = it.format(dateFormatter)
+        }
+        viewModel.time.observe(viewLifecycleOwner) {
+            binding.selectTimeButton.text = it.format(timeFormatter)
         }
 
-        picker.show(parentFragmentManager, "date_picker")
-    }
-    private fun showTimePicker() {
-        val now = Instant.now()
+        binding.submitButton.setOnClickListener {
+            val description = binding.reportDescription.text.toString()
+            if (description.isEmpty()) {
+                binding.reportDescription.error =
+                    getString(R.string.wtp_report_emptyerror)
+                return@setOnClickListener
+            }
 
-        val picker = MaterialTimePicker.Builder()
-            .setTimeFormat(TimeFormat.CLOCK_24H)
-            .setHour(now.atZone(ZoneId.systemDefault()).hour)
-            .setMinute(now.atZone(ZoneId.systemDefault()).minute)
-            .setTitleText("Select time")
-            .build()
-
-        picker.addOnPositiveButtonClickListener {
-            selectedTime = LocalTime.of(picker.hour, picker.minute).roundToFiveMinutes()
-
-            timeButton.post {
-                timeButton.text = selectedTime.format(timeFormatter)
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.createIncident(description)
+                dismiss()
             }
         }
-
-        picker.show(parentFragmentManager, "time_picker")
     }
-
 }

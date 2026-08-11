@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Widget.App.MySearchBar" parent="Widget.Material3.TextInputLayout.OutlinedBox">
 
@@ -20,5 +20,42 @@
 
     <style name="ShapeAppearance.Button" parent="ShapeAppearanceOverlay.Material3.FloatingActionButton">
 
+    </style>
+
+    <!-- Emphasized Text Appearances -->
+    <style name="TextAppearance.Material3.TitleLarge.Emphasized" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Material3.TitleMedium.Emphasized" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Material3.LabelLarge.Emphasized" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textStyle" tools:ignore="ResourceCycle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Material3.LabelMedium.Emphasized" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Material3.LabelSmall.Emphasized" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Material3.BodyLarge.Emphasized" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Material3.BodyMedium.Emphasized" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Material3.DisplaySmall.Emphasized" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Material3.HeadlineMedium.Emphasized" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>
