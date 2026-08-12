@@ -1,16 +1,16 @@
 package de.kniederelz.pawplan.core.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import de.kniederelz.pawplan.dogs.representation.remarks.DogsRemarksViewModel
+import de.kniederelz.pawplan.dogs.representation.remarks.AppointmentRatingData
 
-object RatingDiff : DiffUtil.ItemCallback<DogsRemarksViewModel.AppointmentRatingData>() {
+object RatingDiff : DiffUtil.ItemCallback<AppointmentRatingData>() {
     override fun areItemsTheSame(
-        oldItem: DogsRemarksViewModel.AppointmentRatingData,
-        newItem: DogsRemarksViewModel.AppointmentRatingData
+        oldItem: AppointmentRatingData,
+        newItem: AppointmentRatingData
     ) = oldItem.rating.id == newItem.rating.id
 
     override fun areContentsTheSame(
-        oldItem: DogsRemarksViewModel.AppointmentRatingData,
-        newItem: DogsRemarksViewModel.AppointmentRatingData
+        oldItem: AppointmentRatingData,
+        newItem: AppointmentRatingData
     ) = oldItem == newItem
 }

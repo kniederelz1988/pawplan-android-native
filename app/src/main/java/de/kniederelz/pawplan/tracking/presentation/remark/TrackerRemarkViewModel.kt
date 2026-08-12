@@ -9,13 +9,10 @@ import de.kniederelz.pawplan.appointments.repositories.base.domain.Appointment
 import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentRepository
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRating
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingRepository
-import de.kniederelz.pawplan.dogs.domain.Dog
 import de.kniederelz.pawplan.dogs.domain.DogRepository
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -26,40 +23,24 @@ class TrackerRemarkViewModel @Inject constructor(
     private val appointmentRemarkRepository: AppointmentRatingRepository,
     private val dogRepository: DogRepository
 ) : ViewModel() {
-    data class Data(
-        val appointment: Appointment,
-        val dog: Dog
-    )
 
-    private val _appointmentSubscription = appointmentRepository.createSubscription()
-        .registerListener(checkNotNull(savedStateHandle["appointmentId"]))
-    private val _dogSubscription = dogRepository.createSubscription()
+    private val _nextAppointmentFlow =
+        appointmentRepository.observeAppointment(
+            checkNotNull(savedStateHandle["appointmentId"])
+        )
+            .flatMapLatest { appointment ->
+                if (appointment == null)
+                    return@flatMapLatest flowOf(null)
 
-    private val _appointmentFlow = _appointmentSubscription.values
-        .map { it.values.firstOrNull() }
-        .onEach { appointment ->
-            appointment?.let { _dogSubscription.registerListener(appointment.dogId) }
-        }
+                dogRepository.observeDog(appointment.dogId)
+                    .flatMapLatest { dog ->
+                        if (dog == null)
+                            return@flatMapLatest flowOf(null)
 
-    private val _dogFlow = _dogSubscription.values
-        .combine(_appointmentFlow) { dogs, appointments ->
-            if (appointments == null)
-                return@combine null
-
-            return@combine dogs[appointments.dogId]
-        }
-
-    val nextAppointment = combine(
-            _appointmentFlow,
-            _dogFlow
-        ) { appointment, dog ->
-            if (appointment == null || dog == null)
-                return@combine flowOf(null)
-
-            flowOf(Data(appointment, dog))
-        }
-            .flatMapLatest { it }
-            .asLiveData()
+                        flowOf(TrackerRemarkAppointmentData(appointment, dog))
+                    }
+            }
+    val nextAppointment = _nextAppointmentFlow.asLiveData()
 
     fun getAppointment(): Appointment? {
         return nextAppointment.value?.appointment
@@ -79,10 +60,5 @@ class TrackerRemarkViewModel @Inject constructor(
             .onSuccess { Log.d("TrackerRemarkViewModel", "Rating created") }
             .onFailure { Log.e("TrackerRemarkViewModel", "Rating creation failed", it) }
     }
-
-    override fun onCleared() {
-        _appointmentSubscription.close()
-        _dogSubscription.close()
-    }
-
 }
+

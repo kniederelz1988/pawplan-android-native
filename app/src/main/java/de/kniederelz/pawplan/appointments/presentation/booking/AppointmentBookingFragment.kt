@@ -60,18 +60,6 @@ class AppointmentBookingFragment : BottomSheetDialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        lifecycleScope.launch {
-            viewModel.dog.collect { dog ->
-                if (dog == null) return@collect
-
-                binding.dogImageView.load(dog.imageURL) {
-                    placeholder(R.drawable.dog_placeholder)
-                    error(R.drawable.dog_placeholder)
-                    crossfade(true)
-                }
-            }
-        }
-
         binding.selectDateButton.text = selectedDate.format(dateFormatter)
         binding.selectDateButton.setOnClickListener {
             showDatePicker()
@@ -83,8 +71,21 @@ class AppointmentBookingFragment : BottomSheetDialogFragment() {
         }
 
         binding.submitButton.setOnClickListener {
-            viewModel.createAppointment(LocalDateTime.of(selectedDate, selectedTime))
+            val dog = viewModel.getDog()
+                ?: return@setOnClickListener
+
+            viewModel.createAppointment(dog,LocalDateTime.of(selectedDate, selectedTime))
             dismiss()
+        }
+
+        viewModel.dog.observe(viewLifecycleOwner) { dog ->
+            dog ?: return@observe
+
+            binding.dogImageView.load(dog.imageURL) {
+                placeholder(R.drawable.dog_placeholder)
+                error(R.drawable.dog_placeholder)
+                crossfade(true)
+            }
         }
     }
 

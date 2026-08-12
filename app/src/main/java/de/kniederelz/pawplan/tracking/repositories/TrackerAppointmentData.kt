@@ -11,9 +11,9 @@ data class TrackerAppointmentData(
 
     val appointment: Appointment,
     val appointmentStatus: AppointmentStatus,
-    val appointmentRating: AppointmentRating?,
 
     val dog: Dog,
 
-    val trackingSession: WalkingTrackerSession?
+    val appointmentRating: AppointmentRating? = null,
+    val appointmentSession: WalkingTrackerSession? = null
 )

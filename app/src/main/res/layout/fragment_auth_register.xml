@@ -45,13 +45,13 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/loginUserNameLabel"
+            android:id="@+id/registerUserNameLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/loginUserNameInput"
+                android:id="@+id/registerUserNameInput"
                 style="@style/TextAppearance.Material3.LabelSmall.Emphasized"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

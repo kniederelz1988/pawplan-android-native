@@ -6,6 +6,7 @@ data class FirebaseUserProfileDto(
     val userId: String = "",
     val name: String = "",
     val phoneNumber: String = "",
+    val imageUrl: String = "",
     val birthday: Timestamp = Timestamp.now(),
     val volunteerSince: Timestamp = Timestamp.now(),
 )

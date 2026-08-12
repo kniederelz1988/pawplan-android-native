@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
@@ -41,7 +40,7 @@ class TrackerOverviewViewModel @Inject constructor(
     private val appointmentRemarkRepository: AppointmentRatingRepository,
     private val incidentReportRepository: IncidentReportRepository,
     private val dogRepository: DogRepository,
-    private val trackerSessionRepository: WalkingTrackerSessionRepository,
+    private val appointmentSessionRepository: WalkingTrackerSessionRepository,
     private val trackerSessionStateHolder: WalkingTrackerStateHolder
 ) : ViewModel() {
 
@@ -118,117 +117,87 @@ class TrackerOverviewViewModel @Inject constructor(
         trackerSessionStateHolder.updateSession(null)
     }
 
-    private val _confirmedStatusSubscription =
-        appointmentStatusRepository.createSubscriptionFilteredByStatus(
-            listOf(AppointmentStatusType.CONFIRMED)
-        )
-    private val _completedStatusSubscription =
-        appointmentStatusRepository.createSubscriptionFilteredByStatus(
-            listOf(AppointmentStatusType.COMPLETED)
-        )
-
-    private val _appointmentSubscription = appointmentRepository.createSubscription()
-
-    private val _remarkSubscription = appointmentRemarkRepository.createSubscription()
-    private val _dogSubscription = dogRepository.createSubscription()
-    private val _sessionSubscription = trackerSessionRepository.createSubscription()
-
-    private val _confirmedStatusFlow = userRepository.userProfileFlow
+    private val _nextAppointmentFlow = userRepository.userProfile
         .flatMapLatest { userProfile ->
-            userProfile?.let {
-                _confirmedStatusSubscription.registerListener(it.id)
-            }
-            _confirmedStatusSubscription.values
+            if (userProfile == null)
+                return@flatMapLatest flowOf(emptyList())
+
+            appointmentStatusRepository.observeVolunteerStatus(
+                userProfile.id,
+                listOf(AppointmentStatusType.CONFIRMED)
+            )
         }
-        .onEach { statuses ->
-            statuses.values.forEach { status ->
-                _appointmentSubscription.registerListener(status.appointmentId)
-                _remarkSubscription.registerListener(status.appointmentId)
-                _dogSubscription.registerListener(status.dogId)
-                _sessionSubscription.registerListener(status.appointmentId)
+        .flatMapLatest { statuses ->
+            if (statuses.isEmpty())
+                return@flatMapLatest flowOf(null)
+
+            combine(
+                appointmentRepository.observeAppointments(statuses.map { it.appointmentId }),
+                appointmentSessionRepository.observeSessions(statuses.map { it.appointmentId }),
+                dogRepository.observeDogs(statuses.map { it.dogId })
+            ) { appointments, sessions, dogs ->
+                statuses.filter { appointments.containsKey(it.appointmentId) && dogs.containsKey(it.dogId) }
+                    .map { appointmentStatus ->
+                        val appointment = appointments[appointmentStatus.appointmentId]!!
+                        val appointmentSession = sessions[appointmentStatus.appointmentId]
+
+                        val dog = dogs[appointmentStatus.dogId]!!
+                        TrackerAppointmentData(
+                            appointment.id,
+                            appointment,
+                            appointmentStatus,
+                            dog,
+                            null,
+                            appointmentSession
+                        )
+                    }.minByOrNull { it.appointment.date }
             }
         }
-
-    private val _completedStatusFlow = userRepository.userProfileFlow
-        .flatMapLatest { userProfile ->
-            userProfile?.let {
-                _completedStatusSubscription.registerListener(it.id)
-            }
-            _completedStatusSubscription.values
-        }
-        .onEach { statuses ->
-            statuses.values.forEach { status ->
-                _appointmentSubscription.registerListener(status.appointmentId)
-                _remarkSubscription.registerListener(status.appointmentId)
-                _dogSubscription.registerListener(status.dogId)
-                _sessionSubscription.registerListener(status.appointmentId)
-            }
-        }
-
-    private val _appointmentFlow = _appointmentSubscription.values
-
-    private val _remarkFlow = _remarkSubscription.values
-    private val _dogFlow = _dogSubscription.values
-    private val _sessionFlow = _sessionSubscription.values
-
-    private val _nextAppointmentFlow = combine(
-        _confirmedStatusFlow,
-        _appointmentFlow,
-        _dogFlow,
-        _sessionFlow
-    ) { status, appointments, dogs, sessions ->
-        status.values
-            .filter { appointments.containsKey(it.appointmentId) && dogs.containsKey(it.dogId) }
-            .map { appointmentStatus ->
-                val appointment = appointments[appointmentStatus.appointmentId]!!
-                val dog = dogs[appointmentStatus.dogId]!!
-                val trackingSession = sessions[appointmentStatus.id]
-
-                TrackerAppointmentData(
-                    appointment.id,
-                    appointment,
-                    appointmentStatus,
-                    null,
-                    dog,
-                    trackingSession
-                )
-            }
-            .minByOrNull { it.appointment.date }
-    }
     val nextAppointment = _nextAppointmentFlow.asLiveData()
 
-    private val _completedAppointmentFlow = combine(
-        _completedStatusFlow,
-        _appointmentFlow,
-        _remarkFlow,
-        _dogFlow,
-        _sessionFlow
-    ) { status, appointments, remark, dogs, sessions ->
-        status.values
-            .filter {
-                appointments.containsKey(it.appointmentId)
-                    && remark.containsKey(it.appointmentId)
-                    && dogs.containsKey(it.dogId)
-                    && sessions.containsKey(it.appointmentId)
-            }
-            .map { appointmentStatus ->
-                val appointment = appointments[appointmentStatus.appointmentId]!!
-                val dog = dogs[appointmentStatus.dogId]!!
-                val appointmentRating = remark[appointmentStatus.id]!!
-                val trackingSession = sessions[appointmentStatus.id]
+    private val _completedAppointmentsFlow = userRepository.userProfile
+        .flatMapLatest { userProfile ->
+            if (userProfile == null)
+                return@flatMapLatest flowOf(emptyList())
 
-                TrackerAppointmentData(
-                    appointment.id,
-                    appointment,
-                    appointmentStatus,
-                    appointmentRating,
-                    dog,
-                    trackingSession
-                )
+            appointmentStatusRepository.observeVolunteerStatus(
+                userProfile.id,
+                listOf(AppointmentStatusType.COMPLETED)
+            )
+        }
+        .flatMapLatest { statuses ->
+            if (statuses.isEmpty())
+                return@flatMapLatest flowOf(emptyList())
+
+            combine(
+                appointmentRepository.observeAppointments(statuses.map { it.appointmentId }),
+                appointmentRemarkRepository.observeRatings(statuses.map { it.appointmentId }),
+                appointmentSessionRepository.observeSessions(statuses.map { it.appointmentId }),
+                dogRepository.observeDogs(statuses.map { it.dogId })
+            ) { appointments, ratings, sessions, dogs ->
+                statuses.filter { appointments.containsKey(it.appointmentId)
+                    && ratings.containsKey(it.appointmentId)
+                    && sessions.containsKey(it.appointmentId)
+                    && dogs.containsKey(it.dogId)
+                }.map { appointmentStatus ->
+                    val appointment = appointments[appointmentStatus.appointmentId]!!
+                    val appointmentRating = ratings[appointmentStatus.appointmentId]!!
+                    val appointmentSession = sessions[appointmentStatus.appointmentId]!!
+                    val dog = dogs[appointmentStatus.dogId]!!
+
+                    TrackerAppointmentData(
+                        appointment.id,
+                        appointment,
+                        appointmentStatus,
+                        dog,
+                        appointmentRating,
+                        appointmentSession
+                    )
+                }
+                    .sortedByDescending { it.appointment.date }
             }
-            .sortedByDescending { it.appointment.date }
-    }
-    val completedAppointments = _completedAppointmentFlow.asLiveData()
+        }
+    val completedAppointments = _completedAppointmentsFlow.asLiveData()
 
     val trackingSession = trackerSessionStateHolder.session.asLiveData()
 
@@ -261,8 +230,9 @@ class TrackerOverviewViewModel @Inject constructor(
         .map { state -> state == WalkingTrackerState.Started }
         .asLiveData()
 
+    val userProfile = userRepository.userProfile.asLiveData()
     suspend fun completeAppointment(status: AppointmentStatus) {
-        val userProfile = userRepository.getUserProfile()
+        val userProfile = userProfile.value
             ?: return
 
         val status = status.copy(
@@ -273,14 +243,5 @@ class TrackerOverviewViewModel @Inject constructor(
         appointmentStatusRepository.updateStatus(status)
             .onSuccess { Log.d("TrackerRemarkViewModel", "Status created") }
             .onFailure { Log.d("TrackerRemarkViewModel", "Status creation failed", it) }
-    }
-
-    override fun onCleared() {
-        _confirmedStatusSubscription.close()
-        _completedStatusSubscription.close()
-        _appointmentSubscription.close()
-        _remarkSubscription.close()
-        _dogSubscription.close()
-        _sessionSubscription.close()
     }
 }

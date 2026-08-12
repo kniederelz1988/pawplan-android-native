@@ -8,6 +8,7 @@ data class UserProfile(
 
     var name: String = "",
     var phoneNumber: String = "",
+    var imageUrl: String = "",
 
     var birthday: LocalDate = LocalDate.now(),
     var volunteerSince: LocalDate = LocalDate.now(),

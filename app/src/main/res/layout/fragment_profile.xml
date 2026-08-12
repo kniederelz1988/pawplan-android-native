@@ -40,32 +40,59 @@
                 android:layout_height="256dp"
                 android:background="@drawable/profile_gradient">
 
-                <TextView
-                    android:id="@+id/initialsText"
-                    style="@style/TextAppearance.Material3.DisplaySmall.Emphasized"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/initialsLayout"
                     android:layout_width="96dp"
                     android:layout_height="96dp"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/circleshape"
-                    android:gravity="center"
-                    android:text="@string/profile_initial_text"
-                    android:textColor="@color/md_theme_onPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/initialsImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/profile_initial_text"
+                        android:padding="4dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/dog_placeholder"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Round50Percent"
+                        app:strokeColor="@color/md_theme_outline"
+                        app:strokeWidth="4dp"
+                        app:tint="@color/md_theme_onSecondaryVariant"
+                        app:tintMode="multiply" />
+
+                    <TextView
+                        android:id="@+id/initialsText"
+                        style="@style/TextAppearance.Material3.DisplaySmall.Emphasized"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        android:text="@string/profile_initial_text"
+                        android:textColor="@color/md_theme_onSecondary"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/nameText"
                     style="@style/TextAppearance.Material3.HeadlineMedium.Emphasized"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:gravity="center"
                     android:text="@string/profile_name_text"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/initialsText" />
+                    app:layout_constraintTop_toBottomOf="@+id/initialsLayout" />
 
                 <TextView
                     android:id="@+id/emailText"

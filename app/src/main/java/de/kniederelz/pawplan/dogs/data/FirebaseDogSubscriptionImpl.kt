@@ -3,9 +3,7 @@ package de.kniederelz.pawplan.dogs.data
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import de.kniederelz.pawplan.core.RepositorySubscription
-import de.kniederelz.pawplan.dogs.data.sources.extensions.toDomain
 import de.kniederelz.pawplan.dogs.domain.Dog
-import de.kniederelz.pawplan.dogs.domain.DogSubscription
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 

@@ -1,7 +1,7 @@
 package de.kniederelz.pawplan.user.data
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import de.kniederelz.pawplan.dogs.domain.Dog
 import de.kniederelz.pawplan.user.data.extensions.toDomain
@@ -11,18 +11,21 @@ import de.kniederelz.pawplan.user.domain.UserFavorites
 import de.kniederelz.pawplan.user.domain.UserProfile
 import de.kniederelz.pawplan.user.domain.UserRepository
 import de.kniederelz.pawplan.user.domain.UserRole
+import de.kniederelz.pawplan.user.domain.UserRoleType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class FirestoreUserRepositoryImpl(
     private val firebaseAuth: FirebaseAuth,
@@ -33,8 +36,6 @@ class FirestoreUserRepositoryImpl(
         private const val VOLUNTEERS_ROLE_COLLECTION = "volunteerRoles"
         private const val FAVORITES_COLLECTION = "volunteerDogLikes"
     }
-
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val _user = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener { auth ->
@@ -49,117 +50,132 @@ class FirestoreUserRepositoryImpl(
         }
     }
 
-    private val _userProfile = _user
-        .flatMapLatest { user ->
-            user?.let { getProfile(it.uid) }
-                ?: flowOf(UserProfile())
-        }
-        .onEach { Log.d("FirestoreUserRepository", "Profile: $it") }
-        .stateIn(scope,SharingStarted.WhileSubscribed(5000), null)
-    override val userProfileFlow: StateFlow<UserProfile?> = _userProfile
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    private val _userRole = _userProfile
+    override val userProfile = _user
+        .flatMapLatest { user -> observeProfile(user) }
+        .stateIn(scope, SharingStarted.Eagerly, null)
+
+    override val userRole = userProfile
         .flatMapLatest { userProfile ->
-            userProfile?.let { getRole(it.id) }
-                ?: flowOf(UserRole.OBSERVER)
-        }
-        .onEach { Log.d("FirestoreUserRepository", "Role: $it") }
-        .stateIn(scope, SharingStarted.WhileSubscribed(5000),UserRole.OBSERVER)
-    override val userRoleFlow: StateFlow<UserRole> = _userRole
+            if (userProfile == null)
+                return@flatMapLatest flowOf(UserRoleType.OBSERVER)
 
-    private val _userFavorites = _userProfile
+            observeRole(userProfile.id)
+        }
+        .stateIn(scope, SharingStarted.Eagerly, UserRoleType.OBSERVER)
+    override val userFavorites = userProfile
         .flatMapLatest { userProfile ->
-            userProfile?.let { getFavorites(it.id)}
-                ?: flowOf(UserFavorites())
+            if (userProfile == null)
+                return@flatMapLatest flowOf(UserFavorites())
+
+            observeFavorites(userProfile.id)
         }
-        .onEach { Log.d("FirestoreUserRepository", "Favs: $it") }
-        .stateIn(scope, SharingStarted.WhileSubscribed(5000), UserFavorites())
-    override val userFavoritesFlow: StateFlow<UserFavorites> = _userFavorites
+        .stateIn(scope, SharingStarted.Eagerly, UserFavorites())
 
-    private val profileNameCache = mutableMapOf<String, String>()
-    override suspend fun getProfileName(volunteerId: String): String {
-        if (profileNameCache.contains(volunteerId))
-            return profileNameCache[volunteerId] ?: ""
+    private fun observeProfile(user: FirebaseUser?) = callbackFlow {
+        if (user == null) {
+            trySend(null)
 
-        val snapshot = firestore
-            .collection(VOLUNTEERS_COLLECTION)
-            .document(volunteerId)
-            .get()
-            .await()
+            awaitClose {  }
+            return@callbackFlow
+        }
 
-        val name = snapshot.getString("name") ?: ""
-        profileNameCache[volunteerId] = name
-
-        return name
-    }
-
-    private fun getProfile(userId: String) = callbackFlow {
         val registration = firestore
             .collection(VOLUNTEERS_COLLECTION)
-            .whereEqualTo("userId", userId)
+            .whereEqualTo("userId", user.uid)
             .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    trySend(UserProfile())
+                if (error != null || snapshot == null) {
+                    close(error)
                     return@addSnapshotListener
                 }
 
-                if (snapshot == null || snapshot.size() != 1){
-                    trySend(UserProfile())
+                if (snapshot.size() != 1){
+                    trySend(null)
                     return@addSnapshotListener
                 }
 
                 val userProfile = snapshot.documents.firstOrNull()?.let {
                     it.toObject(FirebaseUserProfileDto::class.java)
                         ?.toDomain(it.id)
-                } ?: UserProfile()
+                }
 
-                val result = trySend(userProfile)
-                Log.e("FirestoreUserRepository Profile", "Result: ${result.isSuccess}")
+                trySend(userProfile)
             }
 
         awaitClose {
             registration.remove()
         }
     }
-    override suspend fun updateProfile(userId: String, user: UserProfile): Result<Unit> {
-        firestore
-            .collection(VOLUNTEERS_COLLECTION)
-            .document(user.id)
-            .set(user.toDto())
-            .await()
 
-        return Result.success(Unit)
+    override suspend fun observeProfiles(profileIds: List<String>): Flow<Map<String, UserProfile>> {
+        return combine(
+            profileIds.map { profileId -> observeProfile(profileId) }
+        ) { userProfiles ->
+            userProfiles.associateBy { it.id }
+        }
+    }
+    override suspend fun observeProfile(profileId: String) = callbackFlow {
+        if (profileId.isEmpty()) {
+            trySend(UserProfile())
+
+            awaitClose {  }
+            return@callbackFlow
+        }
+        val registration = firestore
+            .collection(VOLUNTEERS_COLLECTION)
+            .document(profileId)
+            .addSnapshotListener { snapshot, exception ->
+                if (exception != null || snapshot == null) {
+                    close(exception)
+                    return@addSnapshotListener
+                }
+
+                val userProfile = snapshot.toObject(FirebaseUserProfileDto::class.java)
+                    ?.toDomain(snapshot.id) ?: UserProfile()
+                trySend(userProfile)
+            }
+
+        awaitClose {
+            registration.remove()
+        }
     }
 
-    private fun getRole(profileId: String) = callbackFlow {
+    private fun observeRole(profileId: String) = callbackFlow {
+        if (profileId.isEmpty()) {
+            trySend(UserRoleType.OBSERVER)
+
+            awaitClose {  }
+            return@callbackFlow
+        }
+
         val registration = firestore
             .collection(VOLUNTEERS_ROLE_COLLECTION)
             .document(profileId)
             .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    trySend(UserRole.OBSERVER)
+                if (error != null || snapshot == null) {
+                    close(error)
                     return@addSnapshotListener
                 }
 
-                if (snapshot == null) {
-                    trySend(UserRole.OBSERVER)
-                    return@addSnapshotListener
-                }
+                val userRole = snapshot.toObject(FirebaseUserRoleDto::class.java)
+                    ?.toDomain(snapshot.id)
 
-                val userRoleDto = snapshot.toObject(FirebaseUserRoleDto::class.java)
-                Log.e("FirestoreUserRepository Role", "Result: $userRoleDto")
-
-                val userRole = userRoleDto?.toDomain() ?: UserRole.OBSERVER
-
-                val result = trySend(userRole)
-                Log.e("FirestoreUserRepository Role", "Result: ${result.isSuccess} -> $userRole")
+                trySend(userRole?.role ?: UserRoleType.OBSERVER)
             }
 
         awaitClose {
             registration.remove()
         }
     }
-    private fun getFavorites(profileId: String) = callbackFlow {
+    private fun observeFavorites(profileId: String) = callbackFlow {
+        if (profileId.isEmpty()) {
+            trySend(UserFavorites())
+
+            awaitClose {  }
+            return@callbackFlow
+        }
+
         val registration = firestore
             .collection(FAVORITES_COLLECTION)
             .whereEqualTo("volunteerId", profileId)
@@ -187,24 +203,108 @@ class FirestoreUserRepositoryImpl(
         }
     }
 
-    override suspend fun createFavorite(user: UserProfile, dog: Dog): Result<Unit> {
-        firestore
-            .collection(FAVORITES_COLLECTION)
-            .add(FirebaseUserFavoriteDto(dog.id, user.id))
-            .await()
+    override suspend fun createProfile(userProfile: UserProfile): Result<String> {
+        if (!userProfile.id.isEmpty())
+            return Result.failure(IllegalArgumentException("Profile has ID"))
 
-        return Result.success(Unit)
+        return withContext(NonCancellable) {
+            try {
+                val result = firestore
+                    .collection(VOLUNTEERS_COLLECTION)
+                    .add(userProfile.toDto())
+                    .await()
+
+                Result.success(result.id)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+    override suspend fun updateProfile(userProfile: UserProfile): Result<Unit> {
+        if (userProfile.id.isEmpty())
+            return Result.failure(IllegalArgumentException("Profile has no ID"))
+
+        return withContext(NonCancellable) {
+            try {
+                firestore
+                    .collection(VOLUNTEERS_COLLECTION)
+                    .document(userProfile.id)
+                    .set(userProfile.toDto())
+                    .await()
+
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
+    override suspend fun createRole(userRole: UserRole): Result<String> {
+        if (!userRole.id.isEmpty())
+            return Result.failure(IllegalArgumentException("Profile has ID"))
+
+        return withContext(NonCancellable) {
+            try {
+                val result = firestore
+                    .collection(VOLUNTEERS_ROLE_COLLECTION)
+                    .add(userRole.toDto())
+                    .await()
+
+                Result.success(result.id)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+    override suspend fun updateRole(userRole: UserRole): Result<Unit> {
+        if (userRole.id.isEmpty())
+            return Result.failure(IllegalArgumentException("Profile has no ID"))
+
+        return withContext(NonCancellable) {
+            try {
+                val result = firestore
+                    .collection(VOLUNTEERS_ROLE_COLLECTION)
+                    .document(userRole.id)
+                    .set(userRole.toDto())
+                    .await()
+
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
+    override suspend fun createFavorite(userProfile: UserProfile, dog: Dog): Result<Unit> {
+        return withContext(NonCancellable) {
+            try {
+                firestore
+                    .collection(FAVORITES_COLLECTION)
+                    .add(FirebaseUserFavoriteDto(dog.id, userProfile.id))
+                    .await()
+
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
     }
     override suspend fun deleteFavorite(fav: UserFavorite): Result<Unit> {
-        if (fav.id == null)
-            return Result.failure(IllegalArgumentException("Favorite has no ID"))
+        return withContext(NonCancellable) {
+            try {
+                if (fav.id == null)
+                    return@withContext Result.failure(IllegalArgumentException("Favorite has no ID"))
 
-        firestore
-            .collection(FAVORITES_COLLECTION)
-            .document(fav.id)
-            .delete()
-            .await()
+                firestore
+                    .collection(FAVORITES_COLLECTION)
+                    .document(fav.id)
+                    .delete()
+                    .await()
 
-        return Result.success(Unit)
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
     }
 }

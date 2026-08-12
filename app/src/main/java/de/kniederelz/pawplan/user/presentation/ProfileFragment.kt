@@ -10,6 +10,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import coil3.load
+import coil3.request.crossfade
+import coil3.request.error
+import coil3.request.placeholder
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.R
@@ -59,30 +63,31 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                profileViewModel.userProfile.collect { profile ->
-                    val curProfile = profile ?: UserProfile()
+        profileViewModel.userProfile.observe(viewLifecycleOwner) { it ->
+            it?.let { profile ->
+                birthday = profile.birthday
 
-                    birthday = curProfile.birthday
+                binding.initialsText.text = profile.name.initials()
 
-                    binding.initialsText.text = curProfile.name.initials()
+                binding.nameText.text = profile.name
+                binding.nameInput.setText(profile.name)
 
-                    binding.nameText.text = curProfile.name
-                    binding.nameInput.setText(curProfile.name)
+                binding.phoneInput.setText(profile.phoneNumber)
 
-                    binding.phoneInput.setText(curProfile.phoneNumber)
-                    binding.birthdayInput.setText(curProfile.birthday.format(dateFormatter))
-                    binding.volunteerSinceInput.setText(curProfile.volunteerSince.format(dateFormatter))
+                binding.initialsImage.load(profile.imageUrl) {
+                    placeholder(R.drawable.dog_placeholder)
+                    error(R.drawable.dog_placeholder)
+                    crossfade(true)
                 }
+
+                binding.birthdayInput.setText(profile.birthday.format(dateFormatter))
+                binding.volunteerSinceInput.setText(profile.volunteerSince.format(dateFormatter))
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                profileViewModel.userRole.collect { role ->
-                    binding.roleBadge.applyRole(requireContext(), role)
-                }
+        profileViewModel.userRole.observe(viewLifecycleOwner) {
+            it?.let { role ->
+                binding.roleBadge.applyRole(requireContext(), role)
             }
         }
 
@@ -101,19 +106,19 @@ class ProfileFragment : Fragment() {
         }
 
         binding.logoutButton.setOnClickListener {
-            authViewModel.logout()
+            lifecycleScope.launch {
+                authViewModel.logout()
+            }
         }
         binding.editButton.setOnClickListener {
             val curProfile = profileViewModel.userProfile.value
                 ?: return@setOnClickListener
 
-            val userProfile = UserProfile(
-                curProfile.id,
-                curProfile.userId,
-                binding.nameInput.text.toString(),
-                binding.phoneInput.text.toString(),
-                birthday,
-                curProfile.volunteerSince
+            val userProfile = curProfile.copy(
+                name = binding.nameInput.text.toString(),
+                phoneNumber = binding.phoneInput.text.toString(),
+
+                birthday = birthday
             )
 
             profileViewModel.updateProfile(userProfile)

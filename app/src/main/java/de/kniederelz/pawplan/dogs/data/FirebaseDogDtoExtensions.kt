@@ -1,8 +1,7 @@
-package de.kniederelz.pawplan.dogs.data.sources.extensions
+package de.kniederelz.pawplan.dogs.data
 
 import androidx.core.net.toUri
 import de.kniederelz.pawplan.core.extensions.toLocalDate
-import de.kniederelz.pawplan.dogs.data.FirebaseDogDto
 import de.kniederelz.pawplan.dogs.domain.Dog
 import de.kniederelz.pawplan.dogs.domain.DogGender
 import de.kniederelz.pawplan.dogs.domain.DogSize

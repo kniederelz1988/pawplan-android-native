@@ -24,7 +24,6 @@ import de.kniederelz.pawplan.tracking.presentation.report.TrackerReportFragment
 import de.kniederelz.pawplan.tracking.repositories.base.domain.LatLngTime
 import de.kniederelz.pawplan.tracking.services.WalkingTrackerServiceController
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -152,7 +151,7 @@ class TrackerOverviewFragment : Fragment() {
                     TrackerAppointmentAdapter(
                         appointmentData.take(3),
                         {
-                            val session = it.trackingSession
+                            val session = it.appointmentSession
                                 ?: return@TrackerAppointmentAdapter
 
                             if (viewModel.canInspectSession.value == false) {

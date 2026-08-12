@@ -21,8 +21,6 @@ data class Dog(
     val adoptionDateValid: Boolean,
     val adoptionDate: LocalDate?,
 
-    var isFavorite: Boolean = false,
-    var statistics: AppointmentRatingStatistics? = null
 ) {
     companion object {
         val EMPTY = Dog(

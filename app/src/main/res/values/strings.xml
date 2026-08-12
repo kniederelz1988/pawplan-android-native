@@ -73,6 +73,7 @@
     <string name="wtp_walkduration">%1$d h %2$dm</string>
 
     <string name="wtp_remark_caption">Submit remark for %1$s</string>
+    <string name="wtp_remark_emptyerror">Please enter a comment</string>
 
     <string name="wtp_remark_rating1">1</string>
     <string name="wtp_remark_rating2">2</string>

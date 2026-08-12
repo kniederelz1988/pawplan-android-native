@@ -2,17 +2,19 @@ package de.kniederelz.pawplan.dogs.representation.remarks.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.kniederelz.pawplan.core.extensions.dateFormatter
-import de.kniederelz.pawplan.core.utils.RatingDiff
 import de.kniederelz.pawplan.databinding.FragmentDogsRemarkItemBinding
 import de.kniederelz.pawplan.core.ui.extensions.setRating
-import de.kniederelz.pawplan.dogs.representation.remarks.DogsRemarksViewModel
+import de.kniederelz.pawplan.dogs.representation.remarks.AppointmentRatingData
 
-class DogsRemarksAdapter : PagingDataAdapter<DogsRemarksViewModel.AppointmentRatingData, DogsRemarksAdapter.RatingsViewHolder>(
-    RatingDiff
-) {
+class DogsRemarksAdapter(
+    private val remarks: List<AppointmentRatingData>
+) : RecyclerView.Adapter<DogsRemarksAdapter.RatingsViewHolder>() {
+
+    override fun getItemCount(): Int {
+        return remarks.size
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RatingsViewHolder {
         val binding = FragmentDogsRemarkItemBinding.inflate(
@@ -25,8 +27,8 @@ class DogsRemarksAdapter : PagingDataAdapter<DogsRemarksViewModel.AppointmentRat
     }
 
     override fun onBindViewHolder(holder: RatingsViewHolder, position: Int) {
-        getItem(position)?.let { data ->
-            holder.binding.remarkNameLabel.text = data.volunteerName
+        remarks[position].let { data ->
+            holder.binding.remarkNameLabel.text = data.userProfile.name
             holder.binding.remarkDateLabel.text = data.rating.updateAt.format(dateFormatter)
             holder.binding.remarkLabel.text = data.rating.comment
 

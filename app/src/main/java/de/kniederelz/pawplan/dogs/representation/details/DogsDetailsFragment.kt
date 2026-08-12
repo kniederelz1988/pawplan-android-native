@@ -25,7 +25,6 @@ import de.kniederelz.pawplan.core.ui.extensions.setRating
 import de.kniederelz.pawplan.core.ui.extensions.setSize
 import de.kniederelz.pawplan.ui.extensions.setStatisticsAverage
 import de.kniederelz.pawplan.ui.extensions.setStatisticsCount
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -38,13 +37,19 @@ class DogsDetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentDogsDetailsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         binding.favButton.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.dog.firstOrNull()?.let { dog ->
-                    viewModel.toggleDogFavorite(dog )
-                }
+            lifecycleScope.launch {
+                val dog = viewModel.dogDetails.value?.dog
+                    ?: return@launch
+
+                viewModel.toggleDogFavorite(dog)
             }
         }
         binding.ratingButton.setOnClickListener {
@@ -69,40 +74,32 @@ class DogsDetailsFragment : Fragment() {
             }.show(childFragmentManager, AppointmentBookingFragment.TAG)
         }
 
-        return binding.root
-    }
+        viewModel.dogDetails.observe(viewLifecycleOwner) { dogDetailData ->
+            dogDetailData ?: return@observe
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.dog.collect { dog ->
-                dog ?: return@collect
-
-                binding.dogNameLabel.text = dog.name
-                binding.dogImageView.load(dog.imageURL) {
-                    placeholder(R.drawable.dog_placeholder)
-                    error(R.drawable.dog_placeholder)
-                    crossfade(true)
-                }
-
-                binding.ageCardValue.setAge(dog.getAge())
-                binding.genderCardImage.setGender(dog.gender)
-                binding.sizeCardImage.setSize(dog.size)
-
-                binding.descriptionValue.text = dog.description
-
-                binding.ratingText.setStatisticsAverage(dog.statistics)
-                binding.ratingText2.setStatisticsCount(dog.statistics)
-
-                binding.ratingStar1Image.setRating((dog.statistics?.average ?: 0f) >= 1f)
-                binding.ratingStar2Image.setRating((dog.statistics?.average ?: 0f) >= 2f)
-                binding.ratingStar3Image.setRating((dog.statistics?.average ?: 0f) >= 3f)
-                binding.ratingStar4Image.setRating((dog.statistics?.average ?: 0f) >= 4f)
-                binding.ratingStar5Image.setRating((dog.statistics?.average ?: 0f) >= 5f)
-
-                binding.favButton.setFavorite(dog.isFavorite)
+            binding.dogNameLabel.text = dogDetailData.dog.name
+            binding.dogImageView.load(dogDetailData.dog.imageURL) {
+                placeholder(R.drawable.dog_placeholder)
+                error(R.drawable.dog_placeholder)
+                crossfade(true)
             }
+
+            binding.ageCardValue.setAge(dogDetailData.dog.getAge())
+            binding.genderCardImage.setGender(dogDetailData.dog.gender)
+            binding.sizeCardImage.setSize(dogDetailData.dog.size)
+
+            binding.descriptionValue.text = dogDetailData.dog.description
+
+            binding.ratingText.setStatisticsAverage(dogDetailData.statistics)
+            binding.ratingText2.setStatisticsCount(dogDetailData.statistics)
+
+            binding.ratingStar1Image.setRating((dogDetailData.statistics?.average ?: 0f) >= 1f)
+            binding.ratingStar2Image.setRating((dogDetailData.statistics?.average ?: 0f) >= 2f)
+            binding.ratingStar3Image.setRating((dogDetailData.statistics?.average ?: 0f) >= 3f)
+            binding.ratingStar4Image.setRating((dogDetailData.statistics?.average ?: 0f) >= 4f)
+            binding.ratingStar5Image.setRating((dogDetailData.statistics?.average ?: 0f) >= 5f)
+
+            binding.favButton.setFavorite(dogDetailData.isFavorite)
         }
     }
 }

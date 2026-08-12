@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.auth.AuthViewModel
 import de.kniederelz.pawplan.databinding.FragmentAuthLoginBinding
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AuthLoginFragment : Fragment() {
@@ -36,7 +38,9 @@ class AuthLoginFragment : Fragment() {
             val email = binding.loginUserNameInput.text.toString()
             val password = binding.loginPasswordInput.text.toString()
 
-            authViewModel.login(email, password)
+            lifecycleScope.launch {
+                authViewModel.login(email, password)
+            }
         }
     }
 }

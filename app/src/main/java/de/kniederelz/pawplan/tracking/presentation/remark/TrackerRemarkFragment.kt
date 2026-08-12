@@ -60,12 +60,16 @@ class TrackerRemarkFragment : BottomSheetDialogFragment() {
         }
 
         binding.submitButton.setOnClickListener { _ ->
+            val appointment = viewModel.getAppointment()
+                ?: return@setOnClickListener
+
+            val comment = binding.remarkDescription.text.toString()
+            if (comment.isBlank()) {
+                binding.remarkDescription.error = getString(R.string.wtp_remark_emptyerror)
+                return@setOnClickListener
+            }
 
             viewLifecycleOwner.lifecycleScope.launch {
-                val appointment = viewModel.getAppointment()
-                    ?: return@launch
-
-                val comment = binding.remarkDescription.text.toString()
                 viewModel.submitRating(appointment,rating, comment)
 
                 dismiss()

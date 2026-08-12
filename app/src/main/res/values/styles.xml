@@ -22,6 +22,7 @@
 
     </style>
 
+
     <!-- Emphasized Text Appearances -->
     <style name="TextAppearance.Material3.TitleLarge.Emphasized" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:textStyle">bold</item>

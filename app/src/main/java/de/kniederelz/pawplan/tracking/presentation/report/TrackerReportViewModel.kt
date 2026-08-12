@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.kniederelz.pawplan.core.extensions.toLocalDate
 import de.kniederelz.pawplan.core.extensions.toLocalTime
@@ -49,8 +50,9 @@ class TrackerReportViewModel @Inject constructor(
         _time.value = t.timestamp.toLocalTime()
     }
 
+    private val userProfile = userRepository.userProfile.asLiveData()
     suspend fun createIncident(description: String) {
-        val userProfile = userRepository.getUserProfile()
+        val userProfile = userProfile.value
             ?: return
 
         val location = _location.value

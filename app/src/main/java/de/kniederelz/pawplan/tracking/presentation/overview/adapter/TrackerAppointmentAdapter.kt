@@ -42,7 +42,7 @@ class TrackerAppointmentAdapter(
     fun setHighlightedSession(session: WalkingTrackerSession?) {
         val index =
             if (session != null)
-                trackerAppointmentData.indexOfFirst { it.trackingSession?.id == session.id }
+                trackerAppointmentData.indexOfFirst { it.appointmentSession?.id == session.id }
             else
                 -1
 
@@ -97,7 +97,7 @@ class TrackerAppointmentAdapter(
                 R.string.wtp_walkduration, 0L, 0L
             )
 
-            appointmentData.trackingSession?.let {
+            appointmentData.appointmentSession?.let {
                 holder.binding.sessionLengthLabel.text = holder.itemView.context.getString(
                     R.string.wtp_walklength,
                     it.getDistance() / 1000

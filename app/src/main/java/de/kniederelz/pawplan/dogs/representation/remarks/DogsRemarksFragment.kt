@@ -22,43 +22,25 @@ class DogsRemarksFragment : Fragment() {
 
     private val viewModel: DogsRemarksViewModel by viewModels()
 
-    private val overviewAdapter: DogsRemarksAdapter = DogsRemarksAdapter()
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDogsRemarksBinding.inflate(inflater, container, false)
-
-        binding.remarksCaption.text = getString(R.string.dog_remarks_caption, "")
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        overviewAdapter.addLoadStateListener { loadState ->
-            val isEmpty =
-                loadState.refresh is LoadState.NotLoading &&
-                        overviewAdapter.itemCount == 0
-
-            binding.noRemarksText.isVisible = isEmpty
-            binding.remarksList.isVisible = !isEmpty
+        viewModel.dog.observe(viewLifecycleOwner) {
+            binding.remarksCaption.text = getString(R.string.dog_remarks_caption, it?.name)
         }
+        viewModel.ratings.observe(viewLifecycleOwner) {
+            binding.noRemarksText.isVisible = it.isEmpty()
+            binding.remarksList.isVisible = it.isNotEmpty()
 
-        binding.remarksList.adapter = overviewAdapter
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.dog.collect {
-                binding.remarksCaption.text = getString(R.string.dog_remarks_caption, it?.name)
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.ratings.collect {
-                overviewAdapter.submitData(it)
-            }
+            binding.remarksList.adapter = DogsRemarksAdapter(it)
         }
     }
 }

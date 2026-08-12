@@ -9,10 +9,10 @@ interface AppointmentRatingRepository {
     suspend fun updateRating(rating: AppointmentRating): Result<String>
 
     fun observeRating(appointmentId: String): Flow<AppointmentRating?>
-    fun observeRatings(dogId: String): Flow<PagingData<AppointmentRating>>
+    fun observeRatings(appointmentIds: List<String>): Flow<Map<String, AppointmentRating>>
 
-    val dogStatistics: Flow<Map<String, AppointmentRatingStatistics>>
-    fun requestDogStatistics(dogId: String): Unit
+    fun observeDogRatings(dogId: String): Flow<List<AppointmentRating>>
 
-    fun createSubscription(): RepositorySubscription<AppointmentRating>
+    fun observeDogStatistics(dogId: String): Flow<AppointmentRatingStatistics?>
+    fun observeDogStatistics(dogIds: List<String>): Flow<Map<String, AppointmentRatingStatistics>>
 }
