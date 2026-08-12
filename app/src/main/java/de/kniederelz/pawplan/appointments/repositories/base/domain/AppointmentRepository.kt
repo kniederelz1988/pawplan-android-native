@@ -9,5 +9,6 @@ interface AppointmentRepository {
     fun observeAppointment(appointmentId: String): Flow<Appointment?>
     fun observeAppointments(appointmentIds: List<String>): Flow<Map<String, Appointment>>
 
+    fun observeAllVolunteerAppointments(volunteerId: String): Flow<List<Appointment>>
     fun observeUpcomingVolunteerAppointments(volunteerId: String): Flow<List<Appointment>>
 }

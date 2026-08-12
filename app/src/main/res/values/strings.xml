@@ -127,12 +127,12 @@
     <string name="bookappointment_submit">Submit request</string>
 
     <string name="profile_caption">Profile</string>
-    <string name="profile_visit_value">47</string>
-    <string name="profile_visit_label">Besuche</string>
-    <string name="profile_distance_value">89 km</string>
-    <string name="profile_distance_label">Gelaufen</string>
-    <string name="profile_fav_value">2</string>
-    <string name="profile_fav_label">Favoriten</string>
+    <string name="profile_visit_value">%1$d</string>
+    <string name="profile_visit_label">Visits</string>
+    <string name="profile_distance_value">%1$.1f km</string>
+    <string name="profile_distance_label">Distance</string>
+    <string name="profile_fav_value">%1$d</string>
+    <string name="profile_fav_label">Favorites</string>
     <string name="profile_logoutButton_desc">Logout</string>
     <string name="profile_saveButton_label">Save</string>
     <string name="profile_initial_text">EI</string>

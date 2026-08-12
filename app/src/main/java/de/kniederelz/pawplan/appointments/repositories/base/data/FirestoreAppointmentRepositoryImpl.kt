@@ -84,6 +84,35 @@ class FirestoreAppointmentRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun observeAllVolunteerAppointments(volunteerId: String) = callbackFlow {
+        val registration = firestore
+            .collection(COLLECTION)
+            .whereEqualTo("volunteerId", volunteerId)
+            .addSnapshotListener { snapshots, error ->
+                if (error != null || snapshots == null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                if (snapshots.isEmpty)
+                {
+                    trySend(emptyList())
+                    return@addSnapshotListener
+                }
+
+                val appointments = snapshots.documents.mapNotNull {
+                    it.toObject(FirebaseAppointmentDto::class.java)
+                        ?.toDomain(it.id)
+                }
+
+                trySend(appointments)
+            }
+
+        awaitClose {
+            registration.remove()
+        }
+    }
+
     override fun observeUpcomingVolunteerAppointments(volunteerId: String) = callbackFlow {
         val registration = firestore
             .collection(COLLECTION)

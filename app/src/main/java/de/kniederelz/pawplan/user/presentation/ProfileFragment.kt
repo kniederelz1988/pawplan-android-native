@@ -40,6 +40,15 @@ class ProfileFragment : Fragment() {
     ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
         binding.roleBadge.background.mutate()
+        binding.visitCountLabel.text = getString(
+            R.string.profile_visit_value, 0
+        )
+        binding.distanceCountLabel.text = getString(
+            R.string.profile_distance_value, 0.0
+        )
+        binding.favCountLabel.text = getString(
+            R.string.profile_fav_value, 0
+        )
 
         return binding.root
     }
@@ -82,10 +91,23 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        profileViewModel.userRole.observe(viewLifecycleOwner) {
-            it?.let { role ->
-                binding.roleBadge.applyRole(requireContext(), role)
-            }
+        profileViewModel.userRole.observe(viewLifecycleOwner) { role ->
+            binding.roleBadge.applyRole(requireContext(), role)
+        }
+
+        profileViewModel.userStatistics.observe(viewLifecycleOwner) { stats ->
+            binding.visitCountLabel.text = getString(
+                R.string.profile_visit_value,
+                stats.appointmentCount
+            )
+            binding.distanceCountLabel.text = getString(
+                R.string.profile_distance_value,
+                stats.trackedDistance
+            )
+            binding.favCountLabel.text = getString(
+                R.string.profile_fav_value,
+                stats.favoriteCount
+            )
         }
 
         binding.birthdayInput.setOnClickListener {
