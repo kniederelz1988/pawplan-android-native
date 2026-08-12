@@ -53,7 +53,7 @@ class AppointmentBookingViewModel @Inject constructor(
                 type = AppointmentType.WALK
             )
             appointmentRepository.createAppointment(appointment)
-                .onSuccess {
+                .onSuccess { it ->
                     Log.d(
                         "AppointmentBookingViewModel",
                         "Appointment created $it"

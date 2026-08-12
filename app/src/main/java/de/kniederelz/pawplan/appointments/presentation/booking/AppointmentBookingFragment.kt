@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import coil3.load
 import coil3.request.crossfade
 import coil3.request.error
@@ -25,7 +24,6 @@ import de.kniederelz.pawplan.core.extensions.roundToFiveMinutes
 import de.kniederelz.pawplan.core.extensions.timeFormatter
 import de.kniederelz.pawplan.core.extensions.toLocalDate
 import de.kniederelz.pawplan.databinding.FragmentAppointmentBookingBinding
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime

@@ -11,6 +11,7 @@ import de.kniederelz.pawplan.appointments.repositories.ratings.domain.Appointmen
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatus
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusRepository
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
+import de.kniederelz.pawplan.core.time.ClockProvider
 import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.tracking.repositories.TrackerAppointmentData
 import de.kniederelz.pawplan.tracking.repositories.location.domain.LocationRepository
@@ -41,7 +42,8 @@ class TrackerOverviewViewModel @Inject constructor(
     private val incidentReportRepository: IncidentReportRepository,
     private val dogRepository: DogRepository,
     private val appointmentSessionRepository: WalkingTrackerSessionRepository,
-    private val trackerSessionStateHolder: WalkingTrackerStateHolder
+    private val trackerSessionStateHolder: WalkingTrackerStateHolder,
+    private val clockProvider: ClockProvider
 ) : ViewModel() {
 
     val routePath = combine(
@@ -173,8 +175,9 @@ class TrackerOverviewViewModel @Inject constructor(
                 appointmentRepository.observeAppointments(statuses.map { it.appointmentId }),
                 appointmentRemarkRepository.observeRatings(statuses.map { it.appointmentId }),
                 appointmentSessionRepository.observeSessions(statuses.map { it.appointmentId }),
-                dogRepository.observeDogs(statuses.map { it.dogId })
-            ) { appointments, ratings, sessions, dogs ->
+                dogRepository.observeDogs(statuses.map { it.dogId }),
+                clockProvider.now
+            ) { appointments, ratings, sessions, dogs, _ ->
                 statuses.filter { appointments.containsKey(it.appointmentId)
                     && ratings.containsKey(it.appointmentId)
                     && sessions.containsKey(it.appointmentId)

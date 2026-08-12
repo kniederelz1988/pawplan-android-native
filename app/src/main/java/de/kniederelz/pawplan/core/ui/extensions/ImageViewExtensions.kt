@@ -4,7 +4,7 @@ import android.widget.ImageView
 import androidx.appcompat.content.res.AppCompatResources
 import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.dogs.domain.DogGender
-import de.kniederelz.pawplan.dogs.domain.DogSize
+import de.kniederelz.pawplan.dogs.domain.DogSizeType
 
 fun ImageView.setRating(isRated: Boolean) {
     imageTintList = if (isRated) {
@@ -34,19 +34,19 @@ fun ImageView.setGender(gender: DogGender) {
         }
     }
 }
-fun ImageView.setSize(size: DogSize) {
+fun ImageView.setSize(size: DogSizeType) {
     when (size) {
-        DogSize.SMALL -> {
+        DogSizeType.SMALL -> {
             setImageResource(R.drawable.ic_size_small)
             contentDescription = context.getString(R.string.dog_size_small)
         }
 
-        DogSize.MEDIUM -> {
+        DogSizeType.MEDIUM -> {
             setImageResource(R.drawable.ic_size_medium)
             contentDescription = context.getString(R.string.dog_size_medium)
         }
 
-        DogSize.LARGE -> {
+        DogSizeType.LARGE -> {
             setImageResource(R.drawable.ic_size_large)
             contentDescription = context.getString(R.string.dog_size_large)
         }

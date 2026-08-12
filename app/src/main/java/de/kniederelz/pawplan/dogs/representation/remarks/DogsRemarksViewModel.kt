@@ -7,8 +7,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingRepository
 import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.user.domain.UserRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
 import javax.inject.Inject

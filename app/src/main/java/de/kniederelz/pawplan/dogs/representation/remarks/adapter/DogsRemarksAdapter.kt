@@ -40,7 +40,7 @@ class DogsRemarksAdapter(
         }
     }
 
-    inner class RatingsViewHolder(val binding: FragmentDogsRemarkItemBinding)
+    class RatingsViewHolder(val binding: FragmentDogsRemarkItemBinding)
         : RecyclerView.ViewHolder(binding.root)
 }
 

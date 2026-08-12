@@ -1,9 +1,9 @@
-package de.kniederelz.pawplan.tracking.presentation.remark
+package de.kniederelz.pawplan.appointments.presentation.remark
 
 import de.kniederelz.pawplan.appointments.repositories.base.domain.Appointment
 import de.kniederelz.pawplan.dogs.domain.Dog
 
-data class TrackerRemarkAppointmentData(
+data class AppointmentRatingData(
     val appointment: Appointment,
     val dog: Dog
 )

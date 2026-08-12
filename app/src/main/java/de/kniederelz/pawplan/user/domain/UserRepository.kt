@@ -15,9 +15,8 @@ interface UserRepository {
     suspend fun createProfile(userProfile: UserProfile): Result<String>
     suspend fun updateProfile(userProfile: UserProfile): Result<Unit>
 
-    suspend fun createRole(userRole: UserRole): Result<String>
     suspend fun updateRole(userRole: UserRole): Result<Unit>
 
     suspend fun createFavorite(userProfile: UserProfile, dog: Dog) : Result<Unit>
-    suspend fun deleteFavorite(fav: UserFavorite) : Result<Unit>
+    suspend fun deleteFavorite(userFavorite: UserFavorite) : Result<Unit>
 }

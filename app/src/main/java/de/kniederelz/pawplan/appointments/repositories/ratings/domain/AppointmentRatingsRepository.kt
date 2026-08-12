@@ -1,7 +1,5 @@
 package de.kniederelz.pawplan.appointments.repositories.ratings.domain
 
-import androidx.paging.PagingData
-import de.kniederelz.pawplan.core.RepositorySubscription
 import kotlinx.coroutines.flow.Flow
 
 interface AppointmentRatingRepository {

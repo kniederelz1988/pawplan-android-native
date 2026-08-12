@@ -123,6 +123,6 @@ class TrackerAppointmentAdapter(
         holder.binding.root.setOnClickListener(null)
     }
 
-    inner class AppointmentViewHolder(val binding: FragmentTrackerAppointmentBinding)
+    class AppointmentViewHolder(val binding: FragmentTrackerAppointmentBinding)
         : RecyclerView.ViewHolder(binding.root)
 }

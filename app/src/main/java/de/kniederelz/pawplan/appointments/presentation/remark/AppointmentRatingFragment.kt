@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.tracking.presentation.remark
+package de.kniederelz.pawplan.appointments.presentation.remark
 
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -18,12 +18,12 @@ import kotlinx.coroutines.launch
 import kotlin.getValue
 
 @AndroidEntryPoint
-class TrackerRemarkFragment : BottomSheetDialogFragment() {
+class AppointmentRatingFragment : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "RemarkBottomSheetDialogFragment"
 
         fun show(fragmentManager: FragmentManager, appointmentId: String) {
-            TrackerRemarkFragment().apply {
+            AppointmentRatingFragment().apply {
                 arguments = Bundle().apply {
                     putString("appointmentId", appointmentId)
                 }
@@ -31,7 +31,7 @@ class TrackerRemarkFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private val viewModel: TrackerRemarkViewModel by viewModels()
+    private val viewModel: AppointmentRatingViewModel by viewModels()
 
     private lateinit var binding: FragmentTrackerRemarkBinding
     private lateinit var stars: List<ImageButton>

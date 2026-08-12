@@ -4,7 +4,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRating
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingStatistics
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingRepository
-import de.kniederelz.pawplan.appointments.sources.factories.FirestoreAppointmentRatingDataSourceFactory
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -15,8 +14,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class FirestoreAppointmentRatingRepositoryImpl @Inject constructor(
-    private val firestore: FirebaseFirestore,
-    private val sourceFactory: FirestoreAppointmentRatingDataSourceFactory
+    private val firestore: FirebaseFirestore
 ) : AppointmentRatingRepository {
     companion object {
         const val COLLECTION = "appointmentsRating"

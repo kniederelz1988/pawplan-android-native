@@ -7,9 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import coil3.load
 import coil3.request.crossfade
 import coil3.request.error
@@ -22,8 +20,7 @@ import de.kniederelz.pawplan.core.extensions.dateFormatter
 import de.kniederelz.pawplan.core.extensions.initials
 import de.kniederelz.pawplan.core.extensions.toLocalDate
 import de.kniederelz.pawplan.databinding.FragmentProfileBinding
-import de.kniederelz.pawplan.ui.extensions.applyRole
-import de.kniederelz.pawplan.user.domain.UserProfile
+import de.kniederelz.pawplan.core.ui.extensions.applyRole
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -63,7 +60,7 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        profileViewModel.userProfile.observe(viewLifecycleOwner) { it ->
+        profileViewModel.userProfile.observe(viewLifecycleOwner) {
             it?.let { profile ->
                 birthday = profile.birthday
 

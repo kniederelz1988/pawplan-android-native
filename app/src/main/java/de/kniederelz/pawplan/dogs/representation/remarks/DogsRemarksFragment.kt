@@ -7,13 +7,10 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.databinding.FragmentDogsRemarksBinding
 import de.kniederelz.pawplan.dogs.representation.remarks.adapter.DogsRemarksAdapter
-import kotlinx.coroutines.launch
 import kotlin.getValue
 
 @AndroidEntryPoint

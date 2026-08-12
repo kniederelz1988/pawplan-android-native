@@ -1,6 +1,6 @@
 package de.kniederelz.pawplan.dogs.domain
 
-enum class DogSize {
+enum class DogSizeType {
     SMALL,
     MEDIUM,
     LARGE

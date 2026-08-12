@@ -36,8 +36,9 @@ class AppointmentsOverviewViewModel @Inject constructor(
         .flatMapLatest { appointments ->
             combine(
                 appointmentStatusRepository.observeStatus(appointments.map { it.id }),
-                dogRepository.observeDogs(appointments.map { it.dogId })
-            ) { status, dog ->
+                dogRepository.observeDogs(appointments.map { it.dogId }),
+                clockProvider.now
+            ) { status, dog, _ ->
                 appointments.filter { status.containsKey(it.id) && dog.containsKey(it.dogId) }
                     .map { appointment ->
                         val appointmentStatus = status[appointment.id]!!
@@ -61,6 +62,12 @@ class AppointmentsOverviewViewModel @Inject constructor(
         .map { it.values }
         .asLiveData()
 
+    suspend fun completeAppointment(status: AppointmentStatus) {
+        val t = status.copy(
+            status = AppointmentStatusType.COMPLETED
+        )
+        appointmentStatusRepository.updateStatus(t)
+    }
     suspend fun cancelAppointment(status: AppointmentStatus) {
         val t = status.copy(
             status = AppointmentStatusType.CANCELLED

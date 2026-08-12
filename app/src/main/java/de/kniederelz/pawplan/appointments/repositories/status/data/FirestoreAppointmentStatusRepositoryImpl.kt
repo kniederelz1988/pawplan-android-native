@@ -4,15 +4,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatus
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusRepository
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
-import de.kniederelz.pawplan.core.RepositorySubscription
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import kotlin.collections.set
 
 class FirestoreAppointmentStatusRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore

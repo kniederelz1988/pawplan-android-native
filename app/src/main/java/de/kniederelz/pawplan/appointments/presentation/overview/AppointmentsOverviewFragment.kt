@@ -11,6 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.appointments.presentation.booking.AppointmentBookingFragment
 import de.kniederelz.pawplan.appointments.presentation.overview.adapter.AppointmentFastSelectionAdapter
 import de.kniederelz.pawplan.appointments.presentation.overview.adapter.AppointmentOverviewAdapter
+import de.kniederelz.pawplan.appointments.presentation.remark.AppointmentRatingFragment
 import de.kniederelz.pawplan.appointments.repositories.AppointmentData
 import de.kniederelz.pawplan.databinding.FragmentAppointmentOverviewBinding
 import de.kniederelz.pawplan.dogs.domain.Dog
@@ -36,23 +37,25 @@ class AppointmentsOverviewFragment : Fragment() {
         viewModel.appointments.observe(viewLifecycleOwner) { appointmentData ->
             binding.appointmentList.adapter = AppointmentOverviewAdapter(
                 appointmentData,
-                { onAppointmentStartButtonSubmit(it) },
-                { onAppointmentEditButtonSubmit(it) },
+                { onAppointmentStartCompleteSubmit(it) },
                 { onAppointmentCancelButtonSubmit(it) }
             )
         }
 
         viewModel.favoriteDogs.observe(viewLifecycleOwner) { favoriteDogs ->
             binding.fastSelectRecycler.adapter = AppointmentFastSelectionAdapter(
-                favoriteDogs.toList(),
-                { onFastSelectButtonSubmit(it) }
-            )
+                favoriteDogs.toList()
+            ) { onFastSelectButtonSubmit(it) }
         }
     }
 
-    private fun onAppointmentStartButtonSubmit(data: AppointmentData) {}
+    private fun onAppointmentStartCompleteSubmit(data: AppointmentData) {
+        lifecycleScope.launch {
+            viewModel.completeAppointment(data.appointmentStatus)
 
-    private fun onAppointmentEditButtonSubmit(data: AppointmentData) {}
+            AppointmentRatingFragment.show(parentFragmentManager, data.appointment.id)
+        }
+    }
     private fun onAppointmentCancelButtonSubmit(data: AppointmentData) {
         lifecycleScope.launch {
             viewModel.cancelAppointment(data.appointmentStatus)

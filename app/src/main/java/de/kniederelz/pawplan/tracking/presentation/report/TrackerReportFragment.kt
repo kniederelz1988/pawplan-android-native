@@ -15,7 +15,6 @@ import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.core.extensions.dateFormatter
 import de.kniederelz.pawplan.core.extensions.timeFormatter
 import de.kniederelz.pawplan.databinding.FragmentTrackerReportBinding
-import de.kniederelz.pawplan.tracking.presentation.remark.TrackerReportViewModel
 import de.kniederelz.pawplan.tracking.repositories.base.domain.LatLngTime
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json

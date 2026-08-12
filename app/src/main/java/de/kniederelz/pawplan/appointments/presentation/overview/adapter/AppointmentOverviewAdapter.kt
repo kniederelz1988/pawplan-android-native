@@ -15,12 +15,11 @@ import de.kniederelz.pawplan.appointments.repositories.status.domain.Appointment
 import de.kniederelz.pawplan.core.extensions.dateFormatter
 import de.kniederelz.pawplan.core.extensions.timeFormatter
 import de.kniederelz.pawplan.databinding.FragmentAppointmentOverviewItemBinding
-import de.kniederelz.pawplan.ui.extensions.applyStatus
+import de.kniederelz.pawplan.core.ui.extensions.applyStatus
 
 class AppointmentOverviewAdapter(
     private val appointmentData: List<AppointmentData>,
-    private val onStartButtonSubmit: (AppointmentData) -> Unit,
-    private val onEditButtonSubmit: (AppointmentData) -> Unit,
+    private val onCompleteButtonSubmit: (AppointmentData) -> Unit,
     private val onCancelButtonSubmit: (AppointmentData) -> Unit,
 ) : RecyclerView.Adapter<AppointmentOverviewAdapter.AppointmentViewHolder>() {
 
@@ -53,14 +52,16 @@ class AppointmentOverviewAdapter(
             holder.binding.statusBadge.applyStatus(holder.binding.root.context, data.appointmentStatus.status)
 
             holder.binding.editButton.visibility = View.GONE
-            holder.binding.editButton.setOnClickListener {
-                onEditButtonSubmit(data)
-            }
 
-            holder.binding.startButton.visibility = View.GONE
-            holder.binding.startButton.isEnabled = data.appointment.canStart()
+            holder.binding.startButton.visibility =
+                if (data.appointmentStatus.status in setOf(
+                    AppointmentStatusType.CONFIRMED
+                ))
+                View.VISIBLE
+            else
+                View.GONE
             holder.binding.startButton.setOnClickListener {
-                onStartButtonSubmit(data)
+                onCompleteButtonSubmit(data)
             }
 
             holder.binding.cancelButton.visibility =
@@ -86,7 +87,7 @@ class AppointmentOverviewAdapter(
         holder.binding.cancelButton.setOnClickListener(null)
     }
 
-    inner class AppointmentViewHolder(val binding: FragmentAppointmentOverviewItemBinding)
+    class AppointmentViewHolder(val binding: FragmentAppointmentOverviewItemBinding)
         : RecyclerView.ViewHolder(binding.root)
 }
 

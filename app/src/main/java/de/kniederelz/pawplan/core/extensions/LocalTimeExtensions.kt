@@ -3,7 +3,7 @@ package de.kniederelz.pawplan.core.extensions
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+val timeFormatter: DateTimeFormatter? = DateTimeFormatter.ofPattern("HH:mm")
 
 fun LocalTime.roundToFiveMinutes(): LocalTime {
     val roundedMinute = ((minute + 2) / 5) * 5

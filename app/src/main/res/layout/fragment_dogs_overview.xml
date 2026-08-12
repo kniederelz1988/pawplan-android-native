@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/dogsOverviewLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".dogs.representation.overview.DogsOverviewFragment">
@@ -21,7 +20,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/dogsOverviewCaption"
             style="@style/TextAppearance.Material3.TitleLarge.Emphasized"
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -35,6 +33,7 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nameFilterInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/dogs_overview_search_name_hint"
@@ -50,50 +49,46 @@
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/filterGroup"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:selectionRequired="true"
-            app:singleSelection="true">
+            app:selectionRequired="false"
+            app:singleSelection="false">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/dogFilterAllButton"
+                android:id="@+id/filterFavButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight=".2"
-                android:padding="0dp"
-                android:text="@string/dogs_overview_search_all" />
+                android:layout_weight="1"
+                android:text="@string/dogs_overview_search_favs"
+                android:textColor="@color/toggle_button_text"
+                app:backgroundTint="@color/toggle_button_background" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/dogFilterFavsButton"
+                android:id="@+id/filterSmallButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight=".2"
-                android:padding="0dp"
-                android:text="@string/dogs_overview_search_favs" />
+                android:layout_weight="1"
+                android:text="@string/dogs_overview_search_small"
+                android:textColor="@color/toggle_button_text"
+                app:backgroundTint="@color/toggle_button_background" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/dogFilterSmallButton"
+                android:id="@+id/filterMediumButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight=".2"
-                android:padding="0dp"
-                android:text="@string/dogs_overview_search_small" />
+                android:layout_weight="1"
+                android:text="@string/dogs_overview_search_mid"
+                android:textColor="@color/toggle_button_text"
+                app:backgroundTint="@color/toggle_button_background" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/dogFilterMidButton"
+                android:id="@+id/filterLargeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight=".2"
-                android:padding="0dp"
-                android:text="@string/dogs_overview_search_mid" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/dogFilterLargeButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".2"
-                android:padding="0dp"
-                android:text="@string/dogs_overview_search_large" />
+                android:layout_weight="1"
+                android:text="@string/dogs_overview_search_large"
+                android:textColor="@color/toggle_button_text"
+                app:backgroundTint="@color/toggle_button_background" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -101,13 +96,35 @@
             android:layout_width="match_parent"
             android:layout_height="8dp" />
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/noResultsLayout"
+            style="@style/Widget.Material3.CardView.Filled"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/noResultsText"
+                style="@style/TextAppearance.Material3.BodyMedium.Emphasized"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/dogs_overview_nodogs"
+                android:textAlignment="center" />
+
+        </com.google.android.material.card.MaterialCardView>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/dogOverviewList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="10"
-            tools:listitem="@layout/fragment_dogs_overview_item" />
+            tools:listitem="@layout/fragment_dogs_overview_item">
+
+        </androidx.recyclerview.widget.RecyclerView>
 
     </LinearLayout>
 

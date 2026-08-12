@@ -18,13 +18,13 @@ import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.appointments.presentation.booking.AppointmentBookingFragment
 import de.kniederelz.pawplan.databinding.FragmentDogsDetailsBinding
 import de.kniederelz.pawplan.dogs.domain.extensions.getAge
-import de.kniederelz.pawplan.ui.extensions.setAge
-import de.kniederelz.pawplan.ui.extensions.setFavorite
+import de.kniederelz.pawplan.core.ui.extensions.setAge
+import de.kniederelz.pawplan.core.ui.extensions.setFavorite
 import de.kniederelz.pawplan.core.ui.extensions.setGender
 import de.kniederelz.pawplan.core.ui.extensions.setRating
 import de.kniederelz.pawplan.core.ui.extensions.setSize
-import de.kniederelz.pawplan.ui.extensions.setStatisticsAverage
-import de.kniederelz.pawplan.ui.extensions.setStatisticsCount
+import de.kniederelz.pawplan.core.ui.extensions.setStatisticsAverage
+import de.kniederelz.pawplan.core.ui.extensions.setStatisticsCount
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint

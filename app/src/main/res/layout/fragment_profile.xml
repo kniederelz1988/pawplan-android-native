@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/profileLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".user.presentation.ProfileFragment">
@@ -23,7 +22,6 @@
             android:paddingBottom="16dp">
 
             <TextView
-                android:id="@+id/profileCaption"
                 style="@style/TextAppearance.Material3.TitleLarge.Emphasized"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -35,7 +33,6 @@
                 android:textAlignment="center" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/relativeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="256dp"
                 android:background="@drawable/profile_gradient">
@@ -129,7 +126,6 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/visitCard"
                     style="@style/Widget.Material3.CardView.Filled"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -139,14 +135,12 @@
                     <!-- Content -->
 
                     <LinearLayout
-                        android:id="@+id/visitCardLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/visitCardValue"
                             style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -154,7 +148,6 @@
                             android:textAlignment="center" />
 
                         <TextView
-                            android:id="@+id/visitCardLabel"
                             style="@style/TextAppearance.Material3.LabelSmall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -167,7 +160,6 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/distanceCard"
                     style="@style/Widget.Material3.CardView.Filled"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -177,14 +169,12 @@
                     <!-- Content -->
 
                     <LinearLayout
-                        android:id="@+id/distanceCardLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/distanceCardValue"
                             style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -192,7 +182,6 @@
                             android:textAlignment="center" />
 
                         <TextView
-                            android:id="@+id/distanceCardLabel"
                             style="@style/TextAppearance.Material3.LabelSmall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -205,7 +194,6 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/favCard"
                     style="@style/Widget.Material3.CardView.Filled"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -215,14 +203,12 @@
                     <!-- Content -->
 
                     <LinearLayout
-                        android:id="@+id/favCardLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/favCardValue"
                             style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -230,7 +216,6 @@
                             android:textAlignment="center" />
 
                         <TextView
-                            android:id="@+id/favCardLabel"
                             style="@style/TextAppearance.Material3.LabelSmall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

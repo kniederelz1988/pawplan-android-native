@@ -7,6 +7,6 @@ enum class UserRoleType(val value: String) {
 
     companion object {
         fun fromValue(value: String?): UserRoleType =
-            entries.firstOrNull { it.value == value } ?: UserRoleType.OBSERVER
+            entries.firstOrNull { it.value == value } ?: OBSERVER
     }
 }

@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.tracking.presentation.remark
+package de.kniederelz.pawplan.tracking.presentation.report
 
 import android.util.Log
 import androidx.lifecycle.LiveData

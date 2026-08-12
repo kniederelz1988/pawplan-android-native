@@ -19,7 +19,7 @@ import de.kniederelz.pawplan.databinding.FragmentTrackerBinding
 import de.kniederelz.pawplan.tracking.permissions.WalkingTrackerPermissionLauncher
 import de.kniederelz.pawplan.tracking.permissions.WalkingTrackerPermissionManager
 import de.kniederelz.pawplan.tracking.presentation.overview.adapter.TrackerAppointmentAdapter
-import de.kniederelz.pawplan.tracking.presentation.remark.TrackerRemarkFragment
+import de.kniederelz.pawplan.appointments.presentation.remark.AppointmentRatingFragment
 import de.kniederelz.pawplan.tracking.presentation.report.TrackerReportFragment
 import de.kniederelz.pawplan.tracking.repositories.base.domain.LatLngTime
 import de.kniederelz.pawplan.tracking.services.WalkingTrackerServiceController
@@ -41,9 +41,8 @@ class TrackerOverviewFragment : Fragment() {
 
     @Inject
     lateinit var permissionManager: WalkingTrackerPermissionManager
-    private val permissionLauncher = WalkingTrackerPermissionLauncher(this,
-        { onServicePermissionsGranted() }
-    )
+    private val permissionLauncher = WalkingTrackerPermissionLauncher(this
+    ) { onServicePermissionsGranted() }
 
     private val viewModel: TrackerOverviewViewModel by viewModels()
 
@@ -66,15 +65,15 @@ class TrackerOverviewFragment : Fragment() {
 
         binding = FragmentTrackerBinding.inflate(inflater, container, false)
 
-        locationMarker = Marker(binding.wtMap).apply {
+        locationMarker = Marker(binding.mapView).apply {
             icon = ContextCompat.getDrawable(requireContext(),R.drawable.navigation_tracker)
         }
-        binding.wtMap.overlays.add(locationMarker)
+        binding.mapView.overlays.add(locationMarker)
 
-        routeOverlay = Polyline(binding.wtMap)
-        binding.wtMap.overlays.add(routeOverlay)
-        binding.wtMap.setTileSource(TileSourceFactory.MAPNIK)
-        binding.wtMap.setMultiTouchControls(true)
+        routeOverlay = Polyline(binding.mapView)
+        binding.mapView.overlays.add(routeOverlay)
+        binding.mapView.setTileSource(TileSourceFactory.MAPNIK)
+        binding.mapView.setMultiTouchControls(true)
 
         reportOverlay = ItemizedIconOverlay(
             mutableListOf(),
@@ -94,7 +93,7 @@ class TrackerOverviewFragment : Fragment() {
             },
             requireContext()
         )
-        binding.wtMap.overlays.add(reportOverlay)
+        binding.mapView.overlays.add(reportOverlay)
 
         return binding.root
     }
@@ -124,9 +123,9 @@ class TrackerOverviewFragment : Fragment() {
             val point = GeoPoint(location.latitude, location.longitude)
             locationMarker.position = point
 
-            binding.wtMap.controller.animateTo(point)
-            binding.wtMap.controller.setZoom(20.0)
-            binding.wtMap.invalidate()
+            binding.mapView.controller.animateTo(point)
+            binding.mapView.controller.setZoom(20.0)
+            binding.mapView.invalidate()
         }
 
         viewModel.nextAppointment.observe(viewLifecycleOwner) { appointmentData ->
@@ -137,31 +136,30 @@ class TrackerOverviewFragment : Fragment() {
                 binding.noUpcomingAppointments.visibility = View.GONE
                 binding.upcomingAppointments.visibility = View.VISIBLE
                 binding.upcomingAppointments.adapter =
-                    TrackerAppointmentAdapter(listOf(it), {})
+                    TrackerAppointmentAdapter(listOf(it)) {}
             }
         }
         viewModel.completedAppointments.observe(viewLifecycleOwner) { appointmentData ->
-            binding.noCompletedAppointments.visibility = View.VISIBLE
+            binding.noCompletedAppointmentsLayout.visibility = View.VISIBLE
             binding.completedAppointments.visibility = View.GONE
 
             if (appointmentData.count() > 0) {
-                binding.noCompletedAppointments.visibility = View.GONE
+                binding.noCompletedAppointmentsLayout.visibility = View.GONE
                 binding.completedAppointments.visibility = View.VISIBLE
                 binding.completedAppointments.adapter =
                     TrackerAppointmentAdapter(
-                        appointmentData.take(3),
-                        {
-                            val session = it.appointmentSession
-                                ?: return@TrackerAppointmentAdapter
+                        appointmentData.take(3)
+                    ) {
+                        val session = it.appointmentSession
+                            ?: return@TrackerAppointmentAdapter
 
-                            if (viewModel.canInspectSession.value == false) {
-                                displayInspectDialog()
-                                return@TrackerAppointmentAdapter
-                            }
-
-                            viewModel.toggleInspectedSession(session)
+                        if (!viewModel.canInspectSession.value) {
+                            displayInspectDialog()
+                            return@TrackerAppointmentAdapter
                         }
-                    )
+
+                        viewModel.toggleInspectedSession(session)
+                    }
             }
         }
 
@@ -176,13 +174,9 @@ class TrackerOverviewFragment : Fragment() {
         }
 
         viewModel.trackingSession.observe(viewLifecycleOwner) { session ->
-            (binding.completedAppointments.adapter as TrackerAppointmentAdapter?)?.let {
-                it.setHighlightedSession(session)
-            }
+            (binding.completedAppointments.adapter as TrackerAppointmentAdapter?)?.setHighlightedSession(session)
 
-            (binding.upcomingAppointments.adapter as TrackerAppointmentAdapter?)?.let {
-                it.setHighlightedSession(session)
-            }
+            (binding.upcomingAppointments.adapter as TrackerAppointmentAdapter?)?.setHighlightedSession(session)
         }
 
         viewModel.reports.observe(viewLifecycleOwner) { reports ->
@@ -197,44 +191,44 @@ class TrackerOverviewFragment : Fragment() {
                     )
                 )
             })
-            binding.wtMap.invalidate()
+            binding.mapView.invalidate()
         }
 
         viewModel.routePath.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
                 routeOverlay.setPoints(emptyList<GeoPoint>())
-                binding.wtMap.invalidate()
+                binding.mapView.invalidate()
                 return@observe
             }
 
             routeOverlay.setPoints(it)
-            binding.wtMap.invalidate()
+            binding.mapView.invalidate()
         }
         viewModel.routeBoundingBox.observe(viewLifecycleOwner) {
             if (it == null) {
                 return@observe
             }
 
-            binding.wtMap.setBoundingBox(it)
-            binding.wtMap.invalidate()
+            binding.mapView.setBoundingBox(it)
+            binding.mapView.invalidate()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        binding.wtMap.onDetach()
+        binding.mapView.onDetach()
     }
 
     override fun onPause() {
         super.onPause()
 
-        binding.wtMap.onPause()
+        binding.mapView.onPause()
     }
     override fun onResume() {
         super.onResume()
 
-        binding.wtMap.onResume()
+        binding.mapView.onResume()
     }
 
     private fun displayStartDialog() {
@@ -295,7 +289,7 @@ class TrackerOverviewFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.completeAppointment(appointmentData.appointmentStatus)
 
-            TrackerRemarkFragment.show(parentFragmentManager, appointmentData.id)
+            AppointmentRatingFragment.show(parentFragmentManager, appointmentData.id)
         }
     }
     private fun onReportIncident() {

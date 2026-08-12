@@ -82,6 +82,6 @@ class AuthViewModel @Inject constructor(
             id = profileId,
             role = UserRoleType.VOLUNTEER
         )
-        userRepository.createRole(userRole)
+        userRepository.updateRole(userRole)
     }
 }

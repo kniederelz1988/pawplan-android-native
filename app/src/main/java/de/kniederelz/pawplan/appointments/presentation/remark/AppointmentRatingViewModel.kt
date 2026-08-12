@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.tracking.presentation.remark
+package de.kniederelz.pawplan.appointments.presentation.remark
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -10,14 +10,13 @@ import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentRe
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRating
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingRepository
 import de.kniederelz.pawplan.dogs.domain.DogRepository
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
-class TrackerRemarkViewModel @Inject constructor(
+class AppointmentRatingViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val appointmentRepository: AppointmentRepository,
     private val appointmentRemarkRepository: AppointmentRatingRepository,
@@ -37,7 +36,7 @@ class TrackerRemarkViewModel @Inject constructor(
                         if (dog == null)
                             return@flatMapLatest flowOf(null)
 
-                        flowOf(TrackerRemarkAppointmentData(appointment, dog))
+                        flowOf(AppointmentRatingData(appointment, dog))
                     }
             }
     val nextAppointment = _nextAppointmentFlow.asLiveData()

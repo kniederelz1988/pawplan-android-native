@@ -2,11 +2,7 @@ package de.kniederelz.pawplan.tracking.services
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import androidx.annotation.RequiresApi
 import dagger.hilt.android.qualifiers.ApplicationContext
-import de.kniederelz.pawplan.tracking.permissions.WalkingTrackerPermissionManager
-import de.kniederelz.pawplan.tracking.permissions.WalkingTrackerPermissionState
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.ui.extensions
+package de.kniederelz.pawplan.core.ui.extensions
 
 import android.content.Context
 import android.graphics.drawable.GradientDrawable

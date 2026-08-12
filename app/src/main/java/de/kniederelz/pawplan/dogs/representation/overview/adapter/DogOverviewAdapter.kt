@@ -11,13 +11,13 @@ import coil3.load
 import coil3.request.crossfade
 import coil3.request.error
 import coil3.request.placeholder
-import de.kniederelz.pawplan.ui.extensions.setAge
-import de.kniederelz.pawplan.ui.extensions.setFavorite
+import de.kniederelz.pawplan.core.ui.extensions.setAge
+import de.kniederelz.pawplan.core.ui.extensions.setFavorite
 import de.kniederelz.pawplan.core.ui.extensions.setGender
 import de.kniederelz.pawplan.core.ui.extensions.setSize
 import de.kniederelz.pawplan.dogs.representation.overview.DogOverviewData
-import de.kniederelz.pawplan.ui.extensions.setStatisticsAverage
-import de.kniederelz.pawplan.ui.extensions.setStatisticsCount
+import de.kniederelz.pawplan.core.ui.extensions.setStatisticsAverage
+import de.kniederelz.pawplan.core.ui.extensions.setStatisticsCount
 
 class DogOverviewAdapter(
     private val dogOverviewData: List<DogOverviewData>,
@@ -71,6 +71,6 @@ class DogOverviewAdapter(
         holder.binding.favButton.setOnClickListener(null)
     }
 
-    inner class DogViewHolder(val binding: FragmentDogsOverviewItemBinding)
+    class DogViewHolder(val binding: FragmentDogsOverviewItemBinding)
         : RecyclerView.ViewHolder(binding.root)
 }

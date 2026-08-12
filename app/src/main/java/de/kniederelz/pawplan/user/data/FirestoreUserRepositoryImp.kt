@@ -239,23 +239,6 @@ class FirestoreUserRepositoryImpl(
         }
     }
 
-    override suspend fun createRole(userRole: UserRole): Result<String> {
-        if (!userRole.id.isEmpty())
-            return Result.failure(IllegalArgumentException("Profile has ID"))
-
-        return withContext(NonCancellable) {
-            try {
-                val result = firestore
-                    .collection(VOLUNTEERS_ROLE_COLLECTION)
-                    .add(userRole.toDto())
-                    .await()
-
-                Result.success(result.id)
-            } catch (e: Exception) {
-                Result.failure(e)
-            }
-        }
-    }
     override suspend fun updateRole(userRole: UserRole): Result<Unit> {
         if (userRole.id.isEmpty())
             return Result.failure(IllegalArgumentException("Profile has no ID"))
@@ -289,15 +272,15 @@ class FirestoreUserRepositoryImpl(
             }
         }
     }
-    override suspend fun deleteFavorite(fav: UserFavorite): Result<Unit> {
+    override suspend fun deleteFavorite(userFavorite: UserFavorite): Result<Unit> {
         return withContext(NonCancellable) {
             try {
-                if (fav.id == null)
+                if (userFavorite.id == null)
                     return@withContext Result.failure(IllegalArgumentException("Favorite has no ID"))
 
                 firestore
                     .collection(FAVORITES_COLLECTION)
-                    .document(fav.id)
+                    .document(userFavorite.id)
                     .delete()
                     .await()
 

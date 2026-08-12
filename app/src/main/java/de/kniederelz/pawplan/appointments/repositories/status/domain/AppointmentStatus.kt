@@ -11,15 +11,5 @@ data class AppointmentStatus(
     val updateAt: LocalDateTime,
     val updatedBy: String
 ) {
-    companion object {
-        val EMPTY = AppointmentStatus(
-            "",
-            "",
-            "",
-            "",
-            AppointmentStatusType.PENDING,
-            LocalDateTime.now(),
-            ""
-        )
-    }
+    companion object
 }
