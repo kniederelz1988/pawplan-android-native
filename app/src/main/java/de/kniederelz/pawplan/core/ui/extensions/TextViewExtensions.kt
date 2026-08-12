@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.ui.extensions
+package de.kniederelz.pawplan.core.ui.extensions
 
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
@@ -8,7 +8,7 @@ import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingStatistics
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
 import de.kniederelz.pawplan.dogs.domain.DogAge
-import de.kniederelz.pawplan.user.domain.UserRole
+import de.kniederelz.pawplan.user.domain.UserRoleType
 
 fun TextView.setAge(age: DogAge) {
     text =
@@ -40,10 +40,10 @@ fun TextView.setStatisticsCount(statistics: AppointmentRatingStatistics?) {
     )
 }
 
-fun TextView.applyRole(context: Context, role: UserRole) {
+fun TextView.applyRole(context: Context, role: UserRoleType) {
     text = when(role) {
-        UserRole.ADMIN -> context.getString(R.string.profile_role_admin)
-        UserRole.VOLUNTEER -> context.getString(R.string.profile_role_volunteer)
+        UserRoleType.ADMIN -> context.getString(R.string.profile_role_admin)
+        UserRoleType.VOLUNTEER -> context.getString(R.string.profile_role_volunteer)
         else -> context.getString(R.string.profile_role_observer)
     }
 
@@ -51,7 +51,7 @@ fun TextView.applyRole(context: Context, role: UserRole) {
         ?: return
 
     when(role) {
-        UserRole.ADMIN -> {
+        UserRoleType.ADMIN -> {
             val backgroundColor = ContextCompat.getColor(context, R.color.md_theme_errorContainer)
             drawable.setColor(backgroundColor)
 
@@ -62,7 +62,7 @@ fun TextView.applyRole(context: Context, role: UserRole) {
             val textColor = ContextCompat.getColor(context, R.color.md_theme_onErrorContainer)
             setTextColor(textColor)
         }
-        UserRole.VOLUNTEER -> {
+        UserRoleType.VOLUNTEER -> {
             val backgroundColor = ContextCompat.getColor(context, R.color.md_theme_primaryContainer)
             drawable.setColor(backgroundColor)
 
@@ -86,7 +86,6 @@ fun TextView.applyRole(context: Context, role: UserRole) {
         }
     }
 }
-
 fun TextView.applyStatus(context: Context, status: AppointmentStatusType) {
     text = when(status) {
         AppointmentStatusType.PENDING -> context.getString(R.string.appointment_badge_pending)

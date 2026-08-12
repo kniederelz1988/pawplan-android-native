@@ -1,7 +1,6 @@
 package de.kniederelz.pawplan.dogs.domain
 
 import android.net.Uri
-import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingStatistics
 import java.time.LocalDate
 
 data class Dog(
@@ -11,7 +10,7 @@ data class Dog(
     val description: String,
 
     val breed: String,
-    val size: DogSize,
+    val size: DogSizeType,
     val gender: DogGender,
     val imageURL: Uri,
 
@@ -21,22 +20,6 @@ data class Dog(
     val adoptionDateValid: Boolean,
     val adoptionDate: LocalDate?,
 
-    var isFavorite: Boolean = false,
-    var statistics: AppointmentRatingStatistics? = null
-) {
-    companion object {
-        val EMPTY = Dog(
-            "",
-            "",
-            "",
-            "",
-            DogSize.SMALL,
-            DogGender.MALE,
-            Uri.EMPTY,
-            LocalDate.now(),
-            LocalDate.now(),
-            true,
-            null
-        )
-    }
+    ) {
+    companion object
 }

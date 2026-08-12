@@ -3,6 +3,7 @@ package de.kniederelz.pawplan.appointments.presentation.booking
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.kniederelz.pawplan.appointments.repositories.base.domain.Appointment
@@ -11,10 +12,9 @@ import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentTy
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatus
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusRepository
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
+import de.kniederelz.pawplan.dogs.domain.Dog
 import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.user.domain.UserRepository
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -22,27 +22,23 @@ import javax.inject.Inject
 @HiltViewModel
 class AppointmentBookingViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val dogRepository: DogRepository,
+    private val userRepository: UserRepository,
     private val appointmentRepository: AppointmentRepository,
     private val appointmentStatusRepository: AppointmentStatusRepository,
-    private val dogRepository: DogRepository,
-    private val userRepository: UserRepository
+
 ) : ViewModel() {
 
-    private val dogId: String =
+    private val _dogFlow = dogRepository.observeDog(
         checkNotNull(savedStateHandle["dogId"])
+    )
 
-    private val dogSubscription = dogRepository.createSubscription()
-        .registerListener(dogId)
+    val dog = _dogFlow.asLiveData()
 
-    val dog = dogSubscription.values.flatMapLatest { dogs ->
-        flowOf(dogs.values.firstOrNull())
-    }
+    val userProfile = userRepository.userProfile.asLiveData()
 
-    fun createAppointment(date: LocalDateTime) {
-        if (dogId.isEmpty())
-            return
-
-        val profile = userRepository.userProfileFlow.value ?:
+    fun createAppointment(dog: Dog, date: LocalDateTime) {
+        val profile = userProfile.value ?:
             return
 
         viewModelScope.launch {
@@ -50,14 +46,14 @@ class AppointmentBookingViewModel @Inject constructor(
                 id = "",
 
                 createdAt = LocalDateTime.now(),
-                dogId = dogId,
+                dogId = dog.id,
                 volunteerId = profile.id,
 
                 date = date,
                 type = AppointmentType.WALK
             )
             appointmentRepository.createAppointment(appointment)
-                .onSuccess {
+                .onSuccess { it ->
                     Log.d(
                         "AppointmentBookingViewModel",
                         "Appointment created $it"
@@ -69,7 +65,7 @@ class AppointmentBookingViewModel @Inject constructor(
                         appointmentId = it,
                         status = AppointmentStatusType.CONFIRMED,
 
-                        dogId = dogId,
+                        dogId = dog.id,
                         volunteerId = profile.id,
 
                         updateAt = LocalDateTime.now(),
@@ -100,7 +96,7 @@ class AppointmentBookingViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
-        dogSubscription.close()
+    fun getDog(): Dog? {
+        return dog.value
     }
 }

@@ -1,8 +1,7 @@
 package de.kniederelz.pawplan.appointments.presentation.overview
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.asLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.kniederelz.pawplan.appointments.repositories.AppointmentData
 import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentRepository
@@ -14,9 +13,8 @@ import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.user.domain.UserRepository
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,84 +26,52 @@ class AppointmentsOverviewViewModel @Inject constructor(
     private val clockProvider: ClockProvider
 ) : ViewModel() {
 
-    private val appointmentSubscription
-        = appointmentRepository.createVolunteerSubscription()
-    private val appointmentStatusSubscription
-        = appointmentStatusRepository.createSubscription()
-    private val appointmentDogSubscription
-        = dogRepository.createSubscription()
-
-    private val _appointmentsFlow = userRepository.userProfileFlow
+    private val _appointmentsFlow = userRepository.userProfile
         .flatMapLatest { userProfile ->
-            userProfile?.let {
-                Log.d("AppointmentsOverviewViewModel", "User: $it")
-                appointmentSubscription.registerListener(it.id)
-            }
-            appointmentSubscription.values
+            if (userProfile == null)
+                return@flatMapLatest flowOf(emptyList())
+
+            appointmentRepository.observeUpcomingVolunteerAppointments(userProfile.id)
         }
-    private val _appointmentStatusFlow =
-        _appointmentsFlow
-            .onEach { appointments ->
-                appointments.values.forEach { appointment ->
-                    appointmentStatusSubscription.registerListener(appointment.id)
-                }
-            }
-            .flatMapLatest {
-                appointmentStatusSubscription.values
-            }
-    private val _appointmentDogFlow =
-        _appointmentsFlow
-            .onEach { appointments ->
-                appointments.values.forEach { appointment ->
-                    appointmentDogSubscription.registerListener(appointment.dogId)
-                }
-            }
-            .flatMapLatest {
-                appointmentDogSubscription.values
-            }
+        .flatMapLatest { appointments ->
+            combine(
+                appointmentStatusRepository.observeStatus(appointments.map { it.id }),
+                dogRepository.observeDogs(appointments.map { it.dogId }),
+                clockProvider.now
+            ) { status, dog, _ ->
+                appointments.filter { status.containsKey(it.id) && dog.containsKey(it.dogId) }
+                    .map { appointment ->
+                        val appointmentStatus = status[appointment.id]!!
+                        val dog = dog[appointment.dogId]!!
 
-    val appointments = combine(
-        _appointmentsFlow,
-        _appointmentStatusFlow,
-        _appointmentDogFlow,
-        clockProvider.now
-    ) { appointments, statuses, dogs, _ ->
-        appointments.values
-            .filter { statuses.containsKey(it.id) && dogs.containsKey(it.dogId) }
-            .map {
-                val appointmentStatus = statuses[it.id]!!
-                val dog = dogs[it.dogId]!!
-
-                AppointmentData(
-                    it.id,
-                    it,
-                    appointmentStatus,
-                    dog
-                )
+                        AppointmentData(
+                            appointment.id,
+                            appointment,
+                            appointmentStatus,
+                            dog
+                        )
+                    }
             }
-    }
+        }
+    val appointments = _appointmentsFlow.asLiveData()
 
-    private val favoriteDogsSubscription
-        = dogRepository.createSubscription()
-    val favoriteDogs = userRepository.userFavoritesFlow
+    val favoriteDogs = userRepository.userFavorites
         .flatMapLatest { userFavorites ->
-            favoriteDogsSubscription.registerBatchListener( userFavorites.favorites.map { it.dogId }.distinct() )
-            favoriteDogsSubscription.values
+            dogRepository.observeDogs(userFavorites.favorites.map { it.dogId })
         }
         .map { it.values }
+        .asLiveData()
 
-    fun cancelAppointment(status: AppointmentStatus) {
-        viewModelScope.launch {
-            val t = status.copy(
-                status = AppointmentStatusType.CANCELLED
-            )
-            appointmentStatusRepository.updateStatus(t)
-        }
+    suspend fun completeAppointment(status: AppointmentStatus) {
+        val t = status.copy(
+            status = AppointmentStatusType.COMPLETED
+        )
+        appointmentStatusRepository.updateStatus(t)
     }
-
-    override fun onCleared() {
-        appointmentSubscription.close()
-        appointmentStatusSubscription.close()
-        appointmentDogSubscription.close()
+    suspend fun cancelAppointment(status: AppointmentStatus) {
+        val t = status.copy(
+            status = AppointmentStatusType.CANCELLED
+        )
+        appointmentStatusRepository.updateStatus(t)
     }
 }

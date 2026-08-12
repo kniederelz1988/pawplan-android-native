@@ -1,9 +1,11 @@
 package de.kniederelz.pawplan.tracking.repositories.session.domain
 
-interface WalkingTrackerSessionRepository {
+import kotlinx.coroutines.flow.Flow
 
+interface WalkingTrackerSessionRepository {
     suspend fun createSession(session: WalkingTrackerSession): Result<WalkingTrackerSession>
     suspend fun updateSession(session: WalkingTrackerSession): Result<Unit>
 
-    fun createSubscription(): WalkingTrackerSessionSubscription
+    fun observeSession(appointmentId: String): Flow<WalkingTrackerSession?>
+    fun observeSessions(appointmentIds: List<String>): Flow<Map<String, WalkingTrackerSession>>
 }

@@ -51,6 +51,6 @@ class AppointmentFastSelectionAdapter(
         holder.binding.fastSelectImage.setOnClickListener(null)
     }
 
-    inner class AppointmentViewHolder(val binding: FragmentAppointmentFastselectItemBinding)
+    class AppointmentViewHolder(val binding: FragmentAppointmentFastselectItemBinding)
         : RecyclerView.ViewHolder(binding.root)
 }

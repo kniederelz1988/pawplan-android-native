@@ -5,7 +5,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import de.kniederelz.pawplan.dogs.data.sources.factory.FirebaseDogOverviewDataSourceFactory
 import de.kniederelz.pawplan.dogs.data.FirebaseDogRepositoryImpl
 import de.kniederelz.pawplan.dogs.domain.DogRepository
 import javax.inject.Singleton
@@ -16,10 +15,6 @@ object DogModule {
     @Provides
     @Singleton
     fun provideRepository(): DogRepository {
-        val firestore = FirebaseFirestore.getInstance()
-        return FirebaseDogRepositoryImpl(
-            firestore = firestore,
-            sourceFactory = FirebaseDogOverviewDataSourceFactory(firestore)
-        )
+        return FirebaseDogRepositoryImpl(FirebaseFirestore.getInstance())
     }
 }

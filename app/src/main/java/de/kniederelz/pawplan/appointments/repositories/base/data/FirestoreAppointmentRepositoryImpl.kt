@@ -1,10 +1,15 @@
 package de.kniederelz.pawplan.appointments.repositories.base.data
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import de.kniederelz.pawplan.appointments.repositories.base.domain.Appointment
 import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentRepository
-import de.kniederelz.pawplan.core.RepositorySubscription
+import de.kniederelz.pawplan.core.utils.TimestampUtils
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -46,10 +51,67 @@ class FirestoreAppointmentRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun createSubscription(): RepositorySubscription<Appointment> {
-        return FirestoreAppointmentSubscriptionImpl(firestore)
+    override fun observeAppointment(appointmentId: String) = callbackFlow {
+        val registration = firestore
+            .collection(COLLECTION)
+            .document(appointmentId)
+            .addSnapshotListener { snapshots, error ->
+                if (error != null || snapshots == null){
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                if (!snapshots.exists())
+                {
+                    trySend(null)
+                    return@addSnapshotListener
+                }
+
+                val appointment = snapshots.toObject(FirebaseAppointmentDto::class.java)
+                    ?.toDomain(appointmentId)
+                trySend(appointment)
+            }
+
+        awaitClose {
+            registration.remove()
+        }
     }
-    override fun createVolunteerSubscription(): RepositorySubscription<Appointment> {
-        return FirestoreVolunteerAppointmentSubscriptionImpl(firestore)
+    override fun observeAppointments(appointmentIds: List<String>): Flow<Map<String, Appointment>> {
+        return combine(
+            appointmentIds.map { observeAppointment(it) }
+        ) { appointments ->
+            appointments.filterNotNull().associateBy { it.id }
+        }
+    }
+
+    override fun observeUpcomingVolunteerAppointments(volunteerId: String) = callbackFlow {
+        val registration = firestore
+            .collection(COLLECTION)
+            .whereEqualTo("volunteerId", volunteerId)
+            .whereGreaterThanOrEqualTo("date", TimestampUtils.startOfDay())
+            .orderBy("date", Query.Direction.ASCENDING)
+            .addSnapshotListener { snapshots, error ->
+                if (error != null || snapshots == null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                if (snapshots.isEmpty)
+                {
+                    trySend(emptyList())
+                    return@addSnapshotListener
+                }
+
+                val appointments = snapshots.documents.mapNotNull {
+                    it.toObject(FirebaseAppointmentDto::class.java)
+                        ?.toDomain(it.id)
+                }
+
+                trySend(appointments)
+            }
+
+        awaitClose {
+            registration.remove()
+        }
     }
 }

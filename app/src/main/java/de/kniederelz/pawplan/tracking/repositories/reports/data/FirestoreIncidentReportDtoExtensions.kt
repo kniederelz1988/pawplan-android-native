@@ -1,6 +1,5 @@
 package de.kniederelz.pawplan.tracking.repositories.reports.data
 
-import de.kniederelz.pawplan.core.extensions.toLocalDate
 import de.kniederelz.pawplan.core.extensions.toLocalDateTime
 import de.kniederelz.pawplan.core.extensions.toTimestamp
 import de.kniederelz.pawplan.tracking.repositories.reports.domain.IncidentReport

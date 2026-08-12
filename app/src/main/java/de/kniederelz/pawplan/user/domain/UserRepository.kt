@@ -1,24 +1,22 @@
 package de.kniederelz.pawplan.user.domain
 
-import android.util.Log
 import de.kniederelz.pawplan.dogs.domain.Dog
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository {
-    val userProfileFlow: StateFlow<UserProfile?>
-    fun getUserProfile(): UserProfile? {
-        Log.d("UserRepository", "getUserProfile -> ${userProfileFlow.value}")
-        return userProfileFlow.value
-    }
+    val userProfile: StateFlow<UserProfile?>
+    val userRole: StateFlow<UserRoleType>
+    val userFavorites: StateFlow<UserFavorites>
 
-    val userRoleFlow: StateFlow<UserRole>
-    val userFavoritesFlow: StateFlow<UserFavorites>
+    suspend fun observeProfiles(profileIds: List<String>): Flow<Map<String, UserProfile>>
+    suspend fun observeProfile(profileId: String): Flow<UserProfile>
 
-    suspend fun getProfileName(volunteerId: String): String
+    suspend fun createProfile(userProfile: UserProfile): Result<String>
+    suspend fun updateProfile(userProfile: UserProfile): Result<Unit>
 
-    suspend fun updateProfile(userId: String, user: UserProfile): Result<Unit>
+    suspend fun updateRole(userRole: UserRole): Result<Unit>
 
-    suspend fun createFavorite(user: UserProfile, dog: Dog) : Result<Unit>
-    suspend fun deleteFavorite(fav: UserFavorite) : Result<Unit>
-
+    suspend fun createFavorite(userProfile: UserProfile, dog: Dog) : Result<Unit>
+    suspend fun deleteFavorite(userFavorite: UserFavorite) : Result<Unit>
 }

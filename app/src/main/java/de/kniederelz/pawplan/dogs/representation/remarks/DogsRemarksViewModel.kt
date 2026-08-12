@@ -1,18 +1,14 @@
 package de.kniederelz.pawplan.dogs.representation.remarks
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.paging.map
+import androidx.lifecycle.asLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRating
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingRepository
-import de.kniederelz.pawplan.dogs.domain.Dog
 import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.user.domain.UserRepository
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,23 +18,25 @@ class DogsRemarksViewModel @Inject constructor(
     private val appointmentRatingRepository: AppointmentRatingRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(){
-    data class AppointmentRatingData(val rating: AppointmentRating, val volunteerName: String)
 
-    private val dogId: String =
-        checkNotNull(savedStateHandle["dogId"])
+    val dog = dogRepository.observeDog(checkNotNull(savedStateHandle["dogId"]))
+        .asLiveData()
 
-    val dog: Flow<Dog?> = dogRepository.observeDog(dogId)
+    val ratings = appointmentRatingRepository.observeDogRatings(checkNotNull(savedStateHandle["dogId"]))
+        .flatMapLatest { ratings ->
+            userRepository.observeProfiles(ratings.map { it.volunteerId })
+                .mapLatest { userProfiles ->
+                    ratings.filter { userProfiles.containsKey(it.volunteerId) }
+                        .map { rating ->
+                            val userProfile = userProfiles[rating.volunteerId]!!
 
-    val ratings = appointmentRatingRepository.observeRatings(dogId)
-        .mapLatest { pagingData ->
-            pagingData.map { rating ->
-                val volunteerName = userRepository.getProfileName(rating.volunteerId)
-                AppointmentRatingData(rating, volunteerName)
+                            AppointmentRatingData(
+                                rating,
+                                userProfile
+                            )
+                        }
+                }
             }
-        }
-        .onEach {
-            Log.d("DogsRemarksViewModel", "Ratings: ${it.map { 
-                data -> data.rating.comment
-            }}")
-        }
+        .asLiveData()
 }
+

@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.ui.extensions
+package de.kniederelz.pawplan.core.ui.extensions
 
 import androidx.appcompat.content.res.AppCompatResources
 import com.google.android.material.button.MaterialButton

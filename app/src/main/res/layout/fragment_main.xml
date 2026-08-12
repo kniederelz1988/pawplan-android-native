@@ -21,7 +21,6 @@
         app:navGraph="@navigation/main_nav_graph" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/loadingBar"
         style="@style/Widget.Material3.LoadingIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

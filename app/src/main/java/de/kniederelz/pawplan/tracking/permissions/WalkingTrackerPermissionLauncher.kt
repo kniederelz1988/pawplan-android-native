@@ -5,7 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 
 class WalkingTrackerPermissionLauncher(
-    private val fragment: Fragment,
+    fragment: Fragment,
     private val onPermissionGranted: () -> Unit
 ) {
     fun requestNextPermission(permissionManager: WalkingTrackerPermissionManager): Boolean {

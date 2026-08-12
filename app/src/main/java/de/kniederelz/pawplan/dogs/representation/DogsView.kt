@@ -11,11 +11,6 @@ import androidx.navigation.fragment.NavHostFragment
 import de.kniederelz.pawplan.R
 import de.kniederelz.pawplan.databinding.FragmentDogsBinding
 
-/**
- * A simple [androidx.fragment.app.Fragment] subclass.
- * Use the [DogsView.newInstance] factory method to
- * create an instance of this fragment.
- */
 class DogsView : Fragment() {
 
     companion object {
@@ -24,10 +19,6 @@ class DogsView : Fragment() {
 
     private lateinit var binding: FragmentDogsBinding
     private lateinit var navController: NavController
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -2,6 +2,7 @@ package de.kniederelz.pawplan.user.presentation
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.kniederelz.pawplan.auth.domain.AuthRepository
@@ -16,10 +17,8 @@ class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val currentUser = authRepository.currentUser
-
-    val userProfile = userRepository.userProfileFlow
-    val userRole = userRepository.userRoleFlow
+    val userProfile = userRepository.userProfile.asLiveData()
+    val userRole = userRepository.userRole.asLiveData()
 
     fun updateUserName(name: String) {
         viewModelScope.launch {
@@ -30,10 +29,8 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun updateProfile(profile: UserProfile) {
-        val user = currentUser.value ?: return
-
         viewModelScope.launch {
-            userRepository.updateProfile(user.uid, profile)
+            userRepository.updateProfile(profile)
                 .onSuccess { Log.d("ProfileViewModel", "Profile updated successfully") }
                 .onFailure { Log.e("ProfileViewModel", "Failed to update profile", it) }
         }

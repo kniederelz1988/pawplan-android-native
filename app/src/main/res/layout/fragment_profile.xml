@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/profileLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".user.presentation.ProfileFragment">
@@ -23,7 +22,6 @@
             android:paddingBottom="16dp">
 
             <TextView
-                android:id="@+id/profileCaption"
                 style="@style/TextAppearance.Material3.TitleLarge.Emphasized"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -35,37 +33,63 @@
                 android:textAlignment="center" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/relativeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="256dp"
                 android:background="@drawable/profile_gradient">
 
-                <TextView
-                    android:id="@+id/initialsText"
-                    style="@style/TextAppearance.Material3.DisplaySmall.Emphasized"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/initialsLayout"
                     android:layout_width="96dp"
                     android:layout_height="96dp"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/circleshape"
-                    android:gravity="center"
-                    android:text="@string/profile_initial_text"
-                    android:textColor="@color/md_theme_onPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/initialsImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/profile_initial_text"
+                        android:padding="4dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/dog_placeholder"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Round50Percent"
+                        app:strokeColor="@color/md_theme_outline"
+                        app:strokeWidth="4dp"
+                        app:tint="@color/md_theme_onSecondaryVariant"
+                        app:tintMode="multiply" />
+
+                    <TextView
+                        android:id="@+id/initialsText"
+                        style="@style/TextAppearance.Material3.DisplaySmall.Emphasized"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        android:text="@string/profile_initial_text"
+                        android:textColor="@color/md_theme_onSecondary"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/nameText"
                     style="@style/TextAppearance.Material3.HeadlineMedium.Emphasized"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:gravity="center"
                     android:text="@string/profile_name_text"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/initialsText" />
+                    app:layout_constraintTop_toBottomOf="@+id/initialsLayout" />
 
                 <TextView
                     android:id="@+id/emailText"
@@ -102,7 +126,6 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/visitCard"
                     style="@style/Widget.Material3.CardView.Filled"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -112,14 +135,12 @@
                     <!-- Content -->
 
                     <LinearLayout
-                        android:id="@+id/visitCardLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/visitCardValue"
                             style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -127,7 +148,6 @@
                             android:textAlignment="center" />
 
                         <TextView
-                            android:id="@+id/visitCardLabel"
                             style="@style/TextAppearance.Material3.LabelSmall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -140,7 +160,6 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/distanceCard"
                     style="@style/Widget.Material3.CardView.Filled"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -150,14 +169,12 @@
                     <!-- Content -->
 
                     <LinearLayout
-                        android:id="@+id/distanceCardLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/distanceCardValue"
                             style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -165,7 +182,6 @@
                             android:textAlignment="center" />
 
                         <TextView
-                            android:id="@+id/distanceCardLabel"
                             style="@style/TextAppearance.Material3.LabelSmall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -178,7 +194,6 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/favCard"
                     style="@style/Widget.Material3.CardView.Filled"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -188,14 +203,12 @@
                     <!-- Content -->
 
                     <LinearLayout
-                        android:id="@+id/favCardLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/favCardValue"
                             style="@style/TextAppearance.Material3.LabelLarge.Emphasized"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -203,7 +216,6 @@
                             android:textAlignment="center" />
 
                         <TextView
-                            android:id="@+id/favCardLabel"
                             style="@style/TextAppearance.Material3.LabelSmall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

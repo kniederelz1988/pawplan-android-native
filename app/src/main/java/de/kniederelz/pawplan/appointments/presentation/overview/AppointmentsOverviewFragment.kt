@@ -6,17 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.appointments.presentation.booking.AppointmentBookingFragment
 import de.kniederelz.pawplan.appointments.presentation.overview.adapter.AppointmentFastSelectionAdapter
 import de.kniederelz.pawplan.appointments.presentation.overview.adapter.AppointmentOverviewAdapter
+import de.kniederelz.pawplan.appointments.presentation.remark.AppointmentRatingFragment
 import de.kniederelz.pawplan.appointments.repositories.AppointmentData
 import de.kniederelz.pawplan.databinding.FragmentAppointmentOverviewBinding
 import de.kniederelz.pawplan.dogs.domain.Dog
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -36,40 +34,32 @@ class AppointmentsOverviewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.appointments.collectLatest { appointmentData ->
-                    binding.appointmentList.adapter = AppointmentOverviewAdapter(
-                        appointmentData,
-                        { onAppointmentStartButtonSubmit(it) },
-                        { onAppointmentEditButtonSubmit(it) },
-                        { onAppointmentCancelButtonSubmit(it) }
-                    )
-                }
-            }
+        viewModel.appointments.observe(viewLifecycleOwner) { appointmentData ->
+            binding.appointmentList.adapter = AppointmentOverviewAdapter(
+                appointmentData,
+                { onAppointmentStartCompleteSubmit(it) },
+                { onAppointmentCancelButtonSubmit(it) }
+            )
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.favoriteDogs.collectLatest { favoriteDogs ->
-                    binding.fastSelectRecycler.adapter = AppointmentFastSelectionAdapter(
-                        favoriteDogs.toList(),
-                        { onFastSelectButtonSubmit(it) }
-                    )
-                }
-            }
+        viewModel.favoriteDogs.observe(viewLifecycleOwner) { favoriteDogs ->
+            binding.fastSelectRecycler.adapter = AppointmentFastSelectionAdapter(
+                favoriteDogs.toList()
+            ) { onFastSelectButtonSubmit(it) }
         }
     }
 
-    private fun onAppointmentStartButtonSubmit(data: AppointmentData) {
+    private fun onAppointmentStartCompleteSubmit(data: AppointmentData) {
+        lifecycleScope.launch {
+            viewModel.completeAppointment(data.appointmentStatus)
 
-    }
-
-    private fun onAppointmentEditButtonSubmit(data: AppointmentData) {
-
+            AppointmentRatingFragment.show(parentFragmentManager, data.appointment.id)
+        }
     }
     private fun onAppointmentCancelButtonSubmit(data: AppointmentData) {
-        viewModel.cancelAppointment(data.appointmentStatus)
+        lifecycleScope.launch {
+            viewModel.cancelAppointment(data.appointmentStatus)
+        }
     }
 
     private fun onFastSelectButtonSubmit(dog: Dog) {

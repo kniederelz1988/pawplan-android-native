@@ -24,6 +24,11 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             val navHostFragment = binding.mainNavHost.getFragment() as NavHostFragment
@@ -59,18 +64,13 @@ class MainFragment : Fragment() {
             }
         }
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         // check for user
         viewModel.authState.observe(viewLifecycleOwner) { authState ->
+            val navHostFragment = binding.mainNavHost.getFragment() as NavHostFragment
+            val navController = navHostFragment.navController
+
             if (!authState.isAuthenticated) {
-                val navHostFragment = binding.mainNavHost.getFragment() as NavHostFragment
-                val navController = navHostFragment.navController
-                navController.navigate(R.id.dogsView)
+                binding.bottomNavigation.selectedItemId = R.id.navigation_dogs
 
                 binding.bottomNavigation.menu.findItem(R.id.navigation_tracker)
                     .isVisible = false
@@ -80,7 +80,10 @@ class MainFragment : Fragment() {
                     .isVisible = false
                 binding.bottomNavigation.menu.findItem(R.id.navigation_auth)
                     .isVisible = true
+
             } else {
+                binding.bottomNavigation.selectedItemId = R.id.navigation_dogs
+
                 binding.bottomNavigation.menu.findItem(R.id.navigation_tracker)
                     .isVisible = true
                 binding.bottomNavigation.menu.findItem(R.id.navigation_schedule)
