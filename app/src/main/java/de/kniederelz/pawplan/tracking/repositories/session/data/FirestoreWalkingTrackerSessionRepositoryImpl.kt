@@ -19,20 +19,6 @@ class FirestoreWalkingTrackerSessionRepositoryImpl @Inject constructor(
         const val COLLECTION = "appointmentsSessions"
     }
 
-    override suspend fun createSession(session: WalkingTrackerSession): Result<WalkingTrackerSession> {
-        return withContext(NonCancellable) {
-            try {
-                val result = firestore
-                    .collection(COLLECTION)
-                    .add(session.toDto())
-                    .await()
-
-                Result.success(session.copy(id = result.id))
-            } catch (e: Exception) {
-                Result.failure(e)
-            }
-        }
-    }
     override suspend fun updateSession(session: WalkingTrackerSession): Result<Unit> {
         return withContext(NonCancellable) {
             try {

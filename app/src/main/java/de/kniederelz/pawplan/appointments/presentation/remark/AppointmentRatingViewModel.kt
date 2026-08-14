@@ -9,7 +9,12 @@ import de.kniederelz.pawplan.appointments.repositories.base.domain.Appointment
 import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentRepository
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRating
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingRepository
+import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatus
+import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusRepository
+import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
 import de.kniederelz.pawplan.dogs.domain.DogRepository
+import de.kniederelz.pawplan.user.domain.UserRepository
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime
@@ -19,45 +24,33 @@ import javax.inject.Inject
 class AppointmentRatingViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val appointmentRepository: AppointmentRepository,
-    private val appointmentRemarkRepository: AppointmentRatingRepository,
+    private val appointmentStatusRepository: AppointmentStatusRepository,
     private val dogRepository: DogRepository
 ) : ViewModel() {
 
+    val appointmentId: String = checkNotNull(
+        savedStateHandle[AppointmentRatingFragment.APPOINTMENT_KEY]
+    )
+
     private val _nextAppointmentFlow =
-        appointmentRepository.observeAppointment(
-            checkNotNull(savedStateHandle["appointmentId"])
-        )
+        appointmentRepository.observeAppointment(appointmentId)
             .flatMapLatest { appointment ->
                 if (appointment == null)
                     return@flatMapLatest flowOf(null)
 
-                dogRepository.observeDog(appointment.dogId)
-                    .flatMapLatest { dog ->
-                        if (dog == null)
-                            return@flatMapLatest flowOf(null)
+                combine(
+                    appointmentStatusRepository.observeStatus(appointment.id),
+                    dogRepository.observeDog(appointment.dogId)
+                ) { appointmentStatus, dog ->
+                    if (appointmentStatus == null)
+                        return@combine null
 
-                        flowOf(AppointmentRatingData(appointment, dog))
-                    }
+                    if (dog == null)
+                        return@combine null
+
+                    AppointmentRatingData(appointment, appointmentStatus, dog)
+                }
             }
     val nextAppointment = _nextAppointmentFlow.asLiveData()
-
-    fun getAppointment(): Appointment? {
-        return nextAppointment.value?.appointment
-    }
-
-    suspend fun submitRating(appointment: Appointment, rating: Int, comment: String) {
-        val rating = AppointmentRating(
-            id = appointment.id,
-            appointmentId = appointment.id,
-            volunteerId = appointment.volunteerId,
-            dogId = appointment.dogId,
-            rating = rating,
-            comment = comment,
-            updateAt = LocalDateTime.now()
-        )
-        appointmentRemarkRepository.createRating(rating)
-            .onSuccess { Log.d("TrackerRemarkViewModel", "Rating created") }
-            .onFailure { Log.e("TrackerRemarkViewModel", "Rating creation failed", it) }
-    }
 }
 

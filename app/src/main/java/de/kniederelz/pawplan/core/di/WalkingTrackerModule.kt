@@ -7,7 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import de.kniederelz.pawplan.tracking.repositories.session.data.FirestoreWalkingTrackerSessionRepositoryImpl
 import de.kniederelz.pawplan.tracking.repositories.session.domain.WalkingTrackerSessionRepository
-import de.kniederelz.pawplan.tracking.services.WalkingTrackerStateHolder
+import de.kniederelz.pawplan.tracking.repositories.state.domain.WalkingTrackerStateRepository
 import javax.inject.Singleton
 
 @Module
@@ -23,7 +23,7 @@ object WalkingTrackerModule {
 
     @Provides
     @Singleton
-    fun provideHolder(): WalkingTrackerStateHolder {
-        return WalkingTrackerStateHolder()
+    fun provideHolder(): WalkingTrackerStateRepository {
+        return WalkingTrackerStateRepository()
     }
 }

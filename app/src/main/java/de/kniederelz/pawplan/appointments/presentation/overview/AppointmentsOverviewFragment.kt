@@ -35,7 +35,15 @@ class AppointmentsOverviewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.appointments.observe(viewLifecycleOwner) { appointmentData ->
-            binding.appointmentList.adapter = AppointmentOverviewAdapter(
+            if (appointmentData.isNotEmpty()) {
+                binding.noUpcomingAppointments.visibility = View.GONE
+                binding.upcomingAppointmentList.visibility = View.VISIBLE
+            } else {
+                binding.noUpcomingAppointments.visibility = View.VISIBLE
+                binding.upcomingAppointmentList.visibility = View.GONE
+            }
+
+            binding.upcomingAppointmentList.adapter = AppointmentOverviewAdapter(
                 appointmentData,
                 { onAppointmentStartCompleteSubmit(it) },
                 { onAppointmentCancelButtonSubmit(it) }
@@ -47,18 +55,38 @@ class AppointmentsOverviewFragment : Fragment() {
                 favoriteDogs.toList()
             ) { onFastSelectButtonSubmit(it) }
         }
+
+        parentFragmentManager.setFragmentResultListener(
+            AppointmentRatingFragment.REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, result ->
+            lifecycleScope.launch {
+                val appointmentId =
+                    result.getString(AppointmentRatingFragment.APPOINTMENT_KEY)
+                        ?: return@launch
+
+                val submitRating = result.getBoolean(AppointmentRatingFragment.SUBMIT_KEY)
+                if (submitRating) {
+                    val rating =
+                        result.getInt(AppointmentRatingFragment.RATING_KEY)
+                    val comment =
+                        result.getString(AppointmentRatingFragment.COMMENT_KEY)
+                            ?: return@launch
+
+                    viewModel.setRating(appointmentId, rating, comment)
+                }
+
+                viewModel.completeAppointment(appointmentId)
+            }
+        }
     }
 
     private fun onAppointmentStartCompleteSubmit(data: AppointmentData) {
-        lifecycleScope.launch {
-            viewModel.completeAppointment(data.appointmentStatus)
-
-            AppointmentRatingFragment.show(parentFragmentManager, data.appointment.id)
-        }
+        AppointmentRatingFragment.show(parentFragmentManager, data.appointment.id)
     }
     private fun onAppointmentCancelButtonSubmit(data: AppointmentData) {
         lifecycleScope.launch {
-            viewModel.cancelAppointment(data.appointmentStatus)
+            viewModel.cancelAppointment(data.appointmentStatus.appointmentId)
         }
     }
 

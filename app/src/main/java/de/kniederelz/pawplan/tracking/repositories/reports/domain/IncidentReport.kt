@@ -5,7 +5,6 @@ import java.time.LocalDateTime
 
 data class IncidentReport(
     val id: String,
-    val appointmentId: String,
     val sessionId: String,
 
     val location: LatLngTime,

@@ -29,13 +29,11 @@ class TrackerReportFragment : BottomSheetDialogFragment() {
 
         fun show(
             fragmentManager: FragmentManager,
-            appointmentId: String,
             sessionId: String,
             locationTime: LatLngTime
         ) {
             TrackerReportFragment().apply {
                 arguments = Bundle().apply {
-                    putString("appointmentId", appointmentId)
                     putString("sessionId", sessionId)
                     putString("locationJson", Json.encodeToString(locationTime))
                 }
@@ -47,11 +45,6 @@ class TrackerReportFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentTrackerReportBinding
     private lateinit var locationMarker: Marker
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

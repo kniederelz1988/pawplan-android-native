@@ -10,7 +10,7 @@ import coil3.request.crossfade
 import coil3.request.error
 import coil3.request.placeholder
 import de.kniederelz.pawplan.appointments.repositories.AppointmentData
-import de.kniederelz.pawplan.appointments.repositories.base.domain.canStart
+import de.kniederelz.pawplan.appointments.repositories.base.domain.canComplete
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
 import de.kniederelz.pawplan.core.extensions.dateFormatter
 import de.kniederelz.pawplan.core.extensions.timeFormatter
@@ -60,6 +60,8 @@ class AppointmentOverviewAdapter(
                 View.VISIBLE
             else
                 View.GONE
+            holder.binding.startButton.isEnabled =
+                data.appointment.canComplete()
             holder.binding.startButton.setOnClickListener {
                 onCompleteButtonSubmit(data)
             }

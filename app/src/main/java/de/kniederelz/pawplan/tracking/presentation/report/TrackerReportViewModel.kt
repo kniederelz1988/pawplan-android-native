@@ -25,9 +25,6 @@ class TrackerReportViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val incidentReportRepository: IncidentReportRepository,
 ) : ViewModel() {
-
-    private val _appointmentId: String =
-        checkNotNull(savedStateHandle["appointmentId"])
     private val _sessionId: String =
         checkNotNull(savedStateHandle["sessionId"])
 
@@ -60,7 +57,6 @@ class TrackerReportViewModel @Inject constructor(
 
         val rating = IncidentReport(
             id = "",
-            appointmentId = _appointmentId,
             sessionId = _sessionId,
             location = location,
             description = description,

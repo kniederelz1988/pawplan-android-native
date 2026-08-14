@@ -76,10 +76,31 @@
             android:layout_width="match_parent"
             android:layout_height="8dp" />
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/noUpcomingAppointments"
+            style="@style/Widget.Material3.CardView.Filled"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:visibility="visible"
+            tools:context=".tracking.presentation.TrackerAppointmentFragment">
+
+            <TextView
+                style="@style/TextAppearance.Material3.BodyMedium.Emphasized"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/wtp_noupcomingappointments"
+                android:textAlignment="center" />
+
+        </com.google.android.material.card.MaterialCardView>
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/appointmentList"
+            android:id="@+id/upcomingAppointmentList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="5"
             tools:listitem="@layout/fragment_appointment_overview_item">

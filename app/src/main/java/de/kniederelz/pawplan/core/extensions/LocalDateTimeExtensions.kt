@@ -30,8 +30,14 @@ fun Long.toLocalDateTime(): LocalDateTime {
 fun LocalDateTime.isAfterStartOfDay() : Boolean {
     return isAfter(LocalDate.now().atStartOfDay())
 }
+fun LocalDateTime.isBeforeStartOfDay() : Boolean {
+    return isBefore(LocalDate.now().atStartOfDay())
+}
 
 fun LocalDateTime.checkAfterAndBeforeNow(minutesBefore: Long, minutesAfter: Long): Boolean {
     return isAfter(LocalDateTime.now().minusMinutes(minutesBefore)) &&
             isBefore(LocalDateTime.now().plusMinutes(minutesAfter))
+}
+fun LocalDateTime.checkAfterNow(minutesBefore: Long): Boolean {
+    return isAfter(LocalDateTime.now().minusMinutes(minutesBefore))
 }

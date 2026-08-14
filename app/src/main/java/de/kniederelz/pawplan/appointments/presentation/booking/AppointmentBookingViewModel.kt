@@ -54,11 +54,6 @@ class AppointmentBookingViewModel @Inject constructor(
             )
             appointmentRepository.createAppointment(appointment)
                 .onSuccess { it ->
-                    Log.d(
-                        "AppointmentBookingViewModel",
-                        "Appointment created $it"
-                    )
-
                     val appointmentStatus = AppointmentStatus(
                         id = it,
 

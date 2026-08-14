@@ -6,8 +6,6 @@ import java.time.LocalDateTime
 data class WalkingTrackerSession(
     val id: String = "",
 
-    val appointmentId: String = "",
-
     val startTimestamp: LocalDateTime = LocalDateTime.now(),
     val endTimestamp: LocalDateTime = LocalDateTime.now(),
 

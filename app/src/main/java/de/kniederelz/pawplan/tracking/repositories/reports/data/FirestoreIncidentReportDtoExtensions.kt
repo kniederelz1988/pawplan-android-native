@@ -8,7 +8,6 @@ import kotlinx.serialization.json.Json
 fun FirestoreIncidentReportDto.toDomain(id: String) = IncidentReport(
     id = id,
 
-    appointmentId = appointmentId,
     sessionId = sessionId,
 
     location = Json.decodeFromString(location),
@@ -19,7 +18,6 @@ fun FirestoreIncidentReportDto.toDomain(id: String) = IncidentReport(
 )
 
 fun IncidentReport.toDto() = FirestoreIncidentReportDto(
-    appointmentId = appointmentId,
     sessionId = sessionId,
 
     location = Json.encodeToString(location),

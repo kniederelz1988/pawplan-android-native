@@ -5,7 +5,7 @@ import de.kniederelz.pawplan.core.extensions.dateFormatter
 import de.kniederelz.pawplan.core.extensions.timeFormatter
 import de.kniederelz.pawplan.core.ui.extensions.setRating
 import de.kniederelz.pawplan.databinding.FragmentTrackerAppointmentBinding
-import de.kniederelz.pawplan.tracking.repositories.TrackerAppointmentData
+import de.kniederelz.pawplan.tracking.repositories.base.domain.TrackerAppointmentData
 import de.kniederelz.pawplan.tracking.repositories.session.domain.getDistance
 import java.time.Duration
 import android.view.LayoutInflater

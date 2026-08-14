@@ -77,7 +77,8 @@ class AppointmentBookingFragment : BottomSheetDialogFragment() {
         }
 
         viewModel.dog.observe(viewLifecycleOwner) { dog ->
-            dog ?: return@observe
+            dog
+                ?: return@observe
 
             binding.dogImageView.load(dog.imageURL) {
                 placeholder(R.drawable.dog_placeholder)

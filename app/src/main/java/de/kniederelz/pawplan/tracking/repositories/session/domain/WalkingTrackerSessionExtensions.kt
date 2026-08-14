@@ -1,6 +1,13 @@
 package de.kniederelz.pawplan.tracking.repositories.session.domain
 
 import android.location.Location
+import java.time.Duration
+import java.time.LocalDateTime
+
+fun WalkingTrackerSession.getDuration(): Long {
+    val duration = Duration.between(startTimestamp, LocalDateTime.now())
+    return duration.toMinutes()
+}
 
 fun WalkingTrackerSession.getDistance(): Double {
     if (locations.size < 2) return 0.0

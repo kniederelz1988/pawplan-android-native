@@ -79,9 +79,10 @@
     <string name="wtp_remark_rating4">4</string>
     <string name="wtp_remark_rating5">5</string>
 
+    <string name="wtp_remark_ratingLabel">Rating</string>
     <string name="wtp_remark_commentLabel">Leave a comment on your walk</string>
     <string name="wtp_remark_submitButton">Submit Remark</string>
-    <string name="wtp_remark_ratingLabel">Rating</string>
+    <string name="wtp_remark_closeButton">Close</string>
 
     <string name="tracker_startWalk_title">Start walk?</string>
     <string name="tracker_startWalk_message">
@@ -119,6 +120,9 @@
     <string name="wtp_report_submit">Submit Report</string>
 
     <string name="wtp_report_emptyerror">Please enter a description</string>
+
+    <string name="walkingtracker_notification_title">Walking is being tracked</string>
+    <string name="walkingtracker_notification_text">%1$.1f km · %2$d min</string>
 
     <string name="wtp_noupcomingappointments">No upcoming appointments…</string>
     <string name="wtp_nocompletedappointments">No completed appointments…</string>
@@ -173,5 +177,6 @@
     <string name="appointment_badge_confirmed">Confirmed</string>
     <string name="appointment_badge_completed">Finished</string>
     <string name="appointment_badge_cancelled">Cancelled</string>
+
 
 </resources>

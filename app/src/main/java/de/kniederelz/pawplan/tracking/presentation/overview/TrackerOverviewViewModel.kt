@@ -13,13 +13,13 @@ import de.kniederelz.pawplan.appointments.repositories.status.domain.Appointment
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
 import de.kniederelz.pawplan.core.time.ClockProvider
 import de.kniederelz.pawplan.dogs.domain.DogRepository
-import de.kniederelz.pawplan.tracking.repositories.TrackerAppointmentData
+import de.kniederelz.pawplan.tracking.repositories.base.domain.TrackerAppointmentData
 import de.kniederelz.pawplan.tracking.repositories.location.domain.LocationRepository
 import de.kniederelz.pawplan.tracking.repositories.reports.domain.IncidentReportRepository
 import de.kniederelz.pawplan.tracking.repositories.session.domain.WalkingTrackerSession
 import de.kniederelz.pawplan.tracking.repositories.session.domain.WalkingTrackerSessionRepository
-import de.kniederelz.pawplan.tracking.services.WalkingTrackerState
-import de.kniederelz.pawplan.tracking.services.WalkingTrackerStateHolder
+import de.kniederelz.pawplan.tracking.repositories.state.domain.WalkingTrackerState
+import de.kniederelz.pawplan.tracking.repositories.state.domain.WalkingTrackerStateRepository
 import de.kniederelz.pawplan.user.domain.UserRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -42,13 +42,13 @@ class TrackerOverviewViewModel @Inject constructor(
     private val incidentReportRepository: IncidentReportRepository,
     private val dogRepository: DogRepository,
     private val appointmentSessionRepository: WalkingTrackerSessionRepository,
-    private val trackerSessionStateHolder: WalkingTrackerStateHolder,
+    private val sessionStateRepository: WalkingTrackerStateRepository,
     private val clockProvider: ClockProvider
 ) : ViewModel() {
 
     val routePath = combine(
-        trackerSessionStateHolder.state,
-        trackerSessionStateHolder.session
+        sessionStateRepository.state,
+        sessionStateRepository.session
     ) { state, session ->
         if (session == null || state == WalkingTrackerState.Stopped)
             return@combine flowOf(null)
@@ -65,8 +65,8 @@ class TrackerOverviewViewModel @Inject constructor(
         .asLiveData()
 
     val routeBoundingBox = combine(
-        trackerSessionStateHolder.state,
-        trackerSessionStateHolder.session
+        sessionStateRepository.state,
+        sessionStateRepository.session
     ) { state, session ->
         if (session == null || state != WalkingTrackerState.Inspect)
             return@combine flowOf(null)
@@ -84,7 +84,7 @@ class TrackerOverviewViewModel @Inject constructor(
 
     val location = combine(
         locationRepository.location,
-        trackerSessionStateHolder.state
+        sessionStateRepository.state
     ) { location, state ->
         if (state == WalkingTrackerState.Inspect)
             return@combine flowOf(null)
@@ -94,29 +94,18 @@ class TrackerOverviewViewModel @Inject constructor(
         .flatMapLatest { it }
         .asLiveData()
 
-    val canInspectSession = trackerSessionStateHolder.state
+    val canInspectSession = sessionStateRepository.state
         .map { state -> state != WalkingTrackerState.Started }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     fun toggleInspectedSession(session: WalkingTrackerSession) {
-        if (trackerSessionStateHolder.isActive())
-            return
-
-        if (trackerSessionStateHolder.state.value == WalkingTrackerState.Inspect
-            && trackerSessionStateHolder.session.value?.id == session.id) {
-            clearInspectedSession()
-            return
-        }
-
-        trackerSessionStateHolder.updateState(WalkingTrackerState.Inspect)
-        trackerSessionStateHolder.updateSession(session)
+        if (sessionStateRepository.isInspected(session))
+            sessionStateRepository.clearInspectSession()
+        else
+            sessionStateRepository.startInspectSession(session)
     }
     fun clearInspectedSession() {
-        if (trackerSessionStateHolder.state.value != WalkingTrackerState.Inspect)
-            return
-
-        trackerSessionStateHolder.updateState(WalkingTrackerState.Stopped)
-        trackerSessionStateHolder.updateSession(null)
+        sessionStateRepository.clearInspectSession()
     }
 
     private val _nextAppointmentFlow = userRepository.userProfile
@@ -124,26 +113,26 @@ class TrackerOverviewViewModel @Inject constructor(
             if (userProfile == null)
                 return@flatMapLatest flowOf(emptyList())
 
-            appointmentStatusRepository.observeVolunteerStatus(
-                userProfile.id,
-                listOf(AppointmentStatusType.CONFIRMED)
-            )
+            appointmentRepository.observeUpcomingVolunteerAppointments(userProfile.id)
         }
-        .flatMapLatest { statuses ->
-            if (statuses.isEmpty())
+        .flatMapLatest { appointments ->
+            if (appointments.isEmpty())
                 return@flatMapLatest flowOf(null)
 
             combine(
-                appointmentRepository.observeAppointments(statuses.map { it.appointmentId }),
-                appointmentSessionRepository.observeSessions(statuses.map { it.appointmentId }),
-                dogRepository.observeDogs(statuses.map { it.dogId })
-            ) { appointments, sessions, dogs ->
-                statuses.filter { appointments.containsKey(it.appointmentId) && dogs.containsKey(it.dogId) }
-                    .map { appointmentStatus ->
-                        val appointment = appointments[appointmentStatus.appointmentId]!!
-                        val appointmentSession = sessions[appointmentStatus.appointmentId]
+                appointmentStatusRepository.observeStatus(appointments.map { it.id }),
+                appointmentSessionRepository.observeSessions(appointments.map { it.id }),
+                dogRepository.observeDogs(appointments.map { it.dogId })
+            ) { statuses, sessions, dogs ->
+                appointments.filter { statuses.containsKey(it.id) && dogs.containsKey(it.dogId) }
+                    .mapNotNull { appointment ->
+                        val appointmentStatus = statuses[appointment.id]!!
+                        if (appointmentStatus.status != AppointmentStatusType.CONFIRMED)
+                            return@mapNotNull null
 
-                        val dog = dogs[appointmentStatus.dogId]!!
+                        val appointmentSession = sessions[appointment.id]
+                        val dog = dogs[appointment.dogId]!!
+
                         TrackerAppointmentData(
                             appointment.id,
                             appointment,
@@ -152,7 +141,8 @@ class TrackerOverviewViewModel @Inject constructor(
                             null,
                             appointmentSession
                         )
-                    }.minByOrNull { it.appointment.date }
+                    }
+                    .minByOrNull { it.appointment.date }
             }
         }
     val nextAppointment = _nextAppointmentFlow.asLiveData()
@@ -202,11 +192,11 @@ class TrackerOverviewViewModel @Inject constructor(
         }
     val completedAppointments = _completedAppointmentsFlow.asLiveData()
 
-    val trackingSession = trackerSessionStateHolder.session.asLiveData()
+    val trackingSession = sessionStateRepository.session.asLiveData()
 
     val reports = combine(
-            trackerSessionStateHolder.state,
-            trackerSessionStateHolder.session
+            sessionStateRepository.state,
+            sessionStateRepository.session
         ) { state, session ->
             if (state == WalkingTrackerState.Stopped)
                 return@combine flowOf(emptyList())
@@ -219,32 +209,19 @@ class TrackerOverviewViewModel @Inject constructor(
         .flatMapLatest { it }
         .asLiveData()
 
-    val startTrackingEnabled = trackerSessionStateHolder.state
+    val startTrackingEnabled = sessionStateRepository.state
         .combine(_nextAppointmentFlow) { state, appointment ->
             state == WalkingTrackerState.Stopped && appointment != null
                     && appointment.appointment.canStart()
         }
         .asLiveData()
-    val stopTrackingEnabled = trackerSessionStateHolder.state
+    val stopTrackingEnabled = sessionStateRepository.state
         .map { state -> state == WalkingTrackerState.Started }
         .asLiveData()
 
-    val reportEnabled = trackerSessionStateHolder.state
+    val reportEnabled = sessionStateRepository.state
         .map { state -> state == WalkingTrackerState.Started }
         .asLiveData()
 
     val userProfile = userRepository.userProfile.asLiveData()
-    suspend fun completeAppointment(status: AppointmentStatus) {
-        val userProfile = userProfile.value
-            ?: return
-
-        val status = status.copy(
-            status = AppointmentStatusType.COMPLETED,
-            updateAt = LocalDateTime.now(),
-            updatedBy = userProfile.id
-        )
-        appointmentStatusRepository.updateStatus(status)
-            .onSuccess { Log.d("TrackerRemarkViewModel", "Status created") }
-            .onFailure { Log.d("TrackerRemarkViewModel", "Status creation failed", it) }
-    }
 }

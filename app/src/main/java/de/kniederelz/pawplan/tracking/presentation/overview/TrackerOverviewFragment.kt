@@ -9,7 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import de.kniederelz.pawplan.R
@@ -19,11 +18,10 @@ import de.kniederelz.pawplan.databinding.FragmentTrackerBinding
 import de.kniederelz.pawplan.tracking.permissions.WalkingTrackerPermissionLauncher
 import de.kniederelz.pawplan.tracking.permissions.WalkingTrackerPermissionManager
 import de.kniederelz.pawplan.tracking.presentation.overview.adapter.TrackerAppointmentAdapter
-import de.kniederelz.pawplan.appointments.presentation.remark.AppointmentRatingFragment
 import de.kniederelz.pawplan.tracking.presentation.report.TrackerReportFragment
 import de.kniederelz.pawplan.tracking.repositories.base.domain.LatLngTime
-import de.kniederelz.pawplan.tracking.services.WalkingTrackerServiceController
-import kotlinx.coroutines.launch
+import de.kniederelz.pawplan.tracking.services.WalkingTrackerService
+import de.kniederelz.pawplan.tracking.services.WalkingTrackerService.Companion.getStartTrackingIntent
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -37,12 +35,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class TrackerOverviewFragment : Fragment() {
     @Inject
-    lateinit var serviceController: WalkingTrackerServiceController
-
-    @Inject
     lateinit var permissionManager: WalkingTrackerPermissionManager
-    private val permissionLauncher = WalkingTrackerPermissionLauncher(this
-    ) { onServicePermissionsGranted() }
+    private val permissionLauncher = WalkingTrackerPermissionLauncher(this) {
+        onServicePermissionsGranted()
+    }
 
     private val viewModel: TrackerOverviewViewModel by viewModels()
 
@@ -136,7 +132,11 @@ class TrackerOverviewFragment : Fragment() {
                 binding.noUpcomingAppointments.visibility = View.GONE
                 binding.upcomingAppointments.visibility = View.VISIBLE
                 binding.upcomingAppointments.adapter =
-                    TrackerAppointmentAdapter(listOf(it)) {}
+                    TrackerAppointmentAdapter(
+                        listOf(it)
+                    ) {
+
+                    }
             }
         }
         viewModel.completedAppointments.observe(viewLifecycleOwner) { appointmentData ->
@@ -241,24 +241,16 @@ class TrackerOverviewFragment : Fragment() {
             }
             .show()
     }
-
-    private fun onServicePermissionsGranted() {
-        if (permissionLauncher.requestNextPermission(permissionManager)) {
-            val appointmentId = viewModel.nextAppointment.value?.id
-                ?: return
-
-            serviceController.startTracking(appointmentId)
-        }
-    }
-
     private fun displayStopDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.tracker_stopWalk_title))
             .setMessage(getString(R.string.tracker_stopWalk_message))
             .setNegativeButton(getString(R.string.tracker_stopWalk_negativeLabel), null)
             .setPositiveButton(getString(R.string.tracker_stopWalk_positiveLabel)) { _, _ ->
-                serviceController.stopTracking()
-                onCompleteAppointment()
+                val context = requireContext()
+                context.startService(
+                    WalkingTrackerService.getStopTrackingIntent(context)
+                )
             }
             .show()
     }
@@ -273,40 +265,33 @@ class TrackerOverviewFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.tracker_reportIncident_title))
             .setMessage(getString(R.string.tracker_reportIncident_message))
-            .setNegativeButton(getString(R.string.tracker_reportIncident_negativeLabel)) { _, _ ->
-
-            }
+            .setNegativeButton(getString(R.string.tracker_reportIncident_negativeLabel)) { _, _ -> }
             .setPositiveButton(getString(R.string.tracker_reportIncident_positiveLabel)) { _, _ ->
-                onReportIncident()
+                val session = viewModel.trackingSession.value
+                    ?: return@setPositiveButton
+
+                val location = viewModel.location.value
+                    ?: return@setPositiveButton
+
+                val time = LocalDateTime.now()
+                val locationTime = LatLngTime(location.latitude, location.longitude, time.toLong())
+
+                TrackerReportFragment.show(
+                    parentFragmentManager,session.id, locationTime
+                )
             }
             .show()
     }
 
-    private fun onCompleteAppointment() {
-        val appointmentData = viewModel.nextAppointment.value
-            ?: return
+    private fun onServicePermissionsGranted() {
+        if (permissionLauncher.requestNextPermission(permissionManager)) {
+            val appointmentId = viewModel.nextAppointment.value?.id
+                ?: return
 
-        lifecycleScope.launch {
-            viewModel.completeAppointment(appointmentData.appointmentStatus)
-
-            AppointmentRatingFragment.show(parentFragmentManager, appointmentData.id)
+            val context = requireContext()
+            context.startForegroundService(
+                getStartTrackingIntent(context, appointmentId)
+            )
         }
-    }
-    private fun onReportIncident() {
-        val session = viewModel.trackingSession.value
-            ?: return
-
-        val location = viewModel.location.value
-            ?: return
-
-        val time = LocalDateTime.now()
-        val locationTime = LatLngTime(location.latitude, location.longitude, time.toLong())
-
-        TrackerReportFragment.show(
-            parentFragmentManager,
-            session.appointmentId,
-            session.id,
-            locationTime
-        )
     }
 }

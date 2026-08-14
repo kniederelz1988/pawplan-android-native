@@ -16,6 +16,8 @@
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
     <application
         android:name=".PawPlanApplication"
         android:allowBackup="true"
@@ -46,6 +48,9 @@
             android:exported="false"
             android:foregroundServiceType="location" />
 
+        <receiver
+            android:name=".appointments.notifications.AppointmentNotificationReceiver"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package de.kniederelz.pawplan.tracking.repositories
+package de.kniederelz.pawplan.tracking.repositories.base.domain
 
 import de.kniederelz.pawplan.appointments.repositories.base.domain.Appointment
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRating

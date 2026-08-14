@@ -20,10 +20,11 @@ class FirestoreAppointmentRatingRepositoryImpl @Inject constructor(
         const val COLLECTION = "appointmentsRating"
     }
 
-    override suspend fun createRating(rating: AppointmentRating): Result<String> {
-        return updateRating(rating)
-    }
     override suspend fun updateRating(rating: AppointmentRating) : Result<String> {
+        if (rating.id.isBlank()) {
+            return Result.failure(IllegalArgumentException("Rating id cannot be blank"))
+        }
+
         return withContext(NonCancellable) {
             try {
                 firestore
@@ -92,7 +93,6 @@ class FirestoreAppointmentRatingRepositoryImpl @Inject constructor(
             registration.remove()
         }
     }
-
 
     override fun observeDogStatistics(dogId: String) = callbackFlow {
         val registration = firestore

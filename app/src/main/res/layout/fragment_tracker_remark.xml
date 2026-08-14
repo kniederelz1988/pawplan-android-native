@@ -129,6 +129,13 @@
             android:layout_height="wrap_content"
             android:text="@string/wtp_remark_submitButton" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/closeButton"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wtp_remark_closeButton" />
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="32dp" />

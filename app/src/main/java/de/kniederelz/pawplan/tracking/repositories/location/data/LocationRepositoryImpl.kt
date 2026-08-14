@@ -11,6 +11,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.qualifiers.ApplicationContext
+import de.kniederelz.pawplan.tracking.repositories.base.domain.LatLngTime
 import de.kniederelz.pawplan.tracking.repositories.location.domain.LocationRepository
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -26,16 +27,16 @@ class LocationRepositoryImpl @Inject constructor(
         LocationServices.getFusedLocationProviderClient(context)
 
     @SuppressLint("MissingPermission")
-    override val location: Flow<Location> = callbackFlow {
+    override val location: Flow<LatLngTime> = callbackFlow {
         val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5_000L)
             .setMinUpdateIntervalMillis(5_000L)
-            //.setMinUpdateDistanceMeters(10f)
+            .setMinUpdateDistanceMeters(10f)
             .build()
 
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let {
-                    trySend(it)
+                    trySend(LatLngTime(it.latitude, it.longitude, it.time))
                 }
             }
         }
