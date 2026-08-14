@@ -9,7 +9,6 @@ import de.kniederelz.pawplan.appointments.repositories.ratings.domain.Appointmen
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatus
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusRepository
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
-import de.kniederelz.pawplan.tracking.repositories.session.domain.WalkingTrackerSession
 import de.kniederelz.pawplan.tracking.repositories.state.domain.WalkingTrackerStateRepository
 import de.kniederelz.pawplan.user.domain.UserRepository
 import kotlinx.coroutines.flow.firstOrNull

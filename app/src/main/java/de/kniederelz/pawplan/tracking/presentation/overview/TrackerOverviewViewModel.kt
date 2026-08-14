@@ -1,6 +1,5 @@
 package de.kniederelz.pawplan.tracking.presentation.overview
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -8,7 +7,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentRepository
 import de.kniederelz.pawplan.appointments.repositories.base.domain.canStart
 import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingRepository
-import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatus
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusRepository
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
 import de.kniederelz.pawplan.core.time.ClockProvider
@@ -29,7 +27,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel

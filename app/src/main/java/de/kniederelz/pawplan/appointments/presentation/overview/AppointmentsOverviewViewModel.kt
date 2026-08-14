@@ -10,13 +10,11 @@ import de.kniederelz.pawplan.appointments.repositories.ratings.domain.Appointmen
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatus
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusRepository
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
-import de.kniederelz.pawplan.core.extensions.isAfterStartOfDay
 import de.kniederelz.pawplan.core.extensions.isBeforeStartOfDay
 import de.kniederelz.pawplan.core.time.ClockProvider
 import de.kniederelz.pawplan.dogs.domain.DogRepository
 import de.kniederelz.pawplan.user.domain.UserRepository
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -50,7 +48,7 @@ class AppointmentsOverviewViewModel @Inject constructor(
                 appointments.filter { status.containsKey(it.id) && dog.containsKey(it.dogId) }
                     .mapNotNull { appointment ->
                         val appointmentStatus = status[appointment.id]!!
-                        
+
                         if (
                             appointment.date.isBeforeStartOfDay() &&
                             appointmentStatus.status != AppointmentStatusType.PENDING &&

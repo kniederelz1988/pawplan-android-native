@@ -1,6 +1,5 @@
 package de.kniederelz.pawplan.appointments.notifications
 
-import androidx.lifecycle.asLiveData
 import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentRepository
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusRepository
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType

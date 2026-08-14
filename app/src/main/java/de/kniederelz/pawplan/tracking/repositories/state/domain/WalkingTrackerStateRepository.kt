@@ -3,7 +3,6 @@ package de.kniederelz.pawplan.tracking.repositories.state.domain
 import de.kniederelz.pawplan.tracking.repositories.session.domain.WalkingTrackerSession
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -24,7 +24,6 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val appointmentRepository: AppointmentRepository,
     private val appointmentStatusRepository: AppointmentStatusRepository,
     private val sessionRepository: WalkingTrackerSessionRepository
 ) : ViewModel() {

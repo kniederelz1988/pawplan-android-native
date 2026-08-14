@@ -1,16 +1,13 @@
 package de.kniederelz.pawplan.appointments.notifications
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import android.util.Log
 import androidx.annotation.RequiresPermission
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,11 +15,6 @@ import de.kniederelz.pawplan.appointments.repositories.status.domain.Appointment
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
-import androidx.core.net.toUri
-import de.kniederelz.pawplan.tracking.notification.TrackingNotificationManager.Companion.NOTIFICATION_CHANNEL_DESCRIPTION
-import de.kniederelz.pawplan.tracking.notification.TrackingNotificationManager.Companion.NOTIFICATION_CHANNEL_ID
-import de.kniederelz.pawplan.tracking.notification.TrackingNotificationManager.Companion.NOTIFICATION_CHANNEL_IMPORTANCE
-import de.kniederelz.pawplan.tracking.notification.TrackingNotificationManager.Companion.NOTIFICATION_CHANNEL_NAME
 
 @Singleton
 class AppointmentNotificationManager @Inject constructor(

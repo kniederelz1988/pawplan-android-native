@@ -15,6 +15,8 @@ import de.kniederelz.pawplan.tracking.permissions.WalkingTrackerPermissionState
 import de.kniederelz.pawplan.tracking.repositories.location.domain.LocationRepository
 import de.kniederelz.pawplan.tracking.repositories.session.domain.WalkingTrackerSession
 import de.kniederelz.pawplan.tracking.repositories.session.domain.WalkingTrackerSessionRepository
+import de.kniederelz.pawplan.tracking.repositories.session.domain.getDistance
+import de.kniederelz.pawplan.tracking.repositories.session.domain.getDuration
 import de.kniederelz.pawplan.tracking.repositories.state.domain.WalkingTrackerStateRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -145,6 +147,14 @@ class WalkingTrackerService: LifecycleService() {
                     locations = session.locations.plus(location)
                 )
                 stateRepository.updateSession(session)
+
+                notificationManager.updateNotification(
+                    getString(R.string.walkingtracker_notification_title),
+                    getString(
+                        R.string.walkingtracker_notification_text,
+                        session.getDistance() / 1000, session.getDuration()
+                    )
+                )
             }
         }
     }

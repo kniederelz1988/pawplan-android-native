@@ -1,23 +1,15 @@
 package de.kniederelz.pawplan.appointments.presentation.remark
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.kniederelz.pawplan.appointments.repositories.base.domain.Appointment
 import de.kniederelz.pawplan.appointments.repositories.base.domain.AppointmentRepository
-import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRating
-import de.kniederelz.pawplan.appointments.repositories.ratings.domain.AppointmentRatingRepository
-import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatus
 import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusRepository
-import de.kniederelz.pawplan.appointments.repositories.status.domain.AppointmentStatusType
 import de.kniederelz.pawplan.dogs.domain.DogRepository
-import de.kniederelz.pawplan.user.domain.UserRepository
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel

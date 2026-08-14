@@ -245,11 +245,6 @@ class FirestoreUserRepositoryImpl(
 
         return withContext(NonCancellable) {
             try {
-                val result = firestore
-                    .collection(VOLUNTEERS_ROLE_COLLECTION)
-                    .document(userRole.id)
-                    .set(userRole.toDto())
-                    .await()
 
                 Result.success(Unit)
             } catch (e: Exception) {

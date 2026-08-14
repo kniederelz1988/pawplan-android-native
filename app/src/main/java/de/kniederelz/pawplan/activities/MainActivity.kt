@@ -1,13 +1,8 @@
 package de.kniederelz.pawplan.activities
 
-import android.app.AlarmManager
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,9 +17,8 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var permissionManager: MainPermissionManager
     private val permissionLauncher = MainPermissionLauncher(
-        this,
-        { requestNextPermission() }
-    )
+        this
+    ) { requestNextPermission() }
 
     @Inject
     lateinit var appointmentNotificationSync : AppointmentNotificationSync
