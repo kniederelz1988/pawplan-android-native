@@ -18,7 +18,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AppointmentNotificationManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "APPOINTMENT_CHANNEL"
@@ -60,7 +60,7 @@ class AppointmentNotificationManager @Inject constructor(
         val trackingTime = appointment.trackingNotificationTime()
         if (trackingTime.isAfter(Instant.now())) {
             setupNotification(
-                notificationTime,
+                trackingTime,
                 appointment.id,
                 AppointmentNotificationType.TRACKING,
             )
