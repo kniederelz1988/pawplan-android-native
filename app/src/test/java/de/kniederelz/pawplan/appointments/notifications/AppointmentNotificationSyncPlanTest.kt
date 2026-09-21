@@ -4,7 +4,6 @@ import de.kniederelz.pawplan.appointments.repositories.status.domain.Appointment
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.Instant
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 class AppointmentNotificationSyncPlanTest {
 
