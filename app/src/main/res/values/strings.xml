@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">PawPlan</string>
 
-    <string name="back">Zurück</string>
+    <string name="back">Back</string>
     <string name="navigation_schedule">Schedule</string>
     <string name="navigation_dogs">Dogs</string>
     <string name="navigation_tracker">Tracker</string>
@@ -18,10 +18,10 @@
 
     <string name="dog_details_picture_desc">Cute dog picture</string>
     <string name="dog_details_name">Nana</string>
-    <string name="dog_details_fav_button">Favorisieren</string>
-    <string name="dog_details_defav_button">Entfavorisieren</string>
-    <string name="dog_details_age_label">Alter</string>
-    <string name="dog_details_age_value">4 Jahre</string>
+    <string name="dog_details_fav_button">Favorite</string>
+    <string name="dog_details_defav_button">De-favorite</string>
+    <string name="dog_details_age_label">Age</string>
+    <string name="dog_details_age_value">4 Years</string>
     <string name="dog_details_gender_label">Gender</string>
     <string name="dog_details_size_label">Size</string>
     <string name="dog_details_star_desc">Rating</string>
@@ -54,17 +54,17 @@
     <string name="dogs_overview_nodogs">No results…</string>
 
 
-    <string name="appointments_fast_select_caption">Schnellauswahl</string>
+    <string name="appointments_fast_select_caption">Quick select</string>
     <string name="appointments_caption">Appointments</string>
-    <string name="appointments_pending_caption">Nächste Termine</string>
+    <string name="appointments_pending_caption">Upcoming Appointments</string>
 
     <string name="bookappointment_caption">Book appointment</string>
 
     <string name="wt_start_walk">Start walk</string>
     <string name="wt_stop_walk">Stop walk</string>
     <string name="wt_caption">Walk Tracker</string>
-    <string name="wt_pendingwalk_caption">Nächster Spaziergang</string>
-    <string name="wt_previouswalk_caption">Vorherige Spaziergänge</string>
+    <string name="wt_pendingwalk_caption">Next walk</string>
+    <string name="wt_previouswalk_caption">Previous walks</string>
     <string name="wt_reportbutton_desc">Report</string>
 
     <string name="wtp_walklength">%1$.1f km</string>
